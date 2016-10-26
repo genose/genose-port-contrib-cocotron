@@ -25,24 +25,15 @@
 
 
 source $( find $(dirname $0) -name common_functions.sh -type f -print )
- 
-packedVersionMajor=""
-packedVersionMinor=""
-packedVersionRev=".v8c"
-packedVersionPlatform=""
-packedVersionArch=""
-packedVersionCheck="${packedVersionMajor}:${packedVersionMinor}:${packedVersionRev}:${packedVersionPlatform}:${packedVersionArch}"
-packedVersion="${packedVersionMajor}${packedVersionMinor}${packedVersionRev}${packedVersionPlatform}${packedVersionArch}"
-packedProduct="jpegsrc"
-
-$scriptResources/downloadFilesIfNeeded.sh $productCrossPorting_downloadFolder http://www.ijg.org/files/${packedProduct}${packedVersion}.tar.gz
+  
+$scriptResources/downloadFilesIfNeeded.sh $productCrossPorting_downloadFolder http://www.ijg.org/files/${packedProduct}${packedProduct_packed}${packedVersion}.tar.gz
 
 $scriptResources/unarchiveFiles.sh $productCrossPorting_downloadFolder $BUILD  ${packedProduct}${packedVersion} 
 
 
     # ########## # ########## # ##########
     unarchivedFile=""
-    find_unarchive_dir "${packedProduct}" "${BUILD}/${packedProduct}-${packedVersion} "
+    find_unarchive_dir "${packedProduct}" "${BUILD}/${packedProduct}${packedProduct_packed}${packedVersion}"
     # ## echo "@@@@@@@ ..... (${unarchivedFile})" | tee  >&2 >> $SCRIPT_TTY
     # ########## # ########## # ##########
     
@@ -59,7 +50,7 @@ echo " CC=$GCC "
 echo " RANLIB=" $RANLIB
 echo "***************************************** *"
 echo "***************************************** *"
-
+productCrossPorting_Target_default_compiler_dir_system="${productCrossPorting_Target_default_compiler_dir_system}/${packedProduct_type}${packedProduct}"
 ./configure --prefix="$productCrossPorting_Target_default_compiler_dir_system" --disable-shared -host=$TARGET -target=$TARGET CC=$GCC RANLIB=$RANLIB
 
 tty_echo "Install ${packedProduct} on TARGET : ${TARGET} ::  ${AS} ::  ${AR} :: ${RANLIB}"

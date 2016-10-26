@@ -25,16 +25,7 @@
 
 
 source $( find $(dirname $0) -name common_functions.sh -type f -print )
-
-packedVersionMajor="1.3"
-packedVersionMinor=".0"
-packedVersionRev=""
-packedVersionPlatform=""
-packedVersionArch=""
-packedVersionCheck="${packedVersionMajor}:${packedVersionMinor}:${packedVersionRev}:${packedVersionPlatform}:${packedVersionArch}"
-packedVersion="${packedVersionMajor}${packedVersionMinor}${packedVersionRev}${packedVersionPlatform}${packedVersionArch}"
-packedProduct="libjpeg-turbo" 
- 
+echo "Installing ${packedProduct} ..."
 $scriptResources/downloadFilesIfNeeded.sh $downloadFolder http://freefr.dl.sourceforge.net/project/${packedProduct}/${packedVersion}/${packedProduct}-${packedVersion}.tar.gz
  
 $scriptResources/unarchiveFiles.sh  $productCrossPorting_downloadFolder $BUILD  "${packedProduct}-${packedVersion}"
@@ -48,6 +39,10 @@ $scriptResources/unarchiveFiles.sh  $productCrossPorting_downloadFolder $BUILD  
     cd ${unarchivedFile}
 
 make clean
+productCrossPorting_Target_default_compiler_dir_system="${productCrossPorting_Target_default_compiler_dir_system}/${packedProduct_depend}"
+
 ./configure --prefix="$PREFIX"  --disable-shared --host=$TARGET --target=$TARGET  AR=$AR AS=$AS CC=$GCC RANLIB=$RANLIB --with-jpeg8
 
 make && make install
+
+tty_echo "#### ${packedProduct} installed in (${PWD}) "

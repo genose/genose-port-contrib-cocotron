@@ -124,20 +124,30 @@ glutProduct="glut"
 hunspellVersion="1.3.1:xx:xx:xx:xx"
 hunspellProduct="hunspell"
 
-iconvVersion="xx:xx:xx:xx:xx"
+iconvVersion="1.9.2:xx:.win32:xx:xx"
 iconvProduct="iconv"
 
-libjpegturboVersion="xx:xx:xx:xx:xx"
+libjpegVersion="xx:.v8c:xx:xx:xx"
+libjpegProduct_packed="src"
+libjpegProduct_type="lib"
+libjpegProduct="jpeg"
+libjpegProduct_install="${libjpegProduct_type}${libjpegProduct}"
+
+
+libjpegturboVersion="1.3.0:xx:xx:xx:xx"
 libjpegturboProduct="libjpeg-turbo"
+libjpegturboProduct_base="${libjpegProduct}"
+libjpegturboProduct_depend="${libjpegProduct_type}${libjpegProduct}"
 
 libtiffVersion="xx:xx:xx:xx:xx"
 libtiffProduct="libtiff"
+libtiffProduct_depend="${libjpegProduct}"
 
 opensslVersion="0.9.8:h-1:xx:xx:xx"
 opensslProduct="openssl"
 
-pthreadVersion="xx:xx:xx:xx:xx"
-pthreadProduct="pthread"
+pthreadVersion="xx:xx:-win32:x86:xx"
+pthreadProduct="pthreads"
 
 plibcVersion="0.1.5:xx:xx:xx:xx"
 plibcProduct="plibc"
@@ -152,7 +162,9 @@ xml2Version="1.9.2:xx:.win32:xx:xx"
 xml2Product="xml2"
 
 zlibVersion="1.2.5:xx:.win32:xx:"
+zlibProduct_type=""
 zlibProduct="zlib"
+zlibProduct_install="${zlibProduct_type}${zlibProduct}"
 
 zlib_srcVersion="${zlibVersion}"
 zlib_srcProduct="${zlibProduct}"
@@ -339,7 +351,7 @@ packedVersion="${packedVersionMajor-xx}${packedVersionMinor-xx}${packedVersionRe
 packedProduct=""
 
 
-packedVersion=$(            eval "echo "$( echo '${'$( basename $0 | tr "_" "\ " | tr "." "\ " | tr "[:upper:]" "[:lower:]" | awk '{ print $2 }' )'Version}') )
+packedVersion=$(            eval "echo "$( echo '${'$( basename $0 | tr "_" "\ " | tr "." "\ " | sed -e "s;\-;;g" | tr "[:upper:]" "[:lower:]" | awk '{ print $2 }' )'Version}') )
 packedVersionMajor=$(       echo "${packedVersion}" | tr ":" "\ " | awk '{ print $1 }' | sed -e "s;\.;\ \.\ ;g"  | awk '{ print $1$2$3 }' | sed -e "s;xx;;g" | sed -e "s; ;;g"  )
 packedVersionMinor=$(       echo "${packedVersion}" | tr ":" "\ " | awk '{ print $1 }' | sed -e "s;\.;\ \.\ ;g"  | awk '{ print $4$5 }' | sed -e "s;xx;;g" | sed -e "s; ;;g"  )
 
@@ -352,6 +364,13 @@ packedVersionPack=$(        echo "${packedVersion}" | tr ":" "\ " | awk '{ print
 packedVersionCheck="${packedVersionMajor}:${packedVersionMinor}:${packedVersionRev_xml}:${packedVersionPlatform}:${packedVersionArch}:${packedVersionPack}"
 
 packedProduct=$(            eval "echo "$( echo '${'$( basename $0 | tr "_" "\ " | tr "." "\ " | tr "[:upper:]" "[:lower:]" | awk '{ print $2 }' )'Product}') )
+packedProduct_base=$(       eval "echo "$( echo '${'$( basename $0 | tr "_" "\ " | tr "." "\ " | tr "[:upper:]" "[:lower:]" | awk '{ print $2 }' )'Product_base}') )
+packedProduct_depend=$(     eval "echo "$( echo '${'$( basename $0 | tr "_" "\ " | tr "." "\ " | tr "[:upper:]" "[:lower:]" | awk '{ print $2 }' )'Product_depend}') )
+
+packedProduct_packed=$(     eval "echo "$( echo '${'$( basename $0 | tr "_" "\ " | tr "." "\ " | tr "[:upper:]" "[:lower:]" | awk '{ print $2 }' )'Product_packed}') )
+packedProduct_type=$(       eval "echo "$( echo '${'$( basename $0 | tr "_" "\ " | tr "." "\ " | tr "[:upper:]" "[:lower:]" | awk '{ print $2 }' )'Product_type}') )
+
+packedProduct_install=$(    eval "echo "$( echo '${'$( basename $0 | tr "_" "\ " | tr "." "\ " | tr "[:upper:]" "[:lower:]" | awk '{ print $2 }' )'Product_install}') )
 
 
 GCC=$(   echo $( ls "${productCrossPorting_Target_default_compiler_dir_base_platform}/${productCrossPorting_Target_default_compiler}-${productCrossPorting_Target_default_compiler_version}"/bin/*gcc | head -n1 ) )
