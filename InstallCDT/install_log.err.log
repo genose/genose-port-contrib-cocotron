@@ -1,8 +1,0 @@
-
-usage: mkdir [-pv] [-m mode] directory ...
-/Developer/Cocotron/cocotron/InstallCDT/Resources/scripts//unarchiveFiles.sh: line 51: $3: unbound variable
-find: illegal option -- n
-usage: find [-H | -L | -P] [-EXdsx] [-f path] path ... [expression]
-       find [-H | -L | -P] [-EXdsx] -f path [path ...] [expression]
-./install_zlib.sh: line 59: cd: /lib: No such file or directory
-cp: /lib/zlib.lib: No such file or directory
