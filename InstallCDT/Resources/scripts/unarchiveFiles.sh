@@ -2,7 +2,7 @@
 
 # ########## # ########### ########### ########### ##########
 # ##
-# ##    Cocotron installer compmunity updates
+# ##    Cocotron installer community updates
 # ##    Based from Christopher J. W. Lloyd
 # ##        :: Cocotron project ::
 # ##
@@ -18,7 +18,7 @@
 # ##    // http://project2306.genose.org  // git :: project2306_ide //
 # ##    /////////////////////////////////////////////////////////////
 # ##
-# ##    -- Cocotron compmunity updates
+# ##    -- Cocotron community updates
 # ##
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
@@ -46,71 +46,94 @@ source $( find $(dirname $0) -name common_functions.sh -type f -print )
 
 
 set -eu
-sourceFolder=$1
-destinationFolder=$2
-listOfFiles="$3"
+sourceFolder=${1-$DEFAULT}
+destinationFolder=${2-$DEFAULT}
+listOfFiles=$( echo "${3-$DEFAULT}" | tr " " "\\n")
  
 echo "Unarchive Get : (${sourceFolder}): (${destinationFolder}) :: (${listOfFiles})"
  
 lastPwd=$(pwd)
 unArchiverTool=$( which false )
-unArchiverTool_path_tar=$( ($(test ""$(uname -s)""  == "Darwin" ) && which tar) || which bsdtar )
+unArchiverTool_path_tar=$( ($(test ""$(uname -s)""  == "*arwin*" ) && which tar) || which bsdtar )
 
 mkdir -p $destinationFolder
 
 cd $destinationFolder;
+echo " #### get to : "
+pwd
 
-for locationOfFile_cur in $listOfFiles
+for locationOfFile_cur in ${listOfFiles[*]}
 do
     
     locationOfFile=$sourceFolder/$locationOfFile_cur
-
-    if [ -f $locationOfFile.tar.gz ];then
+    if [ -f "${locationOfFile}.tar.gz" ];then
         extension=".tar.gz"
         unarchiveFlags="-xzf"
         unArchiverTool=$unArchiverTool_path_tar
         
-    elif [ -f $locationOfFile.tar.bz2 ]; then
+    elif [ -f "${locationOfFile}.tar.bz2" ]; then
        extension=".tar.bz2"
        unarchiveFlag="-xjf"
        unArchiverTool=$unArchiverTool_path_tar
        
-    elif [ -f $locationOfFile.zip ]; then  
+    elif [ -f "${locationOfFile}.zip" ]; then  
         unarchiveFlags="-ov"
         extension=".zip"
         unArchiverTool="unzip"
     else
         echo "Unable to determine archive format of $locationOfFile, exiting" | tee >&2 >> $SCRIPT_TTY
+        send_exit $0 $LINENO
         exit 1
     fi
-     
-    /bin/echo "Unarchiving $locationOfFile$extension ..." | tee >&2 >> $SCRIPT_TTY
+    
+    
+    if [ -f "${sourceFolder}/${locationOfFile_cur}${extension}" ]; then
+         echo
+    else
+         tty_echo "Error while accessing archive :: ${sourceFolder}/${locationOfFile_cur}${extension} "
+         send_exit $0 $LINENO  | tee >&2 >> $SCRIPT_TTY
+    fi
+    
+    tty_echo "Unarchiving $locationOfFile$extension ..." | tee >&2 >> $SCRIPT_TTY
  
     # ## (cd $destinationFolder; $unArchiverTool   $unarchiveFlags $locationOfFile$extension)
-    
-   if [ "${SYSTEM_HOST}" = "Darwin" ]; then
+    echo "::""${SYSTEM_HOST}"
+    if [ "${SYSTEM_HOST}" = "darwin" ]; then
        
-       # ## echo "=====xxxxxxx"
-      # ##
-      rm -Rv $destinationFolder/$( echo $locationOfFile_cur | tr "-" " " | awk '{print $1}' )*  || echo "Error ...."   && send_exit $0 $LINENO  | tee >&2 >> $SCRIPT_TTY
+        # ## echo "===== Delete previous xxxxxxx " $destinationFolder/$( echo $locationOfFile_cur | tr "-" " " | awk '{print $1}' )
+        # ##
+        rm -Rv $destinationFolder/$( echo $locationOfFile_cur | tr "-" " " | awk '{print $1}' )* 2>/dev/null || echo "No previous files in ("  $destinationFolder/$( echo $locationOfFile_cur | tr "-" " " | awk '{print $1}' ) ") ...."
        
-       cp -v $sourceFolder/$locationOfFile_cur$extension $destinationFolder || echo "Error ...."    && send_exit $0 $LINENO  | tee >&2 >> $SCRIPT_TTY   
+        cp -v $sourceFolder/$locationOfFile_cur$extension $destinationFolder   
        
-       /System/Library/CoreServices/Applications/Archive\ Utility.app/Contents/MacOS/Archive\ Utility  $destinationFolder/$locationOfFile_cur$extension 
-       # ## echo " status : " $?
-       
-       
-      # ## find $destinationFolder -name  $( echo $locationOfFile_cur | tr "-" " " | awk '{ print $1 }' )"*" -type d  -print >> $SCRIPT_TTY
+        /System/Library/CoreServices/Applications/Archive\ Utility.app/Contents/MacOS/Archive\ Utility  $destinationFolder/$locationOfFile_cur$extension 
+        # ## echo " status : " $?
+        
+        # ## find $destinationFolder -name  $( echo $locationOfFile_cur | tr "-" " " | awk '{ print $1 }' )"*" -type d  -print >> $SCRIPT_TTY
               
        
-       rm  -v  $destinationFolder/$locationOfFile_cur$extension   || echo "Error ...."    && send_exit $0 $LINENO  | tee >&2 >> $SCRIPT_TTY     
-     
+        rm  -v  $destinationFolder/$locationOfFile_cur$extension &&   echo " ### Deleted ${destinationFolder}/${locationOfFile_cur}${extension} ...."
+        # ## || echo "Error ...."    && send_exit $0 $LINENO  | tee >&2 >> $SCRIPT_TTY
+        sleep 1
+        # ########## # ########## # ##########
+        unarchivedFile=""
+        find_unarchive_dir "${packedProduct}" "${destinationFolder}"
+        tty_echo "@@@@@@@ ..... unarchivedFile ==  (${unarchivedFile})" | tee  >&2 >> $SCRIPT_TTY
+        # ########## # ########## # ##########
+        if [ "${unarchivedFile}" != "" ] && [ -e "${unarchivedFile}" ]; then
+            echo
+        else
+             tty_echo "Error while accessing Extracted dir :: ${unarchivedFile} "
+             send_exit $0 $LINENO  | tee >&2 >> $SCRIPT_TTY
+        fi
    else
        $unArchiverTool $unarchiveFlags $locationOfFile$extension || echo "Error ...."    && send_exit $0 $LINENO  | tee >&2 >> $SCRIPT_TTY
    fi
 
     sleep 1
-    echo " done." | tee >&2 >> $SCRIPT_TTY
+    tty_echo " done." | tee >&2 >> $SCRIPT_TTY
 done
 
 cd $lastPwd
+echo " #### back to : "
+pwd

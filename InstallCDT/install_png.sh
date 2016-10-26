@@ -1,60 +1,60 @@
 #!/bin/sh
-installResources=`pwd`/Resources
-scriptResources=$installResources/scripts
+ 
+# ########## # ########### ########### ########### ##########
+# ##
+# ##    Cocotron installer community updates
+# ##    Based from Christopher J. W. Lloyd
+# ##        :: Cocotron project ::
+# ##
+# ##    Created by Genose.org (Sebastien Ray. Cotillard)
+# ##    Date 10-oct-2016
+# ##    last update 25-oct-2016
+# ##
+# ##    Please support genose.org, the author and his projects
+# ##    
+# ##    Based on genose.org tools
+# ##
+# ##    //////////////////////////////////////////////////////////////
+# ##    // http://project2306.genose.org  // git :: project2306_ide //
+# ##    /////////////////////////////////////////////////////////////
+# ##
+# ##    -- Cocotron community updates
+# ##
+# ########## # ########### ########### ########### ##########
+# ########## # ########### ########### ########### ##########
 
-productFolder=/Developer/Cocotron/1.0
-downloadFolder=$productFolder/Downloads
 
-if [ ""$1"" = "" ];then
-  targetPlatform="Windows"
-else
-  targetPlatform=$1
-fi
+source $( find $(dirname $0) -name common_functions.sh -type f -print )
+ 
+packedVersionMajor="1.6"
+packedVersionMinor=".18"
+packedVersionRev=""
+packedVersionPlatform=""
+packedVersionArch=""
+packedVersionCheck="${packedVersionMajor}:${packedVersionMinor}:${packedVersionRev}:${packedVersionPlatform}:${packedVersionArch}"
+packedVersion="${packedVersionMajor}${packedVersionMinor}${packedVersionRev}${packedVersionPlatform}${packedVersionArch}"
+packedProduct="libpng"
 
-if [ ""$2"" = "" ];then
-  targetArchitecture="i386"
-else
-  targetArchitecture=$2
-fi
+tty_echo "Installing ${packedProduct}"
+$scriptResources/downloadFilesIfNeeded.sh $downloadFolder ftp://ftp.simplesystems.org/pub/libpng/png/src/$( echo ${packedVersionMajor} | sed -e "s;.;;g" ) /${packedProduct}-${packedVersion}.tar.gz
 
-if [ ""$3"" = "" ];then
-  gccVersion="4.3.1"
-else
-  gccVersion=$3
-fi
+    $scriptResources/unarchiveFiles.sh  $downloadFolder $BUILD  "${packedProduct}-${packedVersion}"
 
-BASEDIR=/Developer/Cocotron/1.0/$targetPlatform/$targetArchitecture
-PREFIX=`pwd`/../system/i386-mingw32msvc
-
-BUILD=/tmp/build_png
-LIBPNGVERSION=libpng16
-VERSION=1.6.18
-
-$scriptResources/downloadFilesIfNeeded.sh $downloadFolder ftp://ftp.simplesystems.org/pub/libpng/png/src/${LIBPNGVERSION}/libpng-${VERSION}.tar.gz
-
-mkdir -p $BUILD
-cd $BUILD
-tar -xvzf $downloadFolder/libpng-${VERSION}.tar.gz
-cd libpng-${VERSION}
-
+    # ########## # ########## # ##########
+    unarchivedFile=""
+    find_unarchive_dir "${packedProduct}" "${BUILD}"
+    # ## echo "@@@@@@@ ..... (${unarchivedFile})" | tee  >&2 >> $SCRIPT_TTY
+    # ########## # ########## # ##########
+    cd ${unarchivedFile}/lib 
 pwd 
 
-GCC=$(echo $BASEDIR/gcc-$gccVersion/bin/*gcc |  tr -s " " ":" | cut -d':' -f 2 | awk "{print $1;  fflush();}" )
-AS=$(echo $BASEDIR/gcc-$gccVersion/bin/*as |  tr -s " " ":" | cut -d':' -f 2 | awk "{print $1;  fflush();}" )
-AR=$(echo $BASEDIR/gcc-$gccVersion/bin/*ar |  tr -s " " ":" | cut -d':' -f 2 | awk "{print $1;  fflush();}" )
-RANLIB=$(echo $BASEDIR/gcc-$gccVersion/bin/*ranlib |  tr -s " " ":" | cut -d':' -f 2 | awk "{print $1;  fflush();}" )
-TARGET=$($GCC -dumpmachine)
-
-
-
-COCOTRON=/Developer/Cocotron/1.0//build/$targetPlatform/$targetArchitecture
-INSTALL_PREFIX=$PREFIX/libpng
+INSTALL_PREFIX=${productCrossPorting_Target_default_compiler_dir_system}/libpng
 BINARY_PATH=$INSTALL_PREFIX/bin
 INCLUDE_PATH=$INSTALL_PREFIX/include
 LIBRARY_PATH=$INSTALL_PREFIX/lib
 
-export LDFLAGS="-L$PREFIX/zlib-1.2.5/lib"
-export CFLAGS="-I$PREFIX/zlib-1.2.5/include"
+export LDFLAGS="-L$(ls -d ${productCrossPorting_Target_default_compiler_dir_system}/zlib*| head -n1 )/lib"
+export CFLAGS="-I$(ls -d ${productCrossPorting_Target_default_compiler_dir_system}/zlib* | head -n1 )/include"
 
 GCC="$GCC $CFLAGS"
 make clean
@@ -63,7 +63,7 @@ make -p $LIBRARY_PATH
 make -p $INCLUDE_PATH
 
 echo ./configure --prefix="$INSTALL_PREFIX"   --disable-shared --host=$TARGET --target=$TARGET  AR=$AR CC=$GCC RANLIB=$RANLIB AS=$AS
-./configure --prefix="$INSTALL_PREFIX"  --disable-shared --host=$TARGET --target=$TARGET   -with-zlib-prefix=$BASEDIR/zlib-1.2.5 AR="$AR" CC="$GCC" RANLIB="$RANLIB" AS="$AS"
+./configure --prefix="$INSTALL_PREFIX"  --disable-shared --host=$TARGET --target=$TARGET   -with-zlib-prefix=$BASEDIR/zlib* AR="$AR" CC="$GCC" RANLIB="$RANLIB" AS="$AS"
 
 make && make install
 

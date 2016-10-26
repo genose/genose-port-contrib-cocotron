@@ -2,7 +2,7 @@
 
 # ########## # ########### ########### ########### ##########
 # ##
-# ##    Cocotron installer compmunity updates
+# ##    Cocotron installer community updates
 # ##    Based from Christopher J. W. Lloyd
 # ##        :: Cocotron project ::
 # ##
@@ -18,7 +18,7 @@
 # ##    // http://project2306.genose.org  // git :: project2306_ide //
 # ##    /////////////////////////////////////////////////////////////
 # ##
-# ##    -- Cocotron compmunity updates
+# ##    -- Cocotron community updates
 # ##
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
@@ -32,13 +32,13 @@ source $( find $(dirname $0) -name common_functions.sh -type f -print )
 # ## Xcode specific
 
 InstalledSoftware_path_Mac_xcodebuild=$(which xcodebuild)
-InstalledSoftware_path_Mac_xcode_select=$(which xcode-selects && echo "-p" || echo "/bin/echo ./")
+InstalledSoftware_path_Mac_xcode_select=$(which xcode-selects && echo "-p" || echo "tty_echo ./")
 
 InstalledSoftware_path_Mac_xcode=$( dirname $(ls -d  $( ${InstalledSoftware_path_Mac_xcode_select} 2>$SCRIPT_TTY)  2>$SCRIPT_TTY ) )
 InstalledSoftware_path_Mac_xcode_version=$(
 
 ( test -x "${InstalledSoftware_path_Mac_xcode}" && test "${#InstalledSoftware_path_Mac_xcode}" -gt 5 ) && { /usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" $InstalledSoftware_path_Mac_xcode/version.plist  2>/dev/null ; } || {
-/bin/echo "";
+tty_echo "";
 }
 )
 
@@ -50,7 +50,7 @@ if [ ${#InstalledSoftware_path_Mac_xcode} -lt 5 ]; then
 			xcode_openurl_valid=${tty_yesyno_response_valid}
 		   # ########### # ############ ###########
 	   if [ "${xcode_openurl}" == "y" ]; then
-		   /bin/echo "Open Browser with ${SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_url}"
+		   tty_echo "Open Browser with ${SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_url}"
 		   # ## sleep 3
 		   # ## can't download it without AUTH, so open the URL in browser
 		   # ## open "${SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_url}"
@@ -63,15 +63,15 @@ if [ ${#InstalledSoftware_path_Mac_xcode} -lt 5 ]; then
 	exit_witherror "${SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_name} not installed for ${SYSTEM_HOST_VERSION_NAME}:${SYSTEM_HOST_VERSION}" 
 fi
 
-/bin/echo "#### Installed ${SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_name} : (${InstalledSoftware_path_Mac_xcode_version}) : ${InstalledSoftware_path_Mac_xcode}"
+tty_echo "#### Installed ${SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_name} : (${InstalledSoftware_path_Mac_xcode_version}) : ${InstalledSoftware_path_Mac_xcode}"
 
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
 
 if [ -w /Library/Application\ Support/Developer/Shared/Xcode/Specifications ]; then
-	/bin/echo "####  >>>> Permissions properly set up, continuing install."
+	tty_echo "####  >>>> Permissions properly set up, continuing install."
 else
-	/bin/echo "####  >>>> For this script to complete successfully, the directory /Library/Application Support/Develper/Shared/Xcode/Specifications must be writeable by you, and we've detected that it isn't.  "
+	tty_echo "####  >>>> For this script to complete successfully, the directory /Library/Application Support/Develper/Shared/Xcode/Specifications must be writeable by you, and we've detected that it isn't.  "
 	exit 1
 fi
 
@@ -104,13 +104,13 @@ else
     InstalledSoftware_path_Mac_macport_version="No"
     InstalledSoftware_path_Mac_macport="see http://macports.org"
 fi
-/bin/echo "#### Installed MacPort Release .... ($InstalledSoftware_path_Mac_macport_version) : $InstalledSoftware_path_Mac_macport "
+tty_echo "#### Installed MacPort Release .... ($InstalledSoftware_path_Mac_macport_version) : $InstalledSoftware_path_Mac_macport "
 
 
 # ##########
 # ##########
 
-/bin/echo "#### Current MacPort Release .... ($macPortRelease)"
+tty_echo "#### Current MacPort Release .... ($macPortRelease)"
 
 # ##########
 # ##########
@@ -123,7 +123,7 @@ else
 fi
 
 
-/bin/echo "#### MacPort Avail for this System .... (${macPortRelease_avail}) : ${macPortRelease_URL}"
+tty_echo "#### MacPort Avail for this System .... (${macPortRelease_avail}) : ${macPortRelease_URL}"
 
 # ##########
 # ##########
@@ -148,7 +148,7 @@ if [ "${macPortRelease_avail}" == "No" ]; then
 				macport_openurl_valid=${tty_yesyno_response_valid}
 			   # ########### # ############ ###########
 		   if [ "${macport_openurl}" == "y" ]; then
-			   /bin/echo "Open Browser with ${macPortRelease_URL}"
+			   tty_echo "Open Browser with ${macPortRelease_URL}"
 			   sleep 3
 			   # ## can't really download it without some AUTH, so open the URL in browser
 			   open "${macPortRelease_URL}"
@@ -166,19 +166,19 @@ fi
 # ########## # ########### ########### ########### ##########
 
 if [ $InstalledSoftware_path_GUI__dialog_required -eq 1 ]; then
-	/bin/echo " >>>>>> Alternatively you required Xdialog Gui ... Please install this software "
+	tty_echo " >>>>>> Alternatively you required Xdialog Gui ... Please install this software "
 	 
 	if [ "${#InstalledSoftware_path_GUI__x11Window}" -lt 5]; then
 		sleep 3
 		# ## can't really download it without some AUTH, so open the URL in browser
-		/bin/echo " >>>>>> Please install this software X11 :  ${InstalledSoftware_path_GUI__x11Window_url} "
+		tty_echo " >>>>>> Please install this software X11 :  ${InstalledSoftware_path_GUI__x11Window_url} "
 		open "${InstalledSoftware_path_GUI__x11Window_url}"
 		
 		tty_waitforpath "which xquartz"
 	fi
 	if [ "${#InstalledSoftware_path_GUI__xdialog}" -lt 5]; then
 		sleep 3
-		/bin/echo " >>>>>> Please install this software Xdialog :  ${InstalledSoftware_path_GUI__xdialog_url} "
+		tty_echo " >>>>>> Please install this software Xdialog :  ${InstalledSoftware_path_GUI__xdialog_url} "
 		tty_yesyno " Would you like use MacPort to install Xdialog "
 		use_macport_install=${tty_yesyno_response}
 		use_macport_install_valid=${tty_yesyno_response_valid}
@@ -188,19 +188,19 @@ if [ $InstalledSoftware_path_GUI__dialog_required -eq 1 ]; then
 		   tty_waitforpath "which port"
 		   InstalledSoftware_path_Mac_macport=$(which port)
 		   
-			/bin/echo ">>>> If MacPort cant install Xdialog .... assume to do it manualy with dependencies: ( ${InstalledSoftware_path_GUI__xdialog_url} ) "
+			tty_echo ">>>> If MacPort cant install Xdialog .... assume to do it manualy with dependencies: ( ${InstalledSoftware_path_GUI__xdialog_url} ) "
 		  
 		  
 			if [ $(whoami) == "root" ]; then
-				/bin/echo ">>>> call MacPort .... : ( you are root !! ) "
+				tty_echo ">>>> call MacPort .... : ( you are root !! ) "
 				
-				$( /bin/echo "${InstalledSoftware_path_Mac_macport}  info xdialog ") | grep -i "Dependencies"
+				$( tty_echo "${InstalledSoftware_path_Mac_macport}  info xdialog ") | grep -i "Dependencies"
 				
-				$( /bin/echo "${InstalledSoftware_path_Mac_macport}  install xdialog ")
+				$( tty_echo "${InstalledSoftware_path_Mac_macport}  install xdialog ")
 				echo " ::: (" $? ")"
 			else
-				/bin/echo ">>>> use command : (assuming you are sudo / or root) "
-				/bin/echo $InstalledSoftware_path_Mac_macport " install xdialog "
+				tty_echo ">>>> use command : (assuming you are sudo / or root) "
+				tty_echo $InstalledSoftware_path_Mac_macport " install xdialog "
 			fi
 			
 			tty_waitforpath "which xdialog"

@@ -2,7 +2,7 @@
 
 # ########## # ########### ########### ########### ##########
 # ##
-# ##    Cocotron installer compmunity updates
+# ##    Cocotron installer community updates
 # ##    Based from Christopher J. W. Lloyd
 # ##        :: Cocotron project ::
 # ##
@@ -18,41 +18,27 @@
 # ##    // http://project2306.genose.org  // git :: project2306_ide //
 # ##    /////////////////////////////////////////////////////////////
 # ##
-# ##    -- Cocotron compmunity updates
+# ##    -- Cocotron community updates
 # ##
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
 
 source $( find $(dirname $0) -name common_functions.sh -type f -print )
 
-BASEDIR=/Developer/Cocotron/1.0/$targetPlatform/$targetArchitecture
- 
-packedVersionMajor="1.9.2"
-packedVersionMinor=""
-packedVersionRev=""
-packedVersionPlatform=".win32"
-packedVersionArch=""
-packedVersionCheck="${packedVersionMajor}:${packedVersionMinor}:${packedVersionRev}:${packedVersionPlatform}:${packedVersionArch}"
-packedVersion="${packedVersionMajor}${packedVersionMinor}${packedVersionRev}${packedVersionPlatform}${packedVersionArch}"
-packedProduct="zlib"
-
- 
-
 $scriptResources/downloadFilesIfNeeded.sh $downloadFolder -c "${packedVersionCheck}" "http://freefr.dl.sourceforge.net/project/libpng/${packedProduct}/${packedVersion}/${packedProduct}-${packVersion}.tar.bz2"
 
-mkdir -p $BUILD
-cd $BUILD
-tar -xvjf $downloadFolder/${packedProduct}-${packVersion}.tar.bz2
-cd ${packedProduct}-${packVersion} || send_exit $0 $LINENO
+$scriptResources/unarchiveFiles.sh  $productCrossPorting_downloadFolder $BUILD  "${packedProduct}-${packedVersion}"
 
+    # ########## # ########## # ##########
+    unarchivedFile=""
+    find_unarchive_dir "${packedProduct}" "${BUILD}"
+    # ## echo "@@@@@@@ ..... (${unarchivedFile})" | tee  >&2 >> $SCRIPT_TTY
+    # ########## # ########## # ##########
+    
+    cd ${unarchivedFile}
 pwd 
-
-GCC=$(echo $BASEDIR/gcc-$gccVersion/bin/*gcc)
-RANLIB=$(echo $BASEDIR/gcc-$gccVersion/bin/*ranlib)
-AR=$(echo $BASEDIR/gcc-$gccVersion/bin/*ar)
-
-
-INSTALL_PREFIX=${productCrossPorting_Target_default_compiler_basedir}/${packedProduct}-${packVersion}/
+ 
+INSTALL_PREFIX=${productCrossPorting_Target_default_compiler_dir_system}/${packedProduct}-${packVersion}/
 BINARY_PATH=$INSTALL_PREFIX/bin
 INCLUDE_PATH=$INSTALL_PREFIX/include
 LIBRARY_PATH=$INSTALL_PREFIX/lib
@@ -62,5 +48,6 @@ make -p $BINARY_PATH
 make -p $LIBRARY_PATH
 make -p $INCLUDE_PATH
 
-PATH=$COCOTRON/binutils-2.21-20111025/binutils:$PATH make -f win32/Makefile.gcc  CC=$GCC AR=$AR RANLIB=$RANLIB RCFLAGS="-I /Developer/Cocotron/1.0/PlatformInterfaces/i386-mingw32msvc/include -DGCC_WINDRES" BINARY_PATH=$BINARY_PATH INCLUDE_PATH=$INCLUDE_PATH LIBRARY_PATH=$LIBRARY_PATH SHARED_MODE=1 install
+PATH=${productCrossPorting_Target_default_compiler_dir_build_platform}/$( echo "${binutilsProduct}-${binutilsVersion}" | sed -e "s;:;;g"  | | sed -e "s;xx;;" )/binutils:$PATH make -f win32/Makefile.gcc  CC=$GCC AR=$AR RANLIB=$RANLIB RCFLAGS="-I ${productCrossPorting_Target_default_compiler_dir_base_interface}/${productCrossPorting_Target_default_compiler_dir_name}/include -DGCC_WINDRES" BINARY_PATH=$BINARY_PATH INCLUDE_PATH=$INCLUDE_PATH LIBRARY_PATH=$LIBRARY_PATH SHARED_MODE=1 install
 
+tty_echo "#### ${packedProduct} installed in (${PWD}) "

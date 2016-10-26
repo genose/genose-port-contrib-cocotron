@@ -2,7 +2,7 @@
  
 # ########## # ########### ########### ########### ##########
 # ##
-# ##    Cocotron installer compmunity updates
+# ##    Cocotron installer community updates
 # ##    Based from Christopher J. W. Lloyd
 # ##        :: Cocotron project ::
 # ##
@@ -18,16 +18,13 @@
 # ##    // http://project2306.genose.org  // git :: project2306_ide //
 # ##    /////////////////////////////////////////////////////////////
 # ##
-# ##    -- Cocotron compmunity updates
+# ##    -- Cocotron community updates
 # ##
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
 
 source $( find $(dirname $0) -name common_functions.sh -type f -print )
 
-INCLUDE=$productCrossPorting_Target_default_compiler_dir_system/include
-BIN=$productCrossPorting_Target_default_compiler_dir_system/bin
-LIB=$productCrossPorting_Target_default_compiler_dir_system/lib
 
 packedVersionMajor=""
 packedVersionMinor=""
@@ -39,7 +36,7 @@ packedVersion="${packedVersionMajor}${packedVersionMinor}${packedVersionRev}${pa
 packedProduct="pthreads"
 
 
-$scriptResources/downloadFilesIfNeeded.sh $TMPDIR "ftp://sourceware.org/pub/${packedProduct}-${packedVersionPlatform}/dll-latest/dll/${packedVersionArch}/pthreadGC2.dll \
+$scriptResources/downloadFilesIfNeeded.sh $TMPDIR -c "${packedVersion}" "ftp://sourceware.org/pub/${packedProduct}-${packedVersionPlatform}/dll-latest/dll/${packedVersionArch}/pthreadGC2.dll \
 ftp://sourceware.org/pub/${packedProduct}-${packedVersionPlatform}/dll-latest/lib/${packedVersionArch}/libpthreadGC2.a \
 ftp://sourceware.org/pub/${packedProduct}-${packedVersionPlatform}/dll-latest/include/pthread.h \
 ftp://sourceware.org/pub/${packedProduct}-${packedVersionPlatform}/dll-latest/include/sched.h \
