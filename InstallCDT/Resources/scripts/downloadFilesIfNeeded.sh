@@ -22,7 +22,7 @@
 
 # ########## # ########### ########### ########### ##########
 # ##
-# ##    Cocotron installer compmunity updates
+# ##    Cocotron installer community updates
 # ##    Based from Christopher J. W. Lloyd
 # ##        :: Cocotron project ::
 # ##
@@ -38,7 +38,7 @@
 # ##    // http://project2306.genose.org  // git :: project2306_ide //
 # ##    /////////////////////////////////////////////////////////////
 # ##
-# ##    -- Cocotron compmunity updates
+# ##    -- Cocotron community updates
 # ##
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
@@ -115,18 +115,23 @@ function doCheckVersion ()
     checkVersion_local="$1"
       echo "------ version start :: "${checkVersion_local}
     checkVersion_file_valid="--"
+
+    checkVersion_Major=$(       echo "${checkVersion_local}" | tr ":" "\ " | awk '{ print $1 }' | sed -e "s;\.;\ \.\ ;g"  | awk '{ print $1$2$3 }' | sed -e "s;xx;;g" | sed -e "s; ;;g"  )
     
-    checkVersion_Major=$( echo "$checkVersion_local" | tr ":" "\ " | tr "-" "\ " | awk '{ print $1 }')
-        
-    # # ver like 1.2.3 to parts 1 2 3
-    checkVersion_Major_Prior=$( echo "$checkVersion_local" | tr ":" "\ " | tr "-" "\ " | awk '{ print $1 }' | tr "." "\ " | awk '{ print $1 }' )
-    checkVersion_Major_Prior_sec=$( echo "$checkVersion_local" | tr ":" "\ " | tr "-" "\ " | awk '{ print $1 }' | tr "." "\ " | awk '{ print $2 }' )
-    checkVersion_Major_Prior_sec_rev=$( echo "$checkVersion_local" | tr ":" "\ " | tr "-" "\ " | awk '{ print $1 }' | tr "." "\ " | awk '{ print $3 }' )
+     # # ver like 1.2.3 to parts 1 2 3
+    checkVersion_Major_Prior=$( echo "${checkVersion_local}" | tr ":" "\ " | awk '{ print $1 }' | sed -e "s;\.;\ \.\ ;g"  |  awk '{ print $1 }'  | sed -e "s;zz;;g" )
+    checkVersion_Major_Prior_sec=$( echo "${checkVersion_local}" | tr ":" "\ " | awk '{ print $1 }' | sed -e "s;\.;\ \.\ ;g"  |  awk '{ print $2 }'  | sed -e "s;zz;;g" )
+    checkVersion_Major_Prior_sec_rev=$( echo "${checkVersion_local}" | tr ":" "\ " | awk '{ print $1 }' | sed -e "s;\.;\ \.\ ;g"  |  awk '{ print $3 }'  | sed -e "s;zz;;g" )
+
+    checkVersion_Minor=$(       echo "${checkVersion_local}" | tr ":" "\ " | awk '{ print $1 }' | sed -e "s;\.;\ \.\ ;g"  | awk '{ print $4$5 }' | sed -e "s;xx;;g" | sed -e "s; ;;g"  )
     
+    checkVersion_Rev=$(         echo "${checkVersion_local}" | tr ":" "\ " | awk '{ print $2 }' | sed -e "s;\.;\ \.\ ;g"  | awk '{ print $1$2$3 }' | sed -e "s;xx;;g" | sed -e "s; ;;g"  )
+    checkVersion_Platform=$(    echo "${checkVersion_local}" | tr ":" "\ " | awk '{ print $3 }' | sed -e "s;\.;\ \.\ ;g"  | awk '{ print $1$2$3 }' | sed -e "s;xx;;g" | sed -e "s; ;;g"  )
     
-    checkVersion_MinorArch=$( echo "$checkVersion_local" | tr ":" "\ " | tr "-" "\ " | awk '{ print $2 }'  )
-    
-    checkVersion_local=$( echo "$checkVersion_local" | sed -e "s;:;;g")
+    checkVersion_Arch=$(        echo "${checkVersion_local}" | tr ":" "\ " | awk '{ print $4 }' | sed -e "s;\.;\ \.\ ;g"  | awk '{ print $1$2$3 }' | sed -e "s;xx;;g" | sed -e "s; ;;g"  )
+    checkVersion_Pack=$(        echo "${checkVersion_local}" | tr ":" "\ " | awk '{ print $5 }' | sed -e "s;\.;\ \.\ ;g"  | awk '{ print $1$2$3 }' | sed -e "s;xx;;g" | sed -e "s; ;;g"  )
+
+    checkVersion_local=$( echo "$checkVersion_local" | sed -e "s;:;;g" | sed -e "s;zz;;g" )
     
     urlHosting_local="$2"
     urlHosting=$( dirname "${urlHosting_local}" )
@@ -165,18 +170,18 @@ function doCheckVersion ()
         # ########## # ##########
         
         if [ $listOfFiles_valid -eq 2 ]; then
-            echo "# ########## # ########## # ########## # ########## # ##########"
-            echo "# ########## # ########## # ########## # ########## # ##########"
-            echo "# ########## # ########## # ########## # ########## # ##########"
-            echo "# ########## # ########## # ########## # ########## # ##########"
-            echo " #### >>>> Something Moved .... !!! Please Report This !!!!"
-            echo " #### >>>> Something Moved .... !!! Please Report This !!!!"
-            echo " #### >>>> Something Moved .... !!! Please Report This !!!!"
-            echo " #### >>>> Something Moved .... !!! Please Report This !!!!"
-            echo "# ########## # ########## # ########## # ########## # ##########"
-            echo "# ########## # ########## # ########## # ########## # ##########"
-            echo "# ########## # ########## # ########## # ########## # ##########"
-            echo "# ########## # ########## # ########## # ########## # ##########"
+            tty_echo"# ########## # ########## # ########## # ########## # ##########"
+            tty_echo"# ########## # ########## # ########## # ########## # ##########"
+            tty_echo"# ########## # ########## # ########## # ########## # ##########"
+            tty_echo"# ########## # ########## # ########## # ########## # ##########"
+            tty_echo" #### >>>> Something Moved .... !!! Please Report This !!!!"
+            tty_echo" #### >>>> Something Moved .... !!! Please Report This !!!!"
+            tty_echo" #### >>>> Please Report This :: >>>> ${urlHosting_file_base} <<<<"
+            tty_echo" #### >>>> Something Moved .... !!! Please Report This !!!!"
+            tty_echo"# ########## # ########## # ########## # ########## # ##########"
+            tty_echo"# ########## # ########## # ########## # ########## # ##########"
+            tty_echo"# ########## # ########## # ########## # ########## # ##########"
+            tty_echo"# ########## # ########## # ########## # ########## # ##########"
               urlHosting=$( curl -A "Mozilla/4.0"   "${urlHosting}/"  2>/dev/null | grep -i "${urlHosting_file_base}" | tr '"' "\n" | grep -i "http://" | grep -i "${urlHosting_file_base}" | uniq | head -n1 )
         else
                    #check sourceforge
@@ -194,7 +199,7 @@ function doCheckVersion ()
         # ########## # ##########
         # ########## # ##########
         echo "# ########## # ########## # ########## # ########## # ##########"
-        echo "## >>>>> Check newer version than (${checkVersion_Major})  arch/release (${checkVersion_MinorArch}) for file :: ${urlHosting_file}"
+        echo "## >>>>> Check newer version than (${checkVersion_Major})  arch/release (${checkVersion_Arch} / ${checkVersion_Platform}) for file :: ${urlHosting_file}"
         echo "## >>>>> Hosted on : "  $urlHosting
         echo ""
 	echo "# ########## # ########## # ########## # ########## # ##########"
@@ -230,7 +235,7 @@ function doCheckVersion ()
          curl_text=$( cat /tmp/curl_test.txt | tr '; ' ";\\n" | tr "\>\<" "\>\n\<" | grep -i "href=" | grep -i "${urlHosting_file_base}"   || cat /tmp/curl_test.txt | tr ';' ";\\n" | tr "\>\<" "\>\n\<" | grep -i "${urlHosting_file_base}" || echo "Frak format" )
                   echo "@@@@ curl_text:: ${curl_text}"
          
-         send_exit
+         # send_exit $0 $LINENO
          # ## | grep -i "${urlHosting_file_base}"
          sfnet_listing=$( echo $curl_text | tr ' ' "\n" | tr '"' "\n" | grep -i "${urlHosting_file_base}\/files" || echo $curl_text | tr ' ' "\n" | tr '"' "\n" | grep -i "\/files\/${urlHosting_file_base}" || echo "--No--" )
          echo $curl_text | tr ' ' "\n" | tr '"' "\n" | grep -i "\/files\/${urlHosting_file_base}"
@@ -288,7 +293,7 @@ function doCheckVersion ()
                      if [  "${sfnet_listing_sub}" == "--No--" ]; then
                          echo "############### >>>>>>>>>>>>>>>> Nope all"
                          echo " ::::: ${listOfFiles_valid_httpcode} ;;; ${sfnet_listing_sub}"
-                        send_exit 1 
+                        send_exit $0 $LINENO
                      else 
                        #echo "Frak that s SF.net like " ${sfnet_listing_sub[@]}
                         
@@ -315,7 +320,7 @@ function doCheckVersion ()
                                              # ## | tr " " "\\n " | tail -n1
         
        
-        version_avail=( $( cat /tmp/curl_test.txt | tr '; ' ";\\n" | tr "\>\<" "\>\n\<" | grep -i "href=" | tr '"' "\\n" | grep -vi "stats" | grep -i "${urlHosting_file_base}\/files"   || cat /tmp/curl_test.txt | tr ' ' "\\n" | grep -i "${checkVersion_MinorArch}"  | grep -i "${urlHosting_file_base}"   || cat /tmp/curl_test.txt | tr ' ' "\\n" | grep -i "${checkVersion_MinorArch}"    || echo "ERROR" )  )
+        version_avail=( $( cat /tmp/curl_test.txt | tr '; ' ";\\n" | tr "\>\<" "\>\n\<" | grep -i "href=" | tr '"' "\\n" | grep -vi "stats" | grep -i "${urlHosting_file_base}\/files"   || cat /tmp/curl_test.txt | tr ' ' "\\n" | grep -i "${checkVersion_Arch}"  | grep -i "${urlHosting_file_base}"   || cat /tmp/curl_test.txt | tr ' ' "\\n" | grep -i "${checkVersion_Arch}"    || echo "ERROR" )  )
         
         version_avail=( $( echo ${version_avail[@]} | tr ' ' "\\n" | sort | uniq ) )
         
@@ -341,12 +346,12 @@ function doCheckVersion ()
         echo " All Versions says for (${urlHosting_file_base}):: ("${#version_avail[@]}")"
         echo " All Branch for (${urlHosting_file_base}):: ("${#version_avail_branch[@]}") : ("${version_avail_branch[@]}")"
         aff_checkVersion_MinorArch="[xxx-noarch-xxx]"
-        if [ "${#checkVersion_MinorArch}" -lt 1 ]; then
-                aff_checkVersion_MinorArch="${aff_checkVersion_MinorArch} -- >> ${checkVersion_Major}"
-            else
-                whicharch=$(echo "${checkVersion_MinorArch}" | grep -i "win32" || echo "${checkVersion_MinorArch}" | grep -i "win" || echo "${checkVersion_MinorArch}" | grep -i "darwin" || echo "${checkVersion_MinorArch}" | grep -i "mac" || echo "${checkVersion_MinorArch}" | grep -i "arch" || echo "[xxx-noarch-xxx]" )
-                aff_checkVersion_MinorArch="[${whicharch}] ${checkVersion_MinorArch} : [Release] ${checkVersion_Major_Prior}.${checkVersion_Major_Prior_sec} :: rev ${checkVersion_Major_Prior_sec_rev}"
-        fi
+        # if [ "${#checkVersion_Platform}" -lt 1 ]; then
+            #    aff_checkVersion_MinorArch="${aff_checkVersion_MinorArch} -- >> ${checkVersion_Major}"
+            # else
+                whichplatform=$(echo "${checkVersion_Platform}" | grep -i "win32" || echo "${checkVersion_Platform}" | grep -i "win" || echo "${checkVersion_Platform}" | grep -i "darwin" || echo "${checkVersion_Platform}" | grep -i "mac" || echo "${checkVersion_Platform}" | grep -i "arch" || echo "[xxx-noarch-xxx]" )
+                aff_checkVersion_MinorArch="[${checkVersion_Arch}] ${whichplatform} : [Release] ${checkVersion_Major_Prior}.${checkVersion_Major_Prior_sec} :: rev ${checkVersion_Major_Prior_sec_rev}:${checkVersion_Rev}"
+        # fi
         
          echo  "----"${version_avail_branch[*]} | grep -vi "${checkVersion_Major_Prior}.${checkVersion_Major_Prior_sec}"
          
@@ -389,7 +394,8 @@ case $key in
        # ## however problematic : "http" -c "http" "http" ;; nope
         key="$1"
         # ## version can contain full version X.X.X or version platform X.X.X-Cpu64;; in that case Minor and Major MUST be separated by ":" or "-"
-        checkVersion="${key}"
+        checkVersion=$( echo "${key}::" | sed -e "s;::;:zz:;g" )
+        echo "==== ${checkVersion}"
         shift
         if [ ${#checkUrl} -gt 5 ]; then 
              echo $checkUrl >> /tmp/mind_lift.txt
@@ -425,16 +431,24 @@ esac
  # ########
   
     if [ ${#checkVersion} -gt 1 ] && [ ${#checkUrl} -gt 5 ] ; then
+           
+        checkVersion_Major=$(       echo "${checkVersion}" | tr ":" "\ " | awk '{ print $1 }' | sed -e "s;\.;\ \.\ ;g"  | awk '{ print $1$2$3 }' | sed -e "s;xx;;g" | sed -e "s; ;;g"  )
+        checkVersion_Minor=$(       echo "${checkVersion}" | tr ":" "\ " | awk '{ print $1 }' | sed -e "s;\.;\ \.\ ;g"  | awk '{ print $4$5 }' | sed -e "s;xx;;g" | sed -e "s; ;;g"  )
         
-        checkVersionMajor=$( echo "${checkVersion}" | tr ":" "\ " | tr "-" "\ " | awk '{ print $1 }')
-        checkVersionMinor=$( echo "${checkVersion}" | tr ":" "\ " | tr "-" "\ " | awk '{ print $2 }')
+        checkVersion_Rev=$(         echo "${checkVersion}" | tr ":" "\ " | awk '{ print $2 }' | sed -e "s;\.;\ \.\ ;g"  | awk '{ print $1$2$3 }' | sed -e "s;xx;;g" | sed -e "s; ;;g"  )
+        checkVersion_Platform=$(    echo "${checkVersion}" | tr ":" "\ " | awk '{ print $3 }' | sed -e "s;\.;\ \.\ ;g"  | awk '{ print $1$2$3 }' | sed -e "s;xx;;g" | sed -e "s; ;;g"  )
+        
+        checkVersion_Arch=$(        echo "${checkVersion}" | tr ":" "\ " | awk '{ print $4 }' | sed -e "s;\.;\ \.\ ;g"  | awk '{ print $1$2$3 }' | sed -e "s;xx;;g" | sed -e "s; ;;g"  )
+        checkVersion_Pack=$(        echo "${checkVersion}" | tr ":" "\ " | awk '{ print $5 }' | sed -e "s;\.;\ \.\ ;g"  | awk '{ print $1$2$3 }' | sed -e "s;xx;;g" | sed -e "s; ;;g"  )
+
         checkVersion=$( echo "${checkVersion}" | sed  -e "s;:;;g" )
         checkUrl=$( echo "${checkUrl}" | sed  -e "s;${checkVersion};xxx;g" )
         # ## echo "Get url :: "$checkUrl
          echo $checkUrl >> /tmp/mind_lift.txt
          
+        checkVersion_Check="${checkVersion_Major-xx}:${checkVersion_Minor-xx}:${checkVersion_Rev-xx}:${checkVersion_Platform-xx}:${checkVersion_Arch-xx}:${checkVersion_Pack-xx}::"
         
-        doCheckVersion "${checkVersionMajor}:${checkVersionMinor}" "${checkUrl}"  
+        doCheckVersion "${checkVersion_Check}" "${checkUrl}"  
         # ## use only ":" for rebuild version number
 
         cat /tmp/mind_lift.txt | tr ' ' "\\n"  | sed -e "s;$checkUrl;${checkVersion_file_valid};g" > /tmp/mind_lift_out.txt
@@ -467,7 +481,7 @@ listOfFiles=( $( cat /tmp/mind_lift.txt ) )
 # ## cat /tmp/mind_lift.txt
 echo "check finish:: " ${listOfFiles[*]}
  
-        doCheckHTTPFile     $( echo ${listOfFiles[*]} )
+      #  doCheckHTTPFile     $( echo ${listOfFiles[*]} )
 # ########## # ########### ########### ########### ##########
 
 if [ $listOfFiles_valid -eq 0 ]; then
@@ -477,7 +491,7 @@ fi
 
 # ########## # ########### ########### ########### ##########
 
-for locationOfFile in $listOfFiles
+for locationOfFile in ${listOfFiles[*]}
 do
     nameOfFile=`basename $locationOfFile`
 
@@ -485,9 +499,9 @@ do
     /bin/echo "No download needed for "$productCrossPorting_downloadFolder/$nameOfFile | tee >&2 >> $SCRIPT_TTY
  else
     /bin/echo "Downloading "$locationOfFile" ..." | tee >&2 >> $SCRIPT_TTY
-    curl -A "Mozilla/4.0"  -f -L -# $locationOfFile -o $productCrossPorting_downloadFolder/$nameOfFile;
+   echo  curl -A "Mozilla/4.0"  -f -L -# --cookie xurl_cookie --location $locationOfFile -o $productCrossPorting_downloadFolder/$nameOfFile;
     curl_result=$?
-    # /bin/echo "curl result = " $curl_result
+    tty_echo "curl result = " $curl_result
 
     if [ $curl_result -eq 0 ]; then
         /bin/echo " Download complete : ${nameOfFile}" | tee >&2 >> $SCRIPT_TTY

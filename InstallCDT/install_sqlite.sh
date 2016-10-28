@@ -2,7 +2,7 @@
 
 # ########## # ########### ########### ########### ##########
 # ##
-# ##    Cocotron installer compmunity updates
+# ##    Cocotron installer community updates
 # ##    Based from Christopher J. W. Lloyd
 # ##        :: Cocotron project ::
 # ##
@@ -18,50 +18,40 @@
 # ##    // http://project2306.genose.org  // git :: project2306_ide //
 # ##    /////////////////////////////////////////////////////////////
 # ##
-# ##    -- Cocotron compmunity updates
+# ##    -- Cocotron community updates
 # ##
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
 
 source $( find $(dirname $0) -name common_functions.sh -type f -print )
 
-packedVersionMajor="3150000"
-packedVersionMinor=""
-packedVersionRev=""
-packedVersionPlatform="win32"
-packedVersionArch="x86"
-packedVersionCheck="${packedVersionMajor}:${packedVersionMinor}:${packedVersionRev}:${packedVersionPlatform}:${packedVersionArch}"
-packedVersion="${packedVersionMajor}${packedVersionMinor}${packedVersionRev}${packedVersionPlatform}${packedVersionArch}"
-packedProduct="sqlite"
+# ## All automatic
+
+packedVersion="${packedVersionMajor}${packedVersionMinor}${packedVersionRev}${packedVersionPlatform}${packedVersionArch}${packedVersionPack}"
+echo "Installing ${packedProduct} ..."
 
 productCrossPorting_Target_default_compiler_dir_system="${productCrossPorting_Target_default_compiler_dir_system}/${packedProduct}-${packedVersion}"
 
-rm -Rv $productCrossPorting_downloadFolder/${packedProduct}-dll-${packedVersionPlatform}-${packedVersionArch}*
+rm -Rv $productCrossPorting_downloadFolder/${packedProduct}*
 
-$scriptResources/downloadFilesIfNeeded.sh $productCrossPorting_downloadFolder "https://sqlite.org/2016/${packedProduct}-dll-${packedVersionPlatform}-${packedVersionArch}-${packedVersion}.zip"
+$scriptResources/downloadFilesIfNeeded.sh $productCrossPorting_downloadFolder "https://sqlite.org/2016/${packedProduct}${packedVersionPack}${packedVersionPlatform}${packedVersionArch}-${packedVersion}.zip"
 # ## "http://cocotron.googlecode.com/files/sqlite-dll-win32-x86-3070600.zip"
 
-# ## TMPDIR=$productCrossPorting_downloadFolder/install_sqlite
-# ## $( echo "/tmp/"$( basename $0 | tr "." " " | awk '{print $1}' ) )
-
-
-mkdir -vp $TMPDIR
-rm -Rv $TMPDIR/*
-mkdir -vp $TMPDIR
-
-mkdir -p "${productCrossPorting_Target_default_compiler_dir_system}/lib"
-
-cd $TMPDIR
+$scriptResources/unarchiveFiles.sh  $productCrossPorting_downloadFolder "${TMPDIR}" "${packedProduct}${packedVersionPack}${packedVersionPlatform}${packedVersionArch}-${packedVersion}"
     
-    $scriptResources/unarchiveFiles.sh  $productCrossPorting_downloadFolder $TMPDIR  
+    # ########## # ########## # ##########
+    unarchivedFile=""
+    find_unarchive_dir "${packedProduct}" "${TMPDIR}"
+    # ## echo "@@@@@@@ ..... (${unarchivedFile})" | tee  >&2 >> $SCRIPT_TTY
+    # ########## # ########## # ##########
     
-    cp -vp $TMPDIR/sqlite-dll-win32-x86-${packedVersion}/sqlite3.* ${productCrossPorting_Target_default_compiler_dir_system}/bin/
+    cd ${unarchivedFile}
     
-    # ##  unzip -ovx $productCrossPorting_downloadFolder/sqlite-dll-win32-x86-${SQLITE_VERSION}.zip $TMPDIR/ || echo " ERROR ..." && send_exit $0 $LINENO 
-    # ##  cp -vp $TMPDIR/sqlite3.* $productCrossPorting_Target_default_compiler_dir_system/bin/
+    cp -vp sqlite3.* ${productCrossPorting_Target_default_compiler_dir_system}/bin/
 
 # ## build the new binarie file like :: cp -vp $productCrossPorting_Target_default_compiler_dir_system/bin/sqlite3.dll $productCrossPorting_Target_default_compiler_dir_system/lib/libsqlite3.a
 
 ${productCrossPorting_Target_default_compiler_basedir}/bin/i386-pc-mingw32msvc-dlltool --def ${productCrossPorting_Target_default_compiler_dir_system}/bin/sqlite3.def --dllname sqlite3.dll --output-lib ${productCrossPorting_Target_default_compiler_dir_system}/lib/libsqlite3.a
 
 
+tty_echo "#### ${packedProduct} installed in (${PWD}) "

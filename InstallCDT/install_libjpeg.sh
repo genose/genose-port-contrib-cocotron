@@ -2,7 +2,7 @@
  
 # ########## # ########### ########### ########### ##########
 # ##
-# ##    Cocotron installer compmunity updates
+# ##    Cocotron installer community updates
 # ##    Based from Christopher J. W. Lloyd
 # ##        :: Cocotron project ::
 # ##
@@ -18,56 +18,31 @@
 # ##    // http://project2306.genose.org  // git :: project2306_ide //
 # ##    /////////////////////////////////////////////////////////////
 # ##
-# ##    -- Cocotron compmunity updates
+# ##    -- Cocotron community updates
 # ##
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
 
 
 source $( find $(dirname $0) -name common_functions.sh -type f -print )
+  
+$scriptResources/downloadFilesIfNeeded.sh $productCrossPorting_downloadFolder http://www.ijg.org/files/${packedProduct}${packedProduct_packed}${packedVersion}.tar.gz
 
-if [ ""$1"" = "" ];then
-  targetPlatform="Windows"
-else
-  targetPlatform=$1
-fi
+$scriptResources/unarchiveFiles.sh $productCrossPorting_downloadFolder $BUILD  ${packedProduct}${packedVersion} 
 
-if [ ""$2"" = "" ];then
-  targetArchitecture="i386"
-else
-  targetArchitecture=$2
-fi
 
-if [ ""$3"" = "" ];then
-  gccVersion="4.3.1"
-else
-  gccVersion=$3
-fi
+    # ########## # ########## # ##########
+    unarchivedFile=""
+    find_unarchive_dir "${packedProduct}" "${BUILD}/${packedProduct}${packedProduct_packed}${packedVersion}"
+    # ## echo "@@@@@@@ ..... (${unarchivedFile})" | tee  >&2 >> $SCRIPT_TTY
+    # ########## # ########## # ##########
+    
+    cd ${unarchivedFile}
 
-BASEDIR=/Developer/Cocotron/1.0/$targetPlatform/$targetArchitecture
-PREFIX=`pwd`/../system/i386-mingw32msvc/libjpeg
-
-BUILD=/tmp/build_libjepg
-
-mkdir -p $PREFIX
-
-$scriptResources/downloadFilesIfNeeded.sh $downloadFolder http://www.ijg.org/files/jpegsrc.v8c.tar.gz
-
-mkdir -p $BUILD
-cd $BUILD
-tar -xzf $downloadFolder/jpegsrc.v8c.tar.gz
-cd jpeg-8c
-make clean
-
-pwd 
-
-GCC=$(echo $BASEDIR/gcc-$gccVersion/bin/*gcc |  tr -s " " ":" | cut -d':' -f 2 | awk "{print $1;  fflush();}" )
-RANLIB=$(echo $BASEDIR/gcc-$gccVersion/bin/*ranlib |  tr -s " " ":" | cut -d':' -f 2 | awk "{print $1;  fflush();}" )
-TARGET=$($GCC -dumpmachine)
 echo "***************************************** *"
 echo "***************************************** *"
 echo "Configure with  :: "
-echo " --prefix=$PREFIX "
+echo " --prefix=$productCrossPorting_Target_default_compiler_dir_system "
 echo " --disable-shared "
 echo " --host=$TARGET "
 echo " --target=$TARGET "
@@ -75,10 +50,10 @@ echo " CC=$GCC "
 echo " RANLIB=" $RANLIB
 echo "***************************************** *"
 echo "***************************************** *"
+productCrossPorting_Target_default_compiler_dir_system="${productCrossPorting_Target_default_compiler_dir_system}/${packedProduct_type}${packedProduct}"
+./configure --prefix="$productCrossPorting_Target_default_compiler_dir_system" --disable-shared -host=$TARGET -target=$TARGET CC=$GCC RANLIB=$RANLIB
 
-./configure --prefix="$PREFIX" --disable-shared -host=$TARGET -target=$TARGET CC=$GCC RANLIB=$RANLIB
-
-tty_echo "Install ${COCOTRON} on TARGET : ${TARGET} ::  ${AS} ::  ${AR} :: ${RANLIB}"
+tty_echo "Install ${packedProduct} on TARGET : ${TARGET} ::  ${AS} ::  ${AR} :: ${RANLIB}"
 
 make && make install
 

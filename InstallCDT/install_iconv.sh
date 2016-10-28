@@ -23,18 +23,16 @@
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
 
-source $( find $(dirname $0) -name common_functions.sh -type f -print )
 
-./install_zlib.sh
+source $( find $(dirname $0) -name common_functions.sh -type f -print )
 
 # ## All automatic
 
 packedVersion="${packedVersionMajor}${packedVersionMinor}${packedVersionRev}${packedVersionPlatform}${packedVersionArch}${packedVersionPack}"
 echo "Installing ${packedProduct} ..."
 
-$scriptResources/downloadFilesIfNeeded.sh $productCrossPorting_downloadFolder -c "${packedVersionCheck}" "http://downloads.sourceforge.net/gnuwin32/${packedProduct}-${packedVersion}${packedVersionPack}.zip"
+$scriptResources/downloadFilesIfNeeded.sh $productCrossPorting_downloadFolder -c "${packedVersionCheck}" "ftp://ftp.zlatkovic.com/libxml/${packedProduct}-${packedVersion}.zip"
 
-productCrossPorting_Target_default_compiler_dir_system="${productCrossPorting_Target_default_compiler_dir_system}/${packedProduct}-${packedVersion}"
+$scriptResources/unarchiveFiles.sh  $productCrossPorting_downloadFolder $productCrossPorting_Target_default_compiler_dir_system  "${packedProduct}-${packedVersion}"
 
-$scriptResources/unarchiveFiles.sh  $productCrossPorting_downloadFolder $productCrossPorting_Target_default_compiler_dir_system   "${packedProduct}-${packedVersion}${packedVersionPack}"
-
+tty_echo "#### ${packedProduct} installed in (${PWD}) "

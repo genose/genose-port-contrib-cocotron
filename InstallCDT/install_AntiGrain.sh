@@ -2,7 +2,7 @@
 
 # ########## # ########### ########### ########### ##########
 # ##
-# ##    Cocotron installer compmunity updates
+# ##    Cocotron installer community updates
 # ##    Based from Christopher J. W. Lloyd
 # ##        :: Cocotron project ::
 # ##
@@ -18,7 +18,7 @@
 # ##    // http://project2306.genose.org  // git :: project2306_ide //
 # ##    /////////////////////////////////////////////////////////////
 # ##
-# ##    -- Cocotron compmunity updates
+# ##    -- Cocotron community updates
 # ##
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
@@ -27,33 +27,30 @@ source $( find $(dirname $0) -name common_functions.sh -type f -print )
 
 ./install_FreeType.sh
 
-packedVersionMajor="2.4"
-packedVersionMinor=""
-packedVersionPlatform=""
-packedVersionArch=""
-packedVersionCheck="${packedVersionMajor}:${packedVersionMinor}:${packedVersionPlatform}:${packedVersionArch}"
-packedVersion="${packedVersionMajor}${packedVersionMinor}${packedVersionPlatform}${packedVersionArch}"
+# ## All automatic
 
-if [ ""$1"" = "" ];then
-	packedVersion=${packedVersion}
-else
-	packedVersion=$1
-fi
+packedVersion="${packedVersionMajor}${packedVersionMinor}${packedVersionRev}${packedVersionPlatform}${packedVersionArch}${packedVersionPack}"
+echo "Installing ${packedProduct} ..."
 
-packedProduct="agg"
 productCrossPorting_Target_default_compiler_dir_system="${productCrossPorting_Target_default_compiler_dir_system}/${packedProduct}-${packedVersion}"
 
 echo " :::: ${productCrossPorting_Target_default_compiler_dir_system}"
 send_exit
-$scriptResources/downloadFilesIfNeeded.sh $productCrossPorting_downloadFolder -c "${packedVersionCheck}" "http://www.antigrain.com/agg-$packedVersion.zip"
+$scriptResources/downloadFilesIfNeeded.sh $productCrossPorting_downloadFolder -c "${packedVersionCheck}" "http://www.antigrain.com/${packedProduct}-${packedVersion}.zip"
 
-mkdir -p $BUILD
-cd $BUILD
-$scriptResources/unarchiveFiles.sh  $productCrossPorting_downloadFolder $BUILD  "agg-$packedVersion"
+$scriptResources/unarchiveFiles.sh  $productCrossPorting_downloadFolder $BUILD  "${packedProduct}-${packedVersion}"
 # ## unzip -o $productCrossPorting_downloadFolder/agg-$AGG_VERSION.zip
-cd agg-$packedVersion
 
-cd src
+     # ########## # ########## # ##########
+    unarchivedFile=""
+    find_unarchive_dir "${packedProduct}" "${BUILD}"
+    # ## echo "@@@@@@@ ..... (${unarchivedFile})" | tee  >&2 >> $SCRIPT_TTY
+    # ########## # ########## # ##########
+    
+   cd ${unarchivedFile} || echo "Error ...." && ls -la $BUILD  && send_exit $0 $LINENO  | tee >&2 >> $SCRIPT_TTY
+pwd
+
+cd src || echo "Error ...." && ls -la $BUILD  && send_exit $0 $LINENO  | tee >&2 >> $SCRIPT_TTY
 
 # Create a fake Cocotron uname for the build system
 cat > uname <<EOF
@@ -72,7 +69,7 @@ AGGLIBS= -lagg
 AGGCXXFLAGS = -O3
 CXX = ${productCrossPorting_Target_default_compiler_basedir}/bin/i386-pc-mingw32msvc-g++
 C = ${productCrossPorting_Target_default_compiler_basedir}/bin/i386-pc-mingw32msvc-gcc
-LIB = ${productCrossPorting_Target_default_compiler_basedir}/bin/i386-pc-mingw32msvc-ar cr
+LIB = ${CrossPorting_Target_default_compiler_basedir}/bin/i386-pc-mingw32msvc-ar cr
 
 .PHONY : clean
 EOF
