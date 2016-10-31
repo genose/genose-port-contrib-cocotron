@@ -9,7 +9,7 @@
 # ##
 # ##    Created by Genose.org (Sebastien Ray. Cotillard)
 # ##    Date 10-oct-2016
-# ##    last update 25-oct-2016
+# ##    last update 31-oct-2016
 # ##
 # ##    Please support genose.org, the author and his projects
 # ##    
@@ -63,8 +63,8 @@
 # ##
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
-
-source $( find $(dirname $0) -name common_functions.sh -type f -print )
+PWD=$( echo $PWD || pwd )
+source $( find $PWD -name common_functions.sh -type f -print )
 
 #Copyright (c) 2006 Christopher J. W. Lloyd
 #
@@ -89,87 +89,7 @@ source $( find $(dirname $0) -name common_functions.sh -type f -print )
 # Usage: install.sh <platform> <architecture> <productCrossPorting_Target_default_compiler> <productCrossPorting_Target_default_compiler-version> <osVersion>"
 # Windows i386, Linux i386, Solaris sparc
 
-
-# ########## # ########### ########### ########### ##########
-# ########## # ########### ########### ########### ##########
-
-if [ "${SYSTEM_HOST}" = "darwin" ]; then
-	
-tty_echo "**** On darwin System, some compilation and binaries send error ;; we make terminal SED Bytecode error more Friendly :: export LC_CTYPE=C ; export LANG=C"
-    export LC_CTYPE=C ; export LANG=C
-fi
-
-# ########
-# ########
-
-SYSTEM_HOST_IDEGUI_RECOMMENDED=""
-SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_name=""
-SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_use=""
-SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_major=""
-SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_url=""
-
-if [ "${SYSTEM_HOST}" = "darwin" ]; then
-	
-	SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_name="Xcode"
-	case $SYSTEM_HOST_VERSION in
-		10.11) SYSTEM_HOST_VERSION_NAME="EL_Captain" ;
-		# ## Xcode 8.0 is released at the that time (20-oct-2016)
-		SYSTEM_HOST_IDEGUI_RECOMMENDED=("7.2.1" "8.0")
-		;;
-		10.10) SYSTEM_HOST_VERSION_NAME="Yosemite";
-		SYSTEM_HOST_IDEGUI_RECOMMENDED=("7.2.1" "6.4")
-		;;
-		10.9) SYSTEM_HOST_VERSION_NAME="Mavericks" ;
-		SYSTEM_HOST_IDEGUI_RECOMMENDED=("6.4" "5.1.1")
-		;;
-		10.8) SYSTEM_HOST_VERSION_NAME="Moutain_Lion" ;
-		SYSTEM_HOST_IDEGUI_RECOMMENDED=("5.1.1" "4.6.3")
-		;;
-		10.7) SYSTEM_HOST_VERSION_NAME="Lion" ;
-		SYSTEM_HOST_IDEGUI_RECOMMENDED=("4.6.3")
-		;;
-		10.6) SYSTEM_HOST_VERSION_NAME="Snow_Leopard" ;
-		SYSTEM_HOST_IDEGUI_RECOMMENDED=("3.2.6")
-		;;
-		10.5) SYSTEM_HOST_VERSION_NAME="Leopard" ;
-		SYSTEM_HOST_IDEGUI_RECOMMENDED=("3.2.6")
-		;;
-		10.4) SYSTEM_HOST_VERSION_NAME="Tiger";
-		SYSTEM_HOST_IDEGUI_RECOMMENDED=("2.5")
-		;;
-		*)  SYSTEM_HOST_VERSION_NAME="MacOSX_Unsupported" ;;
-	esac
-		SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_use=$(echo ${SYSTEM_HOST_IDEGUI_RECOMMENDED[0]})
-		SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_major=$( echo ${SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION}  | tr "." " " | awk '{ print  $1"."$2 }' )
-		# ## up-to-date 20-oct-2016
-		SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_url="http://adcdownload.apple.com/Developer_Tools/Xcode_${SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION}/${SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_name}_${SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION}.dmg"
-else
-    echo "***** Not a MacOS Host System"
-	winsubstem=$( echo "${SYSTEM_HOST}"  | grep -i "win" || echo "--NO--" )
-	if [ "${winsubstem}" == "--NO--" ]; then
-		echo " ##### Windows Bash user .... "
-		echo " #### Should visit : https://sourceforge.net/projects/xming/ "
-	fi
-fi
-
 # ##  ((sw_vers 2>/dev/null | grep -i "ProductVersion" ) ||  ( uname -r | awk '{ print  "/."$1 }' ))  | tr "." " " | awk '{ print  $2"."$3 }'
-
-trap finish EXIT
-# ########## # ########### ########### ########### ##########
-# ########## # ########### ########### ########### ##########
-
-function int_user() {
-exit_code="User interruption"
-
-tty_dialog "SIGINT caught :: ${exit_code}" "Installation Exit  :: press enter to quit "
-
-exit 1
-}
-
-trap int_user SIGINT
-# ########## # ########### ########### ########### ##########
-# ########## # ########### ########### ########### ##########
-
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
 tty_echo "########### # ########### ########### ########### ###########"
@@ -181,271 +101,17 @@ tty_echo "# ##     Running on ($SCRIPT_TTY):($SYSTEM_HOST : $SYSTEM_HOST_VERSION
 tty_echo "# ##                                                     ## #"
 tty_echo "########### # ########### ########### ########### ###########"
 tty_echo "########### # ########### ########### ########### ###########"
-# ########## # ########### ########### ########### ##########
-# ########## # ########### ########### ########### ##########
- 
-# ## determining full path of this script
-realpathx "$0"
-realp=$realpathx_return
 
-# ########## # ########### ########### ########### ##########
-# ########## # ########### ########### ########### ##########
+init_trap_master $0
 
-INSTALL_SCRIPT_DIR=$(dirname $realp )
-INSTALL_SCRIPT_LOG=$INSTALL_SCRIPT_DIR/install_log.log
-INSTALL_SCRIPT_LOG_ERR=$INSTALL_SCRIPT_DIR/install_log.err.log
-
-# ########## # ########### ########### ########### ##########
-# ########## # ########### ########### ########### ##########
-
-tty_echo "#### Installl Script : " $INSTALL_SCRIPT_DIR
-cd $INSTALL_SCRIPT_DIR
-
-# ########## # ########### ########### ########### ##########
-# ########## # ########### ########### ########### ##########
-
-installResources=`pwd`/Resources
-
-if [ ! -d "$installResources" ];then
-tty_dialog "Unable to locate Resources directory at "$installResources
- exit 1
-fi
-
-# ########## # ########### ########### ########### ##########
-# ########## # ########### ########### ########### ##########
-
-mkdir /tmp/install_$$
-rm -R /tmp/install_*
-
-# ########## # ########### ########### ########### ##########
-# ########## # ########### ########### ########### ##########
-touch $INSTALL_SCRIPT_LOG
-touch $INSTALL_SCRIPT_LOG_ERR
-# ## in case of previous attempt ...
-tty_echo "" >$INSTALL_SCRIPT_LOG  && echo "" >$INSTALL_SCRIPT_LOG_ERR
-
-# ########## # ########### ########### ########### ##########
-# ########## # ########### ########### ########### ##########
-tty_echo "******* ******* ******* ******* ******* ******* ******* ******* "
-tty_echo "******* ******* ******* ******* ******* ******* ******* ******* "
-tty_echo "    You can follow (in real time) all speechy operation thru Logs file's "
-tty_echo "-- Install verbose logs : ${INSTALL_SCRIPT_LOG}"
-tty_echo "-- Errors / Warnings logs : ${INSTALL_SCRIPT_LOG_ERR}"
-tty_echo "******* ******* ******* ******* ******* ******* ******* ******* "
-tty_echo "******* ******* ******* ******* ******* ******* ******* ******* "
-
-tty_echo "######## So let see if you do the do ..."
-
-
-# ########## # ########### ########### ########### ##########
-# ########## # ########### ########### ########### ##########
-InstalledSoftware_path_Mac_open=$(which open)
-InstalledSoftware_path_Mac_terminal=$( ls -d /Applications/Utilities/Terminal.app 2>$SCRIPT_TTY )
-
-# ########## # ########### ########### ########### ##########
-# ########## # ########### ########### ########### ##########
-
-# ## linux specific
-InstalledSoftware_path_linux_xterm=$(which xterm)
-InstalledSoftware_path_linux_gnome_terminal=$(which gnome-terminal)
-InstalledSoftware_path_linux_konsole=$(which konsole)
-InstalledSoftware_path_linux__terminal=$(which terminal)
-
-# ########## # ########### ########### ########### ##########
-# ########## # ########### ########### ########### ##########
-
-InstalledSoftware_path_terminal=$(
-( test -x "${InstalledSoftware_path_linux_gnome_terminal}" ) && { echo "${InstalledSoftware_path_linux_gnome_terminal} -e "; } || {
-( test -x "${InstalledSoftware_path_linux_konsole}" ) && { echo "${InstalledSoftware_path_linux_konsole} -e "; } || {
-( test -x "${InstalledSoftware_path_linux_terminal}" ) && { echo "${InstalledSoftware_path_linux_terminal} -e "; } || {
-( test -x "${InstalledSoftware_path_Mac_terminal}" ) && { echo "${InstalledSoftware_path_Mac_open} -a ${InstalledSoftware_path_Mac_terminal}"; } || {
-( test -x "${InstalledSoftware_path_linux_xterm}" ) && { echo "${InstalledSoftware_path_linux_xterm} -e "; } || {
-
-tty_echo "";
-}
-}
-}
-}
-}
-
-)
-
-tty_echo "#### Terminal :: ${InstalledSoftware_path_terminal}"
-
-# ########## # ########### ########### ########### ##########
-# ########## # ########### ########### ########### ##########
-
-os_showLiveLogs=""
-os_showLiveLogs_valid=0
-
-if [ "${#InstalledSoftware_path_terminal}" -gt 5 ]; then
-        
-        tty_echo "---- Would you Following installation with Live Logs ... "
-
-        tty_yesyno " Open Logs over Terminal Window ... "
-        
-        os_showLiveLogs=${tty_yesyno_response}
-        os_showLiveLogs_valid=${tty_yesyno_response_valid}
-        # ###########
-
-        # ########### # ############ ###########
-    if [ "${os_showLiveLogs}" == "y" ]; then
-        # ###########
-        tty_dialog "--" " >>>> Determining if Logs are Opens or Not ..." 
-        os_showLiveLogs_open=( $( ps waux | grep -i 'tail -f' | grep -i 'install_log' | awk '{ print "\  \"" $13 "\"\ "; }' ) )
-        os_showLiveLogs_open_pid=( $( ps waux | grep -i 'tail -f' | grep -i 'install_log' | awk '{ print "\  " $2 "\ "; }' ) )
- 
-
-        os_showLiveLogs_open_cnt=${#os_showLiveLogs_open[@]}
-        # ###########
-        if [ ${os_showLiveLogs_open_cnt} -gt 0 ]; then
-            tty_echo " >>>> Skipping :: some logs stills Opens ... (${os_showLiveLogs_open[@]})"
-            tty_echo " >>>> PIDs (${os_showLiveLogs_open_pid[@]})"
-
-        else
-        # ###########
-            tty_echo " >>>> Opening Logs ..."
-
-            # ## DARWIN Specific first
-            # ## can be adapted to Linux with GNU Screen or TYY/PTS shell
-
-            touch $INSTALL_SCRIPT_DIR/show_install_log.sh && chmod 755 $INSTALL_SCRIPT_DIR/show_install_log.sh
-            tty_echo '#!/bin/sh
-
-source $( find $(dirname $0) -name common_functions.sh -type f -print )
-' > $INSTALL_SCRIPT_DIR/show_install_log.sh
-            tty_echo "tail -f ${INSTALL_SCRIPT_LOG}" >> $INSTALL_SCRIPT_DIR/show_install_log.sh
-
-            touch $INSTALL_SCRIPT_DIR/show_install_log_err.sh && chmod 755 $INSTALL_SCRIPT_DIR/show_install_log_err.sh
-            tty_echo '#!/bin/sh
-
-source $( find $(dirname $0) -name common_functions.sh -type f -print )
-' > $INSTALL_SCRIPT_DIR/show_install_log_err.sh
-            tty_echo "tail -f ${INSTALL_SCRIPT_LOG_ERR}" >> $INSTALL_SCRIPT_DIR/show_install_log_err.sh
-
-            ${InstalledSoftware_path_terminal} $INSTALL_SCRIPT_DIR/show_install_log.sh &
-            ${InstalledSoftware_path_terminal} $INSTALL_SCRIPT_DIR/show_install_log_err.sh &
-        fi
-        # ###########
-    else
-            tty_echo " #### NO Assisted Live logs ..."
-    fi
-        # ###########
-else
-    tty_echo " #### Assisted Live logs not implemented for Platform (${SYSTEM_HOST}) ..."
-    os_showLiveLogs="n"
-fi
-
-# ########## # ########### ########### ########### ##########
-# ########## # ########### ########### ########### ##########
-
-if [ "${os_showLiveLogs}" == "-" ] || [ "${os_showLiveLogs}" == "n" ]; then
-
-tty_dialog "LiveLogs" " You Still can follow (in real time) all speechy operation thru Logs file's "
-
-# ########## # ########### ########### ########### ##########
-# ########## # ########### ########### ########### ##########
-
-tty_echo "## Install verbose in :"
-tty_echo " "
-tty_echo "tail -f $INSTALL_SCRIPT_LOG"
-tty_echo " "
-tty_echo "******* ******* ******* ******* ******* ******* ******* ******* "
-tty_echo "## Errors and Warnings in :"
-tty_echo " "
-tty_echo "tail -f $INSTALL_SCRIPT_LOG_ERR"
-tty_echo " "
-tty_echo "******* ******* ******* ******* ******* ******* ******* ******* "
-
-fi
-
-# ########## # ########### ########### ########### ##########
-# ########## # ########### ########### ########### ##########
-
-# ## macos / linux specific
-
-# ########## # ########### ########### ########### ##########
-# ########## # ########### ########### ########### ##########
-InstalledSoftware_path_GUI__dialog_required=0
-InstalledSoftware_path_GUI__dialog_use=0
-
-InstalledSoftware_path_GUI__x11Window_url="https://dl.bintray.com/xquartz/downloads/XQuartz-2.7.9.dmg"
-# ## /opt/X11/bin/xquartz
-InstalledSoftware_path_GUI__x11Window=$( which xquartz )
-
-# ########## # ########### ########### ########### ##########
-# ########## # ########### ########### ########### ##########
-
-# manual Xdialog install url
-InstalledSoftware_path_GUI__xdialog_url="http://xdialog.free.fr/Xdialog-2.3.1.orig.tar.gz"
-
-InstalledSoftware_path_GUI__xdialog=$( which xdialog  )
-InstalledSoftware_path_GUI__dialog=$( which dialog  )
-
-InstalledSoftware_path_GUI_dialog=$( ( test -x "${InstalledSoftware_path_GUI__xdialog}" ) && { echo ""${InstalledSoftware_path_GUI__xdialog}; } || {
-( test -x "${InstalledSoftware_path_GUI__dialog}" ) && { echo ""${InstalledSoftware_path_GUI__dialog};
-} || {
-	echo "No";
-}
-}
- )
-
-
-
-if [ ${#InstalledSoftware_path_GUI_dialog} -lt 5 ]; then
-    tty_dialog "You MUST Install Xdialog GUI to continue ..." " see recommended for ${SYSTEM_HOST_VERSION_NAME}:${SYSTEM_HOST_VERSION}  )"
-	if [ ${SYSTEM_HOST_TYPE} -eq 1 ]; then
-		tty_yesyno " Would you like to Install it anyway  "
-			xdialog_openurl=${tty_yesyno_response}
-			xdialog_openurl_valid=${tty_yesyno_response_valid}
-		   # ########### # ############ ###########
-	   if [ "${xdialog_openurl}" == "y" ]; then
-		   tty_echo "Open Browser with xdialog_openurl"
-		   # ## sleep 3
-		   # ## can't download it without AUTH, so open the URL in browser
-		  # ##  tty_waitforpath "which xdialog"
-		  InstalledSoftware_path_GUI__dialog_required=1
-		  InstalledSoftware_path_GUI_dialog="Required"
-	   else
-		   tty_dialog "Xdialog GUI  not installed " "see recommended ${SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_url}"
-	   fi
-	fi
-	 else
-		 
-		tty_yesyno " Would you like to use Xdialog GUI for interactions  "
-			xdialog_openurl=${tty_yesyno_response}
-			xdialog_openurl_valid=${tty_yesyno_response_valid}
-		   # ########### # ############ ###########
-	   if [ "${xdialog_openurl}" == "y" ]; then
-		# ## tty_echo "Open Browser with xdialog_openurl"
-		   # ## sleep 3
-		   # ## can't download it without AUTH, so open the URL in browser
-		  # ##  tty_waitforpath "which xdialog"
-		  InstalledSoftware_path_GUI__dialog_required=0
-		  InstalledSoftware_path_GUI__dialog_use=1
-		else
-			InstalledSoftware_path_GUI_dialog="No"
-	   fi	 
-		 
-fi
- 
-tty_echo "##### dialog :: $InstalledSoftware_path_GUI_dialog"
-
-install_proc_script=$(  echo ""$(dirname $0)"/Resources/scripts/darwin_proc_scipt.sh" )
-
-if [ -x "${install_proc_script}" ] && [ -f  "${install_proc_script}" ] ; then
-    . $(dirname $0)/Resources/scripts/darwin_proc_scipt.sh
-else
-    echo " ######## Warning : incomplete Install.sh support for : ${SYSTEM_HOST} "
-fi
- 
+source $( find $PWD -name common_install_init.inc.sh -type f -print )
 
 # ## set eu :: darwin problematic
 set -eu
-
+ 
 if [ $productCrossPorting_Target_default = "Windows" ];then
 	if [ $productCrossPorting_Target_default_arch = "i386" ];then
-		productCrossPorting_Target_default_compiler=i386-pc-mingw32msvc$osVersion
+		productCrossPorting_Target_default_compiler="i386-pc-mingw32msvc${osVersion}"
 		compilerConfigureFlags=""
 	else
 		tty_echo "Unsupported architecture $productCrossPorting_Target_default_arch on $productCrossPorting_Target_default"
@@ -453,16 +119,16 @@ if [ $productCrossPorting_Target_default = "Windows" ];then
 	fi
 elif [ $productCrossPorting_Target_default = "Linux" ];then
 	if [ $productCrossPorting_Target_default_arch = "i386" ];then
-		productCrossPorting_Target_default_compiler=i386-ubuntu-linux$osVersion
+		productCrossPorting_Target_default_compiler="i386-ubuntu-linux${osVersion}"
 		compilerConfigureFlags="--enable-version-specific-runtime-libs --enable-shared --enable-threads=posix --disable-checking --disable-libunwind-exceptions --with-system-zlib --enable-__cxa_atexit"
 	elif [ $productCrossPorting_Target_default_arch = "arm" ];then
-		productCrossPorting_Target_default_compiler=arm-none-linux-gnueabi$osVersion
+		productCrossPorting_Target_default_compiler="arm-none-linux-gnueabi${osVersion}"
 		compilerConfigureFlags="--enable-version-specific-runtime-libs --enable-shared --enable-threads=posix --disable-checking --disable-libunwind-exceptions --with-system-zlib --enable-__cxa_atexit"
 	elif [ $productCrossPorting_Target_default_arch = "ppc" ];then
-   	 	productCrossPorting_Target_default_compiler=powerpc-unknown-linux$osVersion
+   	 	productCrossPorting_Target_default_compiler="powerpc-unknown-linux${osVersion}"
     		compilerConfigureFlags="--enable-version-specific-runtime-libs --enable-shared --enable-threads=posix --disable-checking --disable-libunwind-exceptions --with-system-zlib --enable-__cxa_atexit"
 	elif [ $productCrossPorting_Target_default_arch = "x86_64" ];then
-		productCrossPorting_Target_default_compiler=x86_64-pc-linux$osVersion
+		productCrossPorting_Target_default_compiler="x86_64-pc-linux${osVersion}"
 		compilerConfigureFlags="--enable-version-specific-runtime-libs --enable-shared --enable-threads=posix --disable-checking --disable-libunwind-exceptions --with-system-zlib --enable-__cxa_atexit"
 		binutilsConfigureFlags="--enable-64-bit-bfd"
 	else
@@ -471,10 +137,10 @@ elif [ $productCrossPorting_Target_default = "Linux" ];then
 	fi
 elif [ $productCrossPorting_Target_default = "FreeBSD" ];then
 	if [ $productCrossPorting_Target_default_arch = "i386" ];then
-		productCrossPorting_Target_default_compiler=i386-pc-freebsd$osVersion
+		productCrossPorting_Target_default_compiler="i386-pc-freebsd${osVersion}"
 		compilerConfigureFlags="--enable-version-specific-runtime-libs --enable-shared --enable-threads=posix --disable-checking --disable-libunwind-exceptions --with-system-zlib --enable-__cxa_atexit"
 	elif [ $productCrossPorting_Target_default_arch = "x86_64" ];then
-		productCrossPorting_Target_default_compiler=x86_64-pc-freebsd$osVersion
+		productCrossPorting_Target_default_compiler="x86_64-pc-freebsd${osVersion}"
 		compilerConfigureFlags="--enable-version-specific-runtime-libs --enable-shared --enable-threads=posix --disable-checking --disable-libunwind-exceptions --with-system-zlib --enable-__cxa_atexit"
 		binutilsConfigureFlags="--enable-64-bit-bfd"
 	else
@@ -483,15 +149,15 @@ elif [ $productCrossPorting_Target_default = "FreeBSD" ];then
 	fi
 elif [ $productCrossPorting_Target_default = "Solaris" ];then
 	if [ $productCrossPorting_Target_default_arch = "sparc" ];then
-		productCrossPorting_Target_default_compiler=sparc-sun-solaris$osVersion
+		productCrossPorting_Target_default_compiler="sparc-sun-solaris${osVersion}"
 		compilerConfigureFlags="--enable-version-specific-runtime-libs --enable-shared --enable-threads=posix --disable-checking --disable-libunwind-exceptions --with-system-zlib --enable-__cxa_atexit"
 	else
 		tty_echo "Unsupported architecture $productCrossPorting_Target_default_arch on $productCrossPorting_Target_default"
 		exit 1
 	 fi
-elif [ $productCrossPorting_Target_default = "*arwin*" ];then
+elif [ $productCrossPorting_Target_default = *"arwin"* ];then
 	if [ $productCrossPorting_Target_default_arch = "i386" ];then
-		productCrossPorting_Target_default_compiler=${productCrossPorting_Target_default_arch}-unknown-darwin$osVersion
+		productCrossPorting_Target_default_compiler="${productCrossPorting_Target_default_arch}-unknown-darwin${osVersion}"
 		compilerConfigureFlags="--enable-version-specific-runtime-libs --enable-shared --enable-threads=posix --disable-checking --disable-libunwind-exceptions --with-system-zlib --enable-__cxa_atexit"
 	else
 		tty_echo "Unsupported architecture $productCrossPorting_Target_default_arch on $productCrossPorting_Target_default"
@@ -506,19 +172,6 @@ fi
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
 
-scriptResources="$installResources/scripts"
-toolResources="$installResources/tools"
-
-# ########## # ########### ########### ########### ##########
-# ########## # ########### ########### ########### ##########
-
-productCrossPorting_Folder=$installFolder/$productName/$productVersion
-
-# ########## # ########### ########### ########### ##########
-# ########## # ########### ########### ########### ##########
-
-
-
 interfaceFolder=$productCrossPorting_Target_default_compiler_dir_base_interface_compiler
 buildFolder=$productCrossPorting_Target_default_compiler_dir_build_platform
 resultFolder=$productCrossPorting_Target_default_compiler_dir_base_platform/$productCrossPorting_Target_default_compiler-$productCrossPorting_Target_default_compiler_version
@@ -532,18 +185,23 @@ PATH="$resultFolder/bin:$PATH"
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
 
-# ########## # ########### ########### ########### ##########
-# ########## # ########### ########### ########### ##########
-
 
 downloadCompilerIfNeeded(){
 ###
-tty_echo "Downloading productCrossPorting_Target_default_compiler (if needed) ..."
+tty_echo "Downloading ${productCrossPorting_Target_default_compiler}-${productCrossPorting_Target_default_compiler_version}${productCrossPorting_Target_default_compiler_version_Date} (if needed) ..."
 
-# ## ${url_google_cocotron_Download_GPL3}/binutils-$binutilsVersion.tar.gz 
-	$scriptResources/downloadFilesIfNeeded.sh $productCrossPorting_downloadFolder "${url_google_cocotron_Download_GPL3}/${productCrossPorting_Target_default_compiler}-${productCrossPorting_Target_default_compiler_version}${productCrossPorting_Target_default_compiler_version_Date}.tar.bz2 \
-	https://ftp.gnu.org/gnu/gmp/gmp-$gmpVersion.tar.bz2 https://ftp.gnu.org/gnu/binutils/binutils-$binutilsVersion.tar.bz2 ${url_google_cocotron_Download_GPL3}/mpfr-$mpfrVersion.tar.bz2"
-	$scriptResources/unarchiveFiles.sh $productCrossPorting_downloadFolder $productCrossPorting_sourceFolder "$productCrossPorting_Target_default_compiler-$productCrossPorting_Target_default_compiler_version$productCrossPorting_Target_default_compiler_version_Date binutils-$binutilsVersion gmp-$gmpVersion mpfr-$mpfrVersion"
+# ## ${url_google_cocotron_Download_GPL3}/binutils-$binutilsVersion.tar.gz
+# ## https://ftp.gnu.org/gnu/gmp/gmp-$gmpVersion.tar.bz2 https://ftp.gnu.org/gnu/binutils/binutils-$binutilsVersion.tar.bz2 \
+
+	$scriptResources/downloadFilesIfNeeded.sh $productCrossPorting_downloadFolder \
+	"${url_google_cocotron_Download_GPL3}/${productCrossPorting_Target_default_compiler}-${productCrossPorting_Target_default_compiler_version}${productCrossPorting_Target_default_compiler_version_Date}.tar.bz2 \	
+	${url_google_cocotron_Download_ARCHIVE}/cocotron-binutils-2-21/binutils-$binutilsVersion.tar.gz \
+	${url_google_cocotron_Download_GPL3}/mpfr-$mpfrVersion.tar.bz2"
+	
+	$scriptResources/unarchiveFiles.sh $productCrossPorting_downloadFolder $productCrossPorting_sourceFolder \
+	"${productCrossPorting_Target_default_compiler}-${productCrossPorting_Target_default_compiler_version}${productCrossPorting_Target_default_compiler_version_Date} \
+	binutils-$binutilsVersion gmp-$gmpVersion \
+	mpfr-$mpfrVersion"
 }
 
 # ########## # ########### ########### ########### ##########
@@ -551,9 +209,9 @@ tty_echo "Downloading productCrossPorting_Target_default_compiler (if needed) ..
 
 
 createWindowsInterfaceIfNeeded(){
-	"$scriptResources/downloadFilesIfNeeded.sh" $productCrossPorting_downloadFolder "${url_google_cocotron_Download_GPL3}/mingwrt-${mingwruntimeVersion}-mingw32-dev.tar.gz ${url_google_cocotron_Download_GPL3}/w32api-${mingwAPIVersion}-mingw32-dev.tar.gz"
+	"$scriptResources/downloadFilesIfNeeded.sh" $productCrossPorting_downloadFolder "${url_google_cocotron_Download_GPL3}/mingwrt-${mingwruntimeVersion}-mingw32-dev.tar.gz ${url_google_cocotron_Download_GPL3}/w32api-${mingwapiVersion}-mingw32-dev.tar.gz"
 
-	"$scriptResources/unarchiveFiles.sh" $productCrossPorting_downloadFolder $interfaceFolder "mingwrt-$mingwRuntimeVersion-mingw32-dev w32api-${mingwAPIVersion}-mingw32-dev"
+	"$scriptResources/unarchiveFiles.sh" $productCrossPorting_downloadFolder $interfaceFolder "mingwrt-$mingwruntimeVersion-mingw32-dev w32api-${mingwapiVersion}-mingw32-dev"
 }
 
 # ########## # ########### ########### ########### ##########
@@ -712,19 +370,22 @@ stripBinaries() {
 	
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
-
-	tty_yesyno " ##### >>>>>> Install $productCrossPorting_Target_default_compiler section ... "
-	
+	tty_echo "########### # ########### ########### ########### ###########"
+	tty_echo "########### # ########### ########### ########### ###########"
+	tty_yesyno " ##### >>>>>> Install compiler $productCrossPorting_Target_default_compiler section ... "
+	tty_echo "########### # ########### ########### ########### ###########"
+	tty_echo "########### # ########### ########### ########### ###########"
 	install_compiler_section_response=${tty_yesyno_response}
 	install_compiler_section_response_valid=${tty_yesyno_response_valid}
 	
-if [ ${install_compiler_section_response} == "y" ]; then 
+if [ "${install_compiler_section_response}" == "y" ]; then 
 	# ########## # ########### ########### ########### ##########
 	# ########## # ########### ########### ########### ##########
 	
 	tty_echo "COCOTRON  :: Platform Interface  :: May Build interface for : $productCrossPorting_Target_default"
 	
-	"create"$productCrossPorting_Target_default"InterfaceIfNeeded" 1>>$INSTALL_SCRIPT_LOG  2>>$INSTALL_SCRIPT_LOG_ERR
+	"create${productCrossPorting_Target_default}InterfaceIfNeeded"
+	# ## 1>>$INSTALL_SCRIPT_LOG  2>>$INSTALL_SCRIPT_LOG_ERR
 	tty_echo "COCOTRON  :: Platform Interface  :: completed"
 	
 	# ########## # ########### ########### ########### ##########
@@ -857,7 +518,7 @@ tty_echo "COCOTRON  :: Libraries :: completed"
 
 tty_echo "COCOTRON  :: Cleaning "
 
-rm -Rv /tmp/install_*
+rm -Rv /tmp/install*
 
 tty_echo "COCOTRON  :: Cleaning :: completed"
 
@@ -878,7 +539,13 @@ tty_echo -n "..."
 
 #/bin/bash
 # ## export `printenv`
-# gccnew=$( echo  $@ | sed -e "s;-mmacosx-version-min=10.4;;g" | sed -e "s;-mmacosx-version-min=10.11;;g" | sed -e "s;MacOSX10.11.sdk;MacOSX10.4u.sdk;g" | sed -e "s;-o ;-o;g" | sed -e "s;-Xlinker /;-Xlinker/;g" | sed -e "s;-framework ;-framework;g"  )
+# gccnew=$( echo  $@ | \
+# sed -e "s;MacOSX10.11.sdk;MacOSX10.4u.sdk;g" | \
+# sed -e "s;-o ;-o;g" | \
+# sed -e "s;-Xlinker /;-Xlinker/;g" | \
+# sed -e "s;-framework ;-framework;g" | \
+# sed -e "s;\ ;\n ;g" | \
+# grep -vi  "macosx-version-min" )
 # ## gccnew=$( echo "$0.origin $gccnew" )
 # clear
 # $0.origin $gccnew

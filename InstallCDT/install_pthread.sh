@@ -26,11 +26,11 @@
 source $( find $(dirname $0) -name common_functions.sh -type f -print )
  
 
-$scriptResources/downloadFilesIfNeeded.sh $TMPDIR -c "${packedVersion}" "ftp://sourceware.org/pub/${packedProduct}${packedVersionPlatform}/dll-latest/dll/${packedVersionArch}/pthreadGC2.dll \
-ftp://sourceware.org/pub/${packedProduct}${packedVersionPlatform}/dll-latest/lib/${packedVersionArch}/libpthreadGC2.a \
-ftp://sourceware.org/pub/${packedProduct}${packedVersionPlatform}/dll-latest/include/pthread.h \
-ftp://sourceware.org/pub/${packedProduct}${packedVersionPlatform}/dll-latest/include/sched.h \
-ftp://sourceware.org/pub/${packedProduct}${packedVersionPlatform}/dll-latest/include/semaphore.h"
+$scriptResources/downloadFilesIfNeeded.sh $TMPDIR -c "${packedVersion}" "ftp://sourceware.org/pub/${packedProduct}${packedVersionPlatform}/${packedProduct_type}-latest/${packedProduct_type}/${packedVersionArch}/pthreadGC2.${packedProduct_type} \
+ftp://sourceware.org/pub/${packedProduct}${packedVersionPlatform}/${packedProduct_type}-latest/lib/${packedVersionArch}/libpthreadGC2.a \
+ftp://sourceware.org/pub/${packedProduct}${packedVersionPlatform}/${packedProduct_type}-latest/include/pthread.h \
+ftp://sourceware.org/pub/${packedProduct}${packedVersionPlatform}/${packedProduct_type}-latest/include/sched.h \
+ftp://sourceware.org/pub/${packedProduct}${packedVersionPlatform}/${packedProduct_type}-latest/include/semaphore.h"
 
 
 cp $TMPDIR/pthreadGC2.dll  ${productCrossPorting_Target_default_compiler_dir_system}/bin || send_exit $0 $LINENO

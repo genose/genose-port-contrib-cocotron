@@ -76,7 +76,7 @@ function doCheckHTTPFile ()
     do
         local nameOfFile=`basename $locationOfFile`
         
-         echo "${locationOfFile}" | grep -i "google"  &&  echo "#### Warning :: Google Hosting May Fails ... ($locationOfFile)" || echo "#### Checking HTTP : ${nameOfFile}" | tee >&2 >> $SCRIPT_TTY
+         echo "${locationOfFile}" | grep -i "google"  &&  echo "#### Warning :: Google Hosting May Fails ... ($locationOfFile)" || echo "#### Checking HTTP status for : ${nameOfFile}" | tee >&2 >> $SCRIPT_TTY
         listOfFiles_valid_httpcode=$(curl -A "Mozilla/4.0" --write-out %{http_code} --silent --output /tmp/curl_test --cookie xurl_cookie --location $locationOfFile || echo 0 )
         let ' listOfFiles_valid_httpcode = listOfFiles_valid_httpcode+0'
     
@@ -106,7 +106,7 @@ function doCheckHTTPFile ()
 
     
 }
-checkVersion_file_valid="**"
+checkVersion_file_valid="##"
 function doCheckVersion ()
 {
     
@@ -137,6 +137,17 @@ function doCheckVersion ()
     urlHosting=$( dirname "${urlHosting_local}" )
     urlHosting_origin=${urlHosting}
     urlHosting_file=$( basename "${urlHosting_local}" | sed  -e "s;xxx;${checkVersion_local};g"  )
+    
+    urlHosting_file_protocol=$( echo "${urlHosting_local}" | grep -i 'ftp:' && echo "ftp" \
+                             || echo "${urlHosting_local}" | grep -i 'sftp:' && echo "ftp" \
+                             || echo "${urlHosting_local}" | grep -i 'http:' && echo "http" \
+                             || echo "${urlHosting_local}" | grep -i 'https:' && echo "http" \
+                             || echo "--nope--"   )
+    
+     urlHosting_file_provider=$( echo "${urlHosting_local}" | grep -i 'sf.net' && echo "sf.net" \
+                             || echo "${urlHosting_local}" | grep -i 'sourceforge.net' && echo "sf.net" \
+                             || echo "${urlHosting_local}" | grep -i 'github' && echo "github" \
+                             || echo "--nope--"   )
     
     urlHosting_file_base=$(  basename "${urlHosting_local}" | tr "xxx" "\ " | tr "-" "\ " | awk '{ print $1 }')
     
@@ -248,7 +259,9 @@ function doCheckVersion ()
                     
         if [  "${sfnet_listing}" == "--No--" ]; then
             echo " nope "
-        else
+        fi
+        
+        if [ "${urlHosting_file_provider}" == "sf.net" ]; then
             sfnet_listing_sub=$( echo $sfnet_listing_sub"?source=navbar"  | tr ' ' "\n" | head -n1 && true  || echo $sfnet_listing_sub )
             # ## sfnet_listing_sub=$(  echo "$sfnet_listing_sub/${urlHosting_file_base}/"} | sed -e "s;://;####;g" | sed -e "s;//;/;g" | sed -e "s;####;://;g" )
             # ##
@@ -260,6 +273,8 @@ function doCheckVersion ()
             urlHosting=$( echo ${urlHosting} | sed -e "s;/projects/${urlHosting_file_base}/files/;${sfnet_listing_sub};g" )
             # ##
             echo " origin " ${urlHosting_origin} ":: new :: "${sfnet_listing_sub}
+        else
+            echo " -- unknow provider ${urlHosting_file_provider}" 
         fi
         
         # ########## # ##########
@@ -338,9 +353,9 @@ function doCheckVersion ()
         # ## extrem particularity .... Website and so on ...
         for m_port_branchs in ${version_avail_branch[*]} ; do
             version_avail=( $( echo ${version_avail_c[*]} | tr '(' "\ " | tr ')' "\ "| tr '"' "\ " | tr '>' "\ " | tr '<' "\ "  | tr ' ' "\\n"  | grep -i "${urlHosting_file_base}" | sort | grep -i "${m_port_branchs}" | uniq  &&  echo " "${version_avail[*]} | tr ' ' "\\n") )
-            # ## echo ".....  ***** step ....(${version_avail[*]})"
+            # ## echo ".....  ##### step ....(${version_avail[*]})"
         done
-         # ## echo ".....  ***** particularity ....(${version_avail[*]})"
+         # ## echo ".....  ##### particularity ....(${version_avail[*]})"
         
         
         echo " All Versions says for (${urlHosting_file_base}):: ("${#version_avail[@]}")"
@@ -442,17 +457,19 @@ esac
         checkVersion_Pack=$(        echo "${checkVersion}" | tr ":" "\ " | awk '{ print $5 }' | sed -e "s;\.;\ \.\ ;g"  | awk '{ print $1$2$3 }' | sed -e "s;xx;;g" | sed -e "s; ;;g"  )
 
         checkVersion=$( echo "${checkVersion}" | sed  -e "s;:;;g" )
-        checkUrl=$( echo "${checkUrl}" | sed  -e "s;${checkVersion};xxx;g" )
-        # ## echo "Get url :: "$checkUrl
-         echo $checkUrl >> /tmp/mind_lift.txt
-         
-        checkVersion_Check="${checkVersion_Major-xx}:${checkVersion_Minor-xx}:${checkVersion_Rev-xx}:${checkVersion_Platform-xx}:${checkVersion_Arch-xx}:${checkVersion_Pack-xx}::"
-        
-        doCheckVersion "${checkVersion_Check}" "${checkUrl}"  
-        # ## use only ":" for rebuild version number
-
-        cat /tmp/mind_lift.txt | tr ' ' "\\n"  | sed -e "s;$checkUrl;${checkVersion_file_valid};g" > /tmp/mind_lift_out.txt
-        cat /tmp/mind_lift_out.txt > /tmp/mind_lift.txt
+        for kcheckUrl in $( echo "${checkUrl[*]}" | tr "\ " "\\n" ) ; do 
+            checkUrl=$( echo "${checkUrl}" | sed  -e "s;${checkVersion};xxx;g" )
+            # ## echo "Get url :: "$checkUrl
+             echo $kcheckUrl >> /tmp/mind_lift.txt
+             
+            checkVersion_Check="${checkVersion_Major-xx}:${checkVersion_Minor-xx}:${checkVersion_Rev-xx}:${checkVersion_Platform-xx}:${checkVersion_Arch-xx}:${checkVersion_Pack-xx}::"
+            
+            doCheckVersion "${checkVersion_Check}" "${kcheckUrl}"  
+            # ## use only ":" for rebuild version number
+    
+            cat /tmp/mind_lift.txt | tr ' ' "\\n"  | sed -e "s;$kcheckUrl;${checkVersion_file_valid};g" > /tmp/mind_lift_out.txt
+            cat /tmp/mind_lift_out.txt > /tmp/mind_lift.txt
+        done
         checkUrl=$checkVersion_file_valid
         # ## echo "Received :: "$checkUrl
        
@@ -461,7 +478,7 @@ esac
         # checkUrl=$( echo "${checkUrl}" | sed  -e "s;xxx;${checkVersion};g" ) 
          # echo $checkUrl >> /tmp/mind_lift.txt
         
- # ## echo "********"${listOfFiles[*]}
+ # ## echo "########"${listOfFiles[*]}
         checkUrl=""
         checkVersion=""
     fi
@@ -475,8 +492,8 @@ esac
 
 
 done
-cat /tmp/mind_lift.txt | tr ' ' "\\n"  | sed -e "s;://;####;g" | sed -e "s;//;/;g" | sed -e "s;####;://;g" > /tmp/mind_lift_out.txt
-cat /tmp/mind_lift_out.txt > /tmp/mind_lift.txt
+cat /tmp/mind_lift.txt | tr ' ' "\\n"   | tr '\\' "\ "  | awk '{print $1}'  | sed -e "s;://;####;g" | sed -e "s;//;/;g" | sed -e "s;####;://;g" > /tmp/mind_lift_out.txt
+cat /tmp/mind_lift_out.txt  | awk '{print $1}' > /tmp/mind_lift.txt
 listOfFiles=( $( cat /tmp/mind_lift.txt ) )
 # ## cat /tmp/mind_lift.txt
 echo "check finish:: " ${listOfFiles[*]}
@@ -499,10 +516,10 @@ do
     /bin/echo "No download needed for "$productCrossPorting_downloadFolder/$nameOfFile | tee >&2 >> $SCRIPT_TTY
  else
     /bin/echo "Downloading "$locationOfFile" ..." | tee >&2 >> $SCRIPT_TTY
-   echo  curl -A "Mozilla/4.0"  -f -L -# --cookie xurl_cookie --location $locationOfFile -o $productCrossPorting_downloadFolder/$nameOfFile;
+    curl -A "Mozilla/4.0"  -f -L -# --cookie xurl_cookie --location $locationOfFile -o "${productCrossPorting_downloadFolder}/${nameOfFile}";
     curl_result=$?
     tty_echo "curl result = " $curl_result
-
+ls  - la "${productCrossPorting_downloadFolder}/${nameOfFile}"
     if [ $curl_result -eq 0 ]; then
         /bin/echo " Download complete : ${nameOfFile}" | tee >&2 >> $SCRIPT_TTY
     else

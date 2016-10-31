@@ -5,7 +5,7 @@
 # ##
 # ##    Created by Genose.org (Sebastien Ray. Cotillard)
 # ##    Date 10-oct-2016
-# ##    last update 25-oct-2016
+# ##    last update 31-oct-2016
 # ##
 # ##    Please support genose.org, the author and his projects
 # ##    
@@ -15,7 +15,14 @@
 # ##    // http://project2306.genose.org  // git :: project2306_ide //
 # ##    /////////////////////////////////////////////////////////////
 # ##
+# ########## # ########### ########### ########### ##########
+# ########## # ########### ########### ########### ##########
+# ##
 # ##    -- Cocotron community updates
+# ##
+# ##    Cocotron installer community updates
+# ##    Based from Christopher J. W. Lloyd
+# ##        :: Cocotron project ::
 # ##
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
@@ -24,322 +31,97 @@
 
 # #### # #### # ####
 # ## set a default value awise a NULL / not declared param
-
-# #### # #### # ####
-# ## set a default value awise a NULL / not declared param
 DEFAULT_FUNC_PARAM=""
 DEFAULT="${DEFAULT_FUNC_PARAM}"
 # #### # #### # ####
 
 
-SCRIPT_TTY=$( (ps ax | grep -i "install.sh" || ps ax | grep -vi "install.sh" | grep -vi "$0" | grep -i "install" | grep -i ".sh"  | grep -vi "log" || ps ax | grep $$) | awk '{ print "/dev/tty" $2 }' | uniq )
+# ## SCRIPT_TTY=$( (ps ax | grep -i "install.sh" || ps ax | grep -vi "install.sh" | grep -vi "$0" | grep -i "install" | grep -i ".sh"  | grep -vi "log" || ps ax | grep $$) | awk '{ print "/dev/tty" $2 }' | uniq )
+ 
+SCRIPT_TTY=$( ps ax | grep -i "install.sh" || ps ax | grep -vi "install.sh" | grep -vi "$0" | grep -i "install" | grep -i ".sh"  | grep -vi "log" || ps ax | grep $$ )
 
+SCRIPT_TTY=$( echo "${SCRIPT_TTY[@]}" |   sort  | uniq  |  head -n1 | awk '{ print "/dev/tty" $2 }'  )
 # #### # #### # ####
+# ##
+echo "# ##  TTY on  ${SCRIPT_TTY[@]}"
+
 export HISTTIMEFORMAT="%d/%m/%y %T "
 set -o history
 
-# ########### ########### ########### ########### ########### ########### ##########
-# ## http://stackoverflow.com/questions/3572030/bash-script-absolute-path-with-osx
-# ########### ########### ########### ########### ########### ########### ##########
-declare realpathx_return="./"
-realpathx() {
+# ########## # ########### ########### ########### ##########
+# ########## # ########### ########### ########### ##########
 
-OURPWD=$PWD
-cd "$(dirname "$1")"
-LINK=$(readlink "$(basename "$1")")
-while [ "$LINK" ]; do
-cd "$(dirname "$LINK")"
-LINK=$(readlink "$(basename "$1")")
-done
-REALPATH="$PWD/$(basename "$1")"
-cd "$OURPWD"
-# ## echo ":::: realpathx == ${REALPATH} "
-    realpathx_return=${REALPATH}
+SYSTEM_HOST=$( uname -s | tr "[:upper:]" "[:lower:]" )
+SYSTEM_HOST_VERSION=$( ((sw_vers -productVersion  2>/dev/null  ) ||   uname -r )   | tr "." " " | awk '{ print  $1"."$2 }'  )
 
-}
+ 
+SYSTEM_HOST_VERSION_NAME=$( uname -s | tr "[:upper:]" "[:lower:]" )
+# ## system type
+# ## 1 : MacOS
+# ## 2 : Unix / GNU / Linux
+# ## 3 : Windows
+SYSTEM_HOST_TYPE=1
+# ########
+# ########
+# ## Cocotrons Default Goal : Apple Cocoa -- > > Windows
+SYSTEM_TARGET_TYPE=3
+# ########
+# ########
 
-realpathx $0
+# ########## # ########### ########### ########### ##########
+# ########## # ########### ########### ########### ##########
+
+if [ "${SYSTEM_HOST}" = "darwin" ]; then
+	 
+    # ## tty_echo "#### On darwin System, some compilation and binaries send error ;; we make terminal SED Bytecode error more Friendly :: export LC_CTYPE=C ; export LANG=C"
+    export LC_CTYPE=C ; export LANG=C
+  
+fi
+ 
+
+# ## determining full path of this script
+realpathx "$0"
+ 
+# #### # #### # ####
+# ## set a default value awise a NULL / not declared param
+ 
+# ## echo "Declared :::: " $0 " :::: returned :::: "$realpathx_return
 ## 
-installResources=$( dirname "${realpathx_return}/"  | grep -i "Resources"  && true ||  dirname $( find $( dirname $( dirname "${realpathx_return}/" ) ) -name common_functions.sh -type f -exec  dirname {} \;    )   )
-##
-scriptResources=$installResources/scripts/
+installResources=$( echo $( dirname $( find $( dirname $( dirname "${realpathx_return}/" | grep -i "Resources" ||  echo "${realpathx_return}/" ) ) -name common_functions.sh -type f -exec  dirname {} \;    )   ) )
+install_script_check_script=$( basename $realpathx_return | grep -i "install\_" | grep -vi "\_log" || echo "--NO--" )
+install_script_check_script="${install_script_check_script}" && [[ "${install_script_check_script}" == "--NO--" ]] || install_script_check_script=$( echo "${install_script_check_script}" | tr "\-" "\ " | awk '{print $2}' )
+
+install_script_check=$(  basename $realpathx_return  | grep -vi "\_log" | tr "\/" "\\n" | grep -i "install" | grep -vi "installcdt"  || echo "--NO--" )
+
+install_script_check=$( echo "${install_script_check[*]}" | tr " " "\\n" | tr "\." "\\n"| grep -i "install"   || echo "--NO--" )
+ 
+ 
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
 
-enableLanguages="c,objc,c++,obj-c++"
-
+scriptResources="$installResources/scripts"
+toolResources="$installResources/tools"
+ 
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
 
-installFolder=/Developer
-productName=Cocotron
-productVersion=1.0
+INSTALL_SCRIPT_DIR=$(dirname $installResources  )
+INSTALL_SCRIPT_LOG=/tmp/install_log.log
+INSTALL_SCRIPT_LOG_ERR=/tmp/install_log.err.log
 
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
-
-# ## binutilsVersion=2.21-20111025
-binutilsVersion="2.21.1"
-binutilsProduct="binutils"
-
-mingwruntimeVersion="3.20"
-mingwruntimeProduct="mingwruntime"
-
-mingwapiVersion="3.17:-2"
-mingwapiProduct="mingwapi"
-
-gmpVersion="4.2.3"
-gmpProduct="gmp"
-
-mpfrVersion="2.3.2"
-binutilsProduct="mpfr"
-
-# ########## # ########### ########### ########### ##########
-# ########## # ########### ########### ########### ##########
-
-
-# ## Version ALLWAYS in format
-
-# ## a.b.c:rev:platform:arch
-# ## replace a position with xx
-# ## a.b.xx:xx:win32:xx
-
-# ## a.b.xx:xx:xx:noarch
-# ## a.b.8:-g1:linux:i386
-# ## a.b.4:-e4:linux:x86
-# ## 16.xx.xx:xx:win32:xx
-
-# ## if you do the follow ... uuuh, well ... don t blame me
-# ## 16..8:xx:win32:xx
-
-antigrainVersion="2.4:xx:xx:xx:xx"
-antigrainProduct="agg"
-
-freetypeVersion="2.3.5:-1:xx:xx:-bin"
-freetypeProduct="freetype"
-
-glutVersion="36:xx:xx:xx:ddls"
-glutProduct="glut"
-
-hunspellVersion="1.3.1:xx:xx:xx:xx"
-hunspellProduct="hunspell"
-
-iconvVersion="1.9.2:xx:.win32:xx:xx"
-iconvProduct="iconv"
-
-libjpegVersion="xx:.v8c:xx:xx:xx"
-libjpegProduct_packed="src"
-libjpegProduct_type="lib"
-libjpegProduct="jpeg"
-libjpegProduct_install="${libjpegProduct_type}${libjpegProduct}"
-
-
-libjpegturboVersion="1.3.0:xx:xx:xx:xx"
-libjpegturboProduct="libjpeg-turbo"
-libjpegturboProduct_base="${libjpegProduct}"
-libjpegturboProduct_depend="${libjpegProduct_type}${libjpegProduct}"
-
-libtiffVersion="xx:xx:xx:xx:xx"
-libtiffProduct="libtiff"
-libtiffProduct_depend="${libjpegProduct}"
-
-opensslVersion="0.9.8:h-1:xx:xx:xx"
-opensslProduct="openssl"
-
-pthreadVersion="xx:xx:-win32:x86:xx"
-pthreadProduct="pthreads"
-
-plibcVersion="0.1.5:xx:xx:xx:xx"
-plibcProduct="plibc"
-
-pngVersion="1.6.18:xx:xx:xx:xx"
-pngProduct="png"
-
-sqliteVersion="3150000:xx:-win32:-x86:-dll"
-sqliteProduct="sqlite"
-
-xml2Version="1.9.2:xx:.win32:xx:xx"
-xml2Product="xml2"
-
-zlibVersion="1.2.5:xx:.win32:xx:"
-zlibProduct_type=""
-zlibProduct="zlib"
-zlibProduct_install="${zlibProduct_type}${zlibProduct}"
-
-zlib_srcVersion="${zlibVersion}"
-zlib_srcProduct="${zlibProduct}"
-
-# ########## # ########### ########### ########### ##########
-# ########## # ########### ########### ########### ##########
-
-binutilsConfigureFlags=""
-
-# ########## # ########### ########### ########### ##########
-# ########## # ########### ########### ########### ##########
-
-# #################
-# URLs
-# #################
-
-# ########### ##########
-# ## 2016 deprecated
-# ## url_Download_GPL3_v1="https://code.google.com/archive/p/cocotron-tools-gpl3/downloads/"
-# ########### ##########
-
-# ########### ##########
-# ## 2016/10 new
-# ## but still deprecated ...
-url_google_cocotron_Download_GPL3="https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/cocotron-tools-gpl3"
-# ########### ##########
-
-productCrossPorting_Name="Cocotron"
-productCrossPorting_Version="1.0"
-productCrossPorting_Folder="/Developer/${productCrossPorting_Name}/${productCrossPorting_Version}"
-productCrossPorting_downloadFolder="${productCrossPorting_Folder}/Downloads"
-productCrossPorting_Target_default="Windows"
-productCrossPorting_Target_default_arch="i386"
-productCrossPorting_Target_default_arch_wordSize="32"
-productCrossPorting_Target_default_compiler="gcc"
-
-productCrossPorting_sourceFolder="${productCrossPorting_Folder}/Source"
-
-productCrossPorting_Target_default_compiler_dir_build_platform="${productCrossPorting_Folder}/build/$productCrossPorting_Target_default/$productCrossPorting_Target_default_arch"
-productCrossPorting_Target_default_compiler_dir_base_platform="${productCrossPorting_Folder}/$productCrossPorting_Target_default/$productCrossPorting_Target_default_arch"
-
-productCrossPorting_Target_default_compiler_dir_base_interface="${productCrossPorting_Folder}/PlatformInterfaces/"
-productCrossPorting_Target_default_compiler_dir_base_interface_compiler="${productCrossPorting_Folder}/PlatformInterfaces/"
-
-productCrossPorting_Target_default_compiler_version="4.3.1"
-productCrossPorting_Target_default_compiler_version_Date=""
-
-productCrossPorting_Target_default_compiler_dir_name="i386-mingw32msvc/"
-productCrossPorting_Target_default_compiler_dir_system=`pwd`/../system/${productCrossPorting_Target_default_compiler_dir_name}
-
-productCrossPorting_Target_default_compiler_basedir="${productCrossPorting_Target_default_compiler_dir_base_platform}/${productCrossPorting_Target_default_compiler}-${productCrossPorting_Target_default_compiler_version}/"
-
-if [ -f "${productCrossPorting_Target_default_compiler_dir_base_interface}" ]; then
-    echo ""
-else
-    mkdir -p $productCrossPorting_downloadFolder
-    mkdir -p $productCrossPorting_sourceFolder
-    
-    mkdir -p $productCrossPorting_Target_default_compiler_dir_build_platform
-    mkdir -p $productCrossPorting_Target_default_compiler_dir_base_platform
-    
-    mkdir -p $productCrossPorting_Target_default_compiler_dir_base_interface
-    mkdir -p $productCrossPorting_Target_default_compiler_basedir
-    
-    mkdir -p $productCrossPorting_Target_default_compiler_dir_system/bin
-    mkdir -p $productCrossPorting_Target_default_compiler_dir_system/lib
-    mkdir -p $productCrossPorting_Target_default_compiler_dir_system/include
+ 
+if [ ! -d "$installResources" ];then
+tty_dialog "Unable to locate Resources directory at "$installResources
+ exit 1
 fi
 
-productCrossPorting_Target_avail=("Windows" "Linux" "BSD" "Solaris" "Darwin")
+PWD=$( echo $PWD || pwd )
+    source $( find $installResources -name "common_declare_*.inc.sh" -type f -print )
 
-
-
-# ## productCrossPorting_Target_default=""
-# ## productCrossPorting_Target_default_arch=""
-# ## productCrossPorting_Target_default_compiler_version=""
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
-realpathx $0
-install_script_check=$( basename $realpathx_return | grep -i "install" >/dev/null && echo "install" || echo "--NO--" )
-
-if [  "${install_script_check}" == "install" ]; then
-    tty_echo ":::: do  ${install_script_check} :: $0" 
-    if [ ""${1-$DEFAULT}"" = "" ]; then
-      productCrossPorting_Target_default="${productCrossPorting_Target_default}"
-    else
-      productCrossPorting_Target_default=${1-$DEFAULT}
-    fi
-    # ########## # ########### ########### ########### ##########
-    # ########## # ########### ########### ########### ##########
-    
-    if [ ""${2-$DEFAULT}"" = "" ];then
-      productCrossPorting_Target_default_arch="${productCrossPorting_Target_default_arch}"
-    else
-      productCrossPorting_Target_default_arch=${2-$DEFAULT}
-    fi
-    # ########## # ########### ########### ########### ##########
-    # ########## # ########### ########### ########### ##########
-    
-    if [ ""${3-$DEFAULT}"" = "" ];then
-            productCrossPorting_Target_default_compiler="${productCrossPorting_Target_default_compiler}"
-    else
-            productCrossPorting_Target_default_compiler=${3-$DEFAULT}
-    fi
-    # ########## # ########### ########### ########### ##########
-    # ########## # ########### ########### ########### ##########
-     
-    # ## productCrossPorting_Target_default_compiler_version="4.3.1"
-    
-    if [ ""${4-$DEFAULT}"" = "" ];then
-      productCrossPorting_Target_default_compiler_version="${productCrossPorting_Target_default_compiler_version}"
-    else
-      productCrossPorting_Target_default_compiler_version=${4-$DEFAULT}
-    fi
-    # ########## # ########### ########### ########### ##########
-    # ########## # ########### ########### ########### ##########
-    
-    # ########## # ########### ########### ########### ##########
-    # ########## # ########### ########### ########### ##########
-    
-    if [ ""${5-$DEFAULT}"" = "" ];then
-            if [ "$productCrossPorting_Target_default_compiler" = "gcc" ]; then
-                    productCrossPorting_Target_default_compiler_version=$productCrossPorting_Target_default_compiler_version
-            elif [ "$productCrossPorting_Target_default_compiler" = "llvm-clang" ]; then
-                    productCrossPorting_Target_default_compiler_version="trunk"
-            else
-                    tty_echo "Unknown $productCrossPorting_Target_default_compiler "$productCrossPorting_Target_default_compiler
-                    send_exit $0 $LINENO
-            fi
-    else
-            productCrossPorting_Target_default_compiler_version=${5-$DEFAULT}
-    fi
-    
-    # ########## # ########### ########### ########### ##########
-    # ########## # ########### ########### ########### ##########
-    
-    if [ ""${6-$DEFAULT}"" = "" ];then
-            if [ "$productCrossPorting_Target_default_compiler" = "gcc" ]; then
-            productCrossPorting_Target_default_compiler_version_Date="-02242010"
-            elif [ "$productCrossPorting_Target_default_compiler" = "llvm-clang" ]; then
-            productCrossPorting_Target_default_compiler_version_Date="-05042011"
-            else
-                    tty_echo "Unknown $productCrossPorting_Target_default_compiler "$productCrossPorting_Target_default_compiler
-                    exit 1
-            fi
-    else
-            productCrossPorting_Target_default_compiler_version_Date="-"${6-$DEFAULT}
-    fi
-    
-    # ########## # ########### ########### ########### ##########
-    # ########## # ########### ########### ########### ##########
-    
-    osVersion=${7-$DEFAULT}
-    
-    if [ ""$osVersion"" = "" ];then
-            if [ ""$osVersion"" = "" -a ""$productCrossPorting_Target_default"" = "Solaris" ];then
-                    osVersion="2.10"
-            elif [ ""$osVersion"" = "" -a ""$productCrossPorting_Target_default"" = "FreeBSD" ];then
-                    osVersion="7"
-            else
-                    osVersion=""
-            fi
-    else
-            osVersion=$osVersion
-    fi
-    
-    # ########## # ########### ########### ########### ##########
-    # ########## # ########### ########### ########### ##########
-    
-    if [ $productCrossPorting_Target_default_arch = "x86_64" ];then
-            productCrossPorting_Target_default_arch_wordSize="64"
-    else
-            productCrossPorting_Target_default_arch_wordSize="32"
-    fi
-fi
 
 packedVersionMajor=""
 packedVersionMinor=""
@@ -402,25 +184,3 @@ mkdir -p $productCrossPorting_Target_default_compiler_dir_system
 mkdir -p $productCrossPorting_Target_default_compiler_dir_system/include
 mkdir -p $productCrossPorting_Target_default_compiler_dir_system/bin
 mkdir -p $productCrossPorting_Target_default_compiler_dir_system/lib
-
-# ########## # ########### ########### ########### ##########
-# ########## # ########### ########### ########### ##########
-
-SYSTEM_HOST=$( uname -s | tr "[:upper:]" "[:lower:]" )
-SYSTEM_HOST_VERSION=$( ((sw_vers -productVersion  2>/dev/null  ) ||   uname -r )   | tr "." " " | awk '{ print  $1"."$2 }'  )
-
-echo "...."
-
-SYSTEM_HOST_VERSION_NAME=$( uname -s | tr "[:upper:]" "[:lower:]" )
-# ## system type
-# ## 1 : MacOS
-# ## 2 : Unix / GNU / Linux
-# ## 3 : Windows
-SYSTEM_HOST_TYPE=1
-# ########
-# ########
-# ## Cocotrons Default Goal : Apple Cocoa -- > > Windows
-SYSTEM_TARGET_TYPE=3
-# ########
-# ########
-
