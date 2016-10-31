@@ -54,7 +54,7 @@ echo "Unarchive Get : (${sourceFolder}): (${destinationFolder}) :: (${listOfFile
  
 lastPwd=$(pwd)
 unArchiverTool=$( which false )
-unArchiverTool_path_tar=$( ($(test ""$(uname -s)""  == "*arwin*" ) && which tar) || which bsdtar )
+unArchiverTool_path_tar=$( ($(test ""$(uname -s)""  == "Darwin" ) && which tar) || which gnutar || which bsdtar )
 
 mkdir -p $destinationFolder
 
@@ -127,7 +127,7 @@ do
              send_exit $0 $LINENO  | tee >&2 >> $SCRIPT_TTY
         fi
    else
-       $unArchiverTool $unarchiveFlags $locationOfFile$extension || echo "Error ...."    && send_exit $0 $LINENO  | tee >&2 >> $SCRIPT_TTY
+       $unArchiverTool $unarchiveFlags $locationOfFile$extension | tee >&2 >> $SCRIPT_TTY || echo "Error ...."    && send_exit $0 $LINENO  | tee >&2 >> $SCRIPT_TTY
    fi
 
     sleep 1
