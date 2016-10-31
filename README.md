@@ -4,46 +4,38 @@ some port and contrib along Christopher J. W. Lloyd, Project Cocotron
 # Stay tuned on Nigthly Build -- > > Not to use, just a daily status
 
 # ########## # ########### ########### ########### ##########
-# ##
    Cocotron installer commmunity updates
    Based from Christopher J. W. Lloyd
        :: Cocotron project ::
-# ##
+# ########## # ########### ########### ########### ##########
    Created by Genose.org (Sebastien Ray. Cotillard)
    Date 10-oct-2016
-# ##
-   Please support genose.org, the author and his projects
    
-   Based on genose.org tools
-# ##
-   //////////////////////////////////////////////////////////////
-   // http://project2306.genose.org  // git :: project2306_ide //
-   /////////////////////////////////////////////////////////////
-# ##
-   -- Cocotron commmunity updates
-# ##
 # ########## # ########### ########### ########### ##########
- 
+# ## Please support genose.org, the author and his projects
+# ##           Based on genose.org tools
+# ########## # ########### ########### ########### ##########
+** http://project2306.genose.org  // git :: project2306_ide **
+# ########## # ########### ########### ########### ##########
 
 # ########## # ########### ########### ########### ##########
-# ##
-   Initialy Modified 10-oct-2016 by Genose.org (Sebastien Ray. Cotillard)
-# ##
+# ##   Initialy Created 10-oct-2016 by Genose.org (Sebastien Ray. Cotillard)
+# ########## # ########### ########### ########### ##########
    Change Log :
 # ##
-# ##		- Loves "" sequence
-# ##		- Hates so much, but when it cant be, Loves "long shell sentences " when don t know alternative
-       - Script Cosmetics
-       - More Screen & Script Cosmetics ...
-       - Lots and Lots More Screen & Script Cosmetics ...
-       - Lots and Lots More GUI Friendly ...
-# ##
-       - Separated logs in 3 parts (User Screen progress, Error log, Install log)
-# ##
-       - Zip / Tar / GZ, platform dependant uniformisation / standardisation
-# ##
-   - Curl and Download Improvements (see ressources/scripts/downloadIfNeeded.sh)
-	- Curl based Version checker for download updates ( Http and Ftp thru http )
+    - Loves "" sequence
+    - Hates so much, but when it cant be, Loves "long shell sentences " when don t know alternative
+    - Script Cosmetics
+    - More Screen & Script Cosmetics ...
+    - Lots and Lots More Screen & Script Cosmetics ...
+    - Lots and Lots More GUI Friendly ...
+    
+    - Separated logs in 3 parts (User Screen progress, Error log, Install log)
+    
+    - Zip / Tar / GZ, platform dependant uniformisation / standardisation
+   
+    - Curl and Download Improvements (see ressources/scripts/downloadIfNeeded.sh)
+    - Curl based Version checker for download updates ( Http and Ftp thru http )
 # ##
     - Remove Deprecated :
       ---- > > Google Url updates to Git
