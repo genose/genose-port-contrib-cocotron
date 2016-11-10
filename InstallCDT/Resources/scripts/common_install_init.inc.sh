@@ -65,10 +65,10 @@ if [ "${SYSTEM_HOST}" = "darwin" ]; then
 	
 	SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_name="Xcode" 
 	case $SYSTEM_HOST_VERSION in
-		# ## 10.12) # ## MacOSX Sierra 10.12 is released at the that time (20-oct-2016), Dont stay at it for the moment
+		# ## 10.12) # ## MacOSX Sierra 10.12 is released at that time (20-oct-2016), Dont stay at it for the moment
 		10.11) SYSTEM_HOST_VERSION_NAME="EL_Captain" ;
 		# ## Xcode 8.0 is released at the that time (20-oct-2016)
-		SYSTEM_HOST_IDEGUI_RECOMMENDED=("7.2.1" "8.0")
+		SYSTEM_HOST_IDEGUI_RECOMMENDED=("7.2.1" "7.3.1" "8.0")
 		;;
 		10.10)
                 
@@ -344,3 +344,8 @@ if [ "${SYSTEM_TARGET_IDEGUI_APP_sdk}"  == "--NO--" ]; then
 else
     echo " Install in  : ${SYSTEM_TARGET_IDEGUI_APP_sdk}";
 fi
+# productCrossPorting_Target
+# productCrossPorting_Target_arch
+# productCrossPorting_Target_compiler
+# productCrossPorting_Target_compiler_arch
+# SYSTEM_TARGET_IDEGUI_APP_sdk

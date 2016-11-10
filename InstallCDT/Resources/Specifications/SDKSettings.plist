@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CanonicalName</key>
+	<string>${SYSTEM_TARGET}${SYSTEM_TARGET_VERSION}</string>
+	<key>CustomProperties</key>
+	<dict>
+		<key>KERNEL_EXTENSION_HEADER_SEARCH_PATHS</key>
+		<string>$(KERNEL_FRAMEWORK)/PrivateHeaders $(KERNEL_FRAMEWORK_HEADERS)</string>
+	</dict>
+	<key>DefaultProperties</key>
+	<dict>
+		<key>MACOSX_DEPLOYMENT_TARGET</key>
+		<string>${SYSTEM_TARGET_VERSION}</string>
+		<key>PLATFORM_NAME</key>
+		<string>${SYSTEM_TARGET}</string>
+		<key>DEFAULT_KEXT_INSTALL_PATH</key>
+		<string>$(LIBRARY_KEXT_INSTALL_PATH)</string>
+	</dict>
+	<key>DisplayName</key>
+	<string>Cross Platform ${SYSTEM_TARGET} ${SYSTEM_TARGET_VERSION} ${productCrossPorting_Target_compiler} </string>
+	<key>MaximumDeploymentTarget</key>
+	<string>10.12</string>
+	<key>MinimalDisplayName</key>
+	<string>${SYSTEM_TARGET}</string>
+	<key>MinimumSupportedToolsVersion</key>
+	<string>3.2</string>
+	<key>SupportedBuildToolComponents</key>
+	<array>
+		<string>com.apple.compilers.gcc.headers.4_2</string>
+	</array>
+	<key>Version</key>
+	<string>10.4</string>
+	<key>isBaseSDK</key>
+	<string>YES</string>
+</dict>
+</plist>

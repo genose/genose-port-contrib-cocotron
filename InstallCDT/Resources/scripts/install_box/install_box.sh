@@ -110,7 +110,10 @@ echo "::::" $dailog_result
 
 case $platform_choose in
     default)
-        platform_choose=${productCrossPorting_Target_default}
+        platform_choose=$( echo ${productCrossPorting_Target_default}  | tr "[:upper:]" "[:lower:]" )
+        ;;
+    latest)
+        platform_choose=$( echo ${productCrossPorting_Target_default}  | tr "[:upper:]" "[:lower:]" )
         ;;
     *) ;;
 esac
@@ -156,6 +159,71 @@ case  $switch_case in
     echo "${SDK_STYLE}/System/Library/Frameworks"
     echo "${SDK_STYLE}/System/Library/Printers"
     echo "${SDK_STYLE}/System/Library/PrivateFrameworks"
+    
+    echo "${SDK_STYLE}/usr"
+    
+    echo "${SDK_STYLE}/usr/bin"
+    echo "${SDK_STYLE}/usr/include"
+    echo "${SDK_STYLE}/usr/lib"
+    echo "${SDK_STYLE}/usr/libexec"
+    echo "${SDK_STYLE}/usr/share"
+    
+    echo "${SDK_STYLE}/SDKSettings.plist"
+    echo " ====== ======== SEtting ===== ======== "
+    
+    SYSTEM_HOST_IDEGUI_TARGET_SDK_plist_spec=$( find  $(dirname $install_box_dir | xargs dirname  ) -iname "SDKSettings.plist" -print )
+    plist_set="--no--"
+    
+    cat "${SYSTEM_HOST_IDEGUI_TARGET_SDK_plist_spec}" > "${SYSTEM_HOST_IDEGUI_TARGET_SDK_plist_spec}.${SYSTEM_TARGET}"
+    
+    function plist_settarget()
+    {
+        plist_set_spec="${1}"
+        plist_set_spec_file="${2-${SYSTEM_HOST_IDEGUI_TARGET_SDK_plist_spec}}"
+        
+        
+        plist_set_spec_skip=${3-$(echo 0 )}
+        let "plist_set_spec_skip= plist_set_spec_skip+1"
+        let "plist_set_spec_skip= plist_set_spec_skip-1"
+        
+        plist_set=$( /usr/libexec/PlistBuddy  -c "Print :${plist_set_spec}" "${plist_set_spec_file}"  )
+         
+        plist_set=$(  eval 'echo "'${plist_set}'"' | xargs echo )
+        
+        if [ ${plist_set_spec_skip} -eq 0 ]; then
+            /usr/libexec/PlistBuddy  -c "Set :${plist_set_spec} ${plist_set}"  "${plist_set_spec_file}.${SYSTEM_TARGET}"
+        fi
+        
+    }
+    
+    plist_settarget "DisplayName"  "${SYSTEM_HOST_IDEGUI_TARGET_SDK_plist_spec}"
+    echo "SDK Display name : ${plist_set}"
+    
+    plist_settarget 'CanonicalName'                                     "${SYSTEM_HOST_IDEGUI_TARGET_SDK_plist_spec}"   
+    echo "SDK CanonicalName : ${plist_set}"
+    
+    plist_settarget 'MinimalDisplayName'                                "${SYSTEM_HOST_IDEGUI_TARGET_SDK_plist_spec}"
+    echo "SDK MinimalDisplayName : "
+
+    plist_settarget 'Version'                                           "${SYSTEM_HOST_IDEGUI_TARGET_SDK_plist_spec}"
+    echo "SDK  Version : ${plist_set} "
+    
+    plist_settarget 'DefaultProperties:MACOSX_DEPLOYMENT_TARGET'         "${SYSTEM_HOST_IDEGUI_TARGET_SDK_plist_spec}"
+    echo "SDK  :DefaultProperties:MACOSX_DEPLOYMENT_TARGET: ${plist_set} "
+    
+    plist_settarget 'DefaultProperties:PLATFORM_NAME'                    "${SYSTEM_HOST_IDEGUI_TARGET_SDK_plist_spec}"
+    echo "SDK  DefaultProperties:PLATFORM_NAME : ${plist_set} "
+    
+    # ## plist_settarget 'DefaultProperties:DEFAULT_KEXT_INSTALL_PATH'        "${SYSTEM_HOST_IDEGUI_TARGET_SDK_plist_spec}"
+    # ## echo "SDK DefaultProperties:DEFAULT_KEXT_INSTALL_PATH : ${plist_set} "
+    
+    plist_settarget 'SupportedBuildToolComponents'                       "${SYSTEM_HOST_IDEGUI_TARGET_SDK_plist_spec}" 1
+    echo "SDK  SupportedBuildToolComponents : ${plist_set} "
+    
+    plist_settarget 'MaximumDeploymentTarget'                            "${SYSTEM_HOST_IDEGUI_TARGET_SDK_plist_spec}"
+    echo "SDK  MaximumDeploymentTarget: ${plist_set} "
+    
+    echo " ====== ========  ===== ======== "
     ;;
   1)
     echo "No chosen.";;
@@ -281,8 +349,9 @@ done
 ) |
 $DIALOG --title "${titrebarre}" --gauge "Bonjour, ceci est une barre d'avancement" 20 70 0
 
-SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_url=$( echo ${SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_url} | tr "{" "\ " | tr "}" "\ " | sed -e "s;\ ;;g" | sed -e "s;editor_download;${editor_download};g" )
-productCrossPorting_Target_default_arch=${productCrossPorting_Target_default_arch}
-productCrossPorting_Target_default_compiler=${productCrossPorting_Target_default_compiler}
+# ## note :: sed -e "s;\({\([a-zA-Z0-9_]*\)}\);$\2;g"
+SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_url=$( echo ${SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_url} | sed -e "s;\({\([a-zA-Z0-9_]*\)}\);$\1;g" | sed -e "s;\ ;;g" | xargs echo )
+productCrossPorting_Target_arch=${productCrossPorting_Target_default_arch}
+productCrossPorting_Target_compiler=${productCrossPorting_Target_default_compiler}
 
 SYSTEM_TARGET_IDEGUI_APP_sdk="${SDK_STYLE}"
