@@ -32,7 +32,7 @@ testbash_backyard_cond_test_b="no" &&  [[ 0 -eq 0  ]] &&  true  && testbash_back
 # ## echo "testbash_backyard_cond_test == ${testbash_backyard_cond_test}"
 # ##### ##### ##### ##### ##### ####
 # ##### ##### ##### ##### ##### ####
-# on Darwin shell can have Res 0 and parenthesis at the same time ... this can be the boot shell
+# on darwin shell can have Res 0 and parenthesis at the same time ... this can be the boot shell
 testbash_backyard_ps_tty=$( ps waux | tr '\(' '\;' | tr '\)' '\;' |  grep -vi '\\(' | grep -i "bash" | awk '{print $7}' | sort | uniq )
 # ##### ##### ##### ##### ##### ####
 # ##### ##### ##### ##### ##### ####
@@ -73,7 +73,7 @@ fi
 testbash_backyard_real_brand="no" && [[ -f /proc/version ]] && testbash_backyard_real_brand="yes"
 
 if [ "${testbash_backyard_real_brand}" == "no" ]; then
-    testbash_backyard_real_brand=$( [[ $( uname -s | tr "[:upper:]" "[:lower:]" ) == *"darwin"* ]] && echo "Darwin" || echo "no" ) 
+    testbash_backyard_real_brand=$( [[ $( uname -s | tr "[:upper:]" "[:lower:]" ) == "darwin" ]] && echo "darwin" || echo "no" ) 
 elif [ -f /proc/version ]; then
     # ## test windows 10 fra-king Bash port
     testbash_backyard_real_brand=$( /proc/version | tr "[:upper:]" "[:lower:]" | tr '\-' '\\n' | grep -i "microsoft" | head -n1  && echo "no" )
@@ -110,11 +110,26 @@ function bash_args_bugs() {
 # ##### ##### ##### ##### ##### ####
 if [ ${testbash_backyard_valid} -eq 1 ]; then
     # ## echo " Bash compatible :: True "
-    PWD=$( echo $PWD || pwd )
+    # ## PWD=$( echo $PWD || pwd )
+    PWD=${PWD-$(pwd)}
+    _script=$( echo "$PWD/$0" | sed -e "s;${PWD};;g"  | sed -e "s;\.\/;;g" ) 
+    _script="$PWD/$0"
+    echo " ==== "$PWD
+    _script=$( echo "$_script" | sed -e "s;${PWD}/${PWD};${PWD};g" | sed -e "s;\.\/;;g" )
+    echo " ==== "$_script
+    
+    
+     
+# ## todo :: test -x on find 
+    ( test -x "${PWD}/common_functions.sh" ) && { echo "${PWD}/common_functions.sh"; } || {
+                                                                                           PWD=$( find $( dirname $_script ) -name common_functions.sh -type f | xargs dirname )
+                                                                                           } 
+    
     # ##
     echo "Bootstrap functions .... in ;; $PWD ;;"
     source $( find $PWD -name "common_func_def.inc.sh" -type f -print )
-    # ## echo "Bootstrap functions .... "
+    # ##
+    echo "Bootstrap functions .... "
 else
     echo " Bash compatible :: False "
     echo " "

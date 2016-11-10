@@ -17,15 +17,6 @@
 # ##
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
-# ##
-# ##    -- Cocotron community updates
-# ##
-# ##    Cocotron installer community updates
-# ##    Based from Christopher J. W. Lloyd
-# ##        :: Cocotron project ::
-# ##
-# ########## # ########### ########### ########### ##########
-# ########## # ########### ########### ########### ##########
 
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
@@ -65,18 +56,24 @@ SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_name=""
 SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_use=""
 SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_major=""
 SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_url=""
+SYSTEM_HOST_IDEGUI_APP_SUPPORT_xcode3_dir="/Library/Application\ Support/Developer/Shared/Xcode/Specifications"
+
+
+SYSTEM_TARGET_IDEGUI_APP_sdk="--NO--"
 
 if [ "${SYSTEM_HOST}" = "darwin" ]; then
 	
-	SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_name="Xcode"
+	SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_name="Xcode" 
 	case $SYSTEM_HOST_VERSION in
 		# ## 10.12) # ## MacOSX Sierra 10.12 is released at the that time (20-oct-2016), Dont stay at it for the moment
 		10.11) SYSTEM_HOST_VERSION_NAME="EL_Captain" ;
 		# ## Xcode 8.0 is released at the that time (20-oct-2016)
 		SYSTEM_HOST_IDEGUI_RECOMMENDED=("7.2.1" "8.0")
 		;;
-		10.10) SYSTEM_HOST_VERSION_NAME="Yosemite";
-		SYSTEM_HOST_IDEGUI_RECOMMENDED=("7.2.1" "6.4")
+		10.10)
+                
+                SYSTEM_HOST_VERSION_NAME="Yosemite";
+		SYSTEM_HOST_IDEGUI_RECOMMENDED=("7.2.1" "6.4") 
 		;;
 		10.9) SYSTEM_HOST_VERSION_NAME="Mavericks" ;
 		SYSTEM_HOST_IDEGUI_RECOMMENDED=("6.4" "5.1.1")
@@ -101,7 +98,9 @@ if [ "${SYSTEM_HOST}" = "darwin" ]; then
 		SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_use=$(echo ${SYSTEM_HOST_IDEGUI_RECOMMENDED[0]})
 		SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_major=$( echo ${SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION}  | tr "." " " | awk '{ print  $1"."$2 }' )
 		# ## up-to-date 20-oct-2016
-		SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_url="http://adcdownload.apple.com/Developer_Tools/Xcode_${SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION}/${SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_name}_${SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION}.dmg"
+                
+		SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_url="{editor_download}/Xcode_${SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_use}/${SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_name}_${SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_use}.dmg"
+                
 else
     echo "##### Not a MacOS Host System"
 	winsubstem=$( echo "${SYSTEM_HOST}"  | grep -i "win" || echo "--NO--" )
@@ -111,6 +110,82 @@ else
 	fi
 fi
 
+# ########## # ########### ########### ########### ##########
+# ########## # ########### ########### ########### ##########
+
+# ## macos / linux specific
+
+# ########## # ########### ########### ########### ##########
+# ########## # ########### ########### ########### ##########
+InstalledSoftware_path_GUI__dialog_required=0
+InstalledSoftware_path_GUI__dialog_use=0
+
+InstalledSoftware_path_GUI__x11Window_url="https://dl.bintray.com/xquartz/downloads/XQuartz-2.7.9.dmg"
+# ## /opt/X11/bin/xquartz
+InstalledSoftware_path_GUI__x11Window=$( which xquartz )
+
+# ########## # ########### ########### ########### ##########
+# ########## # ########### ########### ########### ##########
+
+# manual Xdialog install url
+InstalledSoftware_path_GUI__xdialog_url="http://xdialog.free.fr/Xdialog-2.3.1.orig.tar.gz"
+
+InstalledSoftware_path_GUI__xdialog=$( which xdialog  )
+InstalledSoftware_path_GUI__dialog=$( which dialog  )
+
+InstalledSoftware_path_GUI_dialog=$( ( test -x "${InstalledSoftware_path_GUI__xdialog}" ) && { echo ""${InstalledSoftware_path_GUI__xdialog}; } || {
+( test -x "${InstalledSoftware_path_GUI__dialog}" ) && { echo ""${InstalledSoftware_path_GUI__dialog};
+} || {
+	echo "No";
+}
+}
+ )
+
+tty_echo "##### dialog :: $InstalledSoftware_path_GUI_dialog"
+
+
+if [ ${#InstalledSoftware_path_GUI_dialog} -lt 5 ]; then
+    tty_dialog "You MUST Install Xdialog GUI to continue ..." " see recommended for ${SYSTEM_HOST_VERSION_NAME}:${SYSTEM_HOST_VERSION}  )"
+	if [ ${SYSTEM_HOST_TYPE} -eq 1 ]; then
+            
+		tty_yesyno " Would you like to Install it anyway  "
+			xdialog_openurl=${tty_yesyno_response}
+			xdialog_openurl_valid=${tty_yesyno_response_valid}
+                        
+		   # ########### # ############ ###########
+	   if [ "${xdialog_openurl}" == "y" ]; then
+		   tty_echo "Open Browser with xdialog_openurl"
+		   # ## sleep 3
+		   # ## can't download it without AUTH, so open the URL in browser
+		  # ##
+                  tty_waitforpath "which xdialog"
+		  InstalledSoftware_path_GUI__dialog_required=1
+		  InstalledSoftware_path_GUI_dialog="Required"
+	   else
+		   tty_dialog "Xdialog GUI  not installed " "see recommended ${SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_url}"
+	   fi
+	fi
+	 else
+		  InstalledSoftware_path_GUI__dialog_use=1
+		tty_yesyno " Would you like to use Xdialog GUI for interactions  "
+                 InstalledSoftware_path_GUI__dialog_use=0
+			xdialog_openurl=${tty_yesyno_response}
+			xdialog_openurl_valid=${tty_yesyno_response_valid}
+		   # ########### # ############ ###########
+	   if [ "${xdialog_openurl}" == "y" ]; then
+		# ## tty_echo "Open Browser with xdialog_openurl"
+		   # ## sleep 3
+		   # ## can't download it without AUTH, so open the URL in browser
+		  # ##  tty_waitforpath "which xdialog"
+		  InstalledSoftware_path_GUI__dialog_required=0
+		  InstalledSoftware_path_GUI__dialog_use=1
+               
+		else
+			InstalledSoftware_path_GUI_dialog="No"
+                   
+	   fi	 
+		 
+fi
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
 InstalledSoftware_path_Mac_open=$(which open)
@@ -180,7 +255,7 @@ if [ "${#InstalledSoftware_path_terminal}" -gt 5 ]; then
         # ###########
             tty_echo " >>>> Opening Logs ..."
 
-            # ## DARWIN Specific first
+            # ## darwin Specific first
             # ## can be adapted to Linux with GNU Screen or TYY/PTS shell
 
             touch $INSTALL_SCRIPT_DIR/show_install_log.sh && chmod 755 $INSTALL_SCRIPT_DIR/show_install_log.sh
@@ -237,83 +312,35 @@ tty_echo "####### ####### ####### ####### ####### ####### ####### ####### "
 
 fi
 
-# ########## # ########### ########### ########### ##########
-# ########## # ########### ########### ########### ##########
+ if [ ${InstalledSoftware_path_GUI__dialog_required} -lt 1 ]; then
+        source $( find $( pwd ) -name install_box  -type d -exec echo {}"/archs/darwin/host/ide/apple_xcode/desc.txt" \; )
+        SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_url=$( echo ${SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_url} | tr "{" "\ " | tr "}" "\ " | sed -e "s;\ ;;g" | sed -e "s;editor_download;${editor_download};g" )
+ fi
 
-# ## macos / linux specific
-
-# ########## # ########### ########### ########### ##########
-# ########## # ########### ########### ########### ##########
-InstalledSoftware_path_GUI__dialog_required=0
-InstalledSoftware_path_GUI__dialog_use=0
-
-InstalledSoftware_path_GUI__x11Window_url="https://dl.bintray.com/xquartz/downloads/XQuartz-2.7.9.dmg"
-# ## /opt/X11/bin/xquartz
-InstalledSoftware_path_GUI__x11Window=$( which xquartz )
-
-# ########## # ########### ########### ########### ##########
-# ########## # ########### ########### ########### ##########
-
-# manual Xdialog install url
-InstalledSoftware_path_GUI__xdialog_url="http://xdialog.free.fr/Xdialog-2.3.1.orig.tar.gz"
-
-InstalledSoftware_path_GUI__xdialog=$( which xdialog  )
-InstalledSoftware_path_GUI__dialog=$( which dialog  )
-
-InstalledSoftware_path_GUI_dialog=$( ( test -x "${InstalledSoftware_path_GUI__xdialog}" ) && { echo ""${InstalledSoftware_path_GUI__xdialog}; } || {
-( test -x "${InstalledSoftware_path_GUI__dialog}" ) && { echo ""${InstalledSoftware_path_GUI__dialog};
-} || {
-	echo "No";
-}
-}
- )
-
-
-
-if [ ${#InstalledSoftware_path_GUI_dialog} -lt 5 ]; then
-    tty_dialog "You MUST Install Xdialog GUI to continue ..." " see recommended for ${SYSTEM_HOST_VERSION_NAME}:${SYSTEM_HOST_VERSION}  )"
-	if [ ${SYSTEM_HOST_TYPE} -eq 1 ]; then
-		tty_yesyno " Would you like to Install it anyway  "
-			xdialog_openurl=${tty_yesyno_response}
-			xdialog_openurl_valid=${tty_yesyno_response_valid}
-		   # ########### # ############ ###########
-	   if [ "${xdialog_openurl}" == "y" ]; then
-		   tty_echo "Open Browser with xdialog_openurl"
-		   # ## sleep 3
-		   # ## can't download it without AUTH, so open the URL in browser
-		  # ##  tty_waitforpath "which xdialog"
-		  InstalledSoftware_path_GUI__dialog_required=1
-		  InstalledSoftware_path_GUI_dialog="Required"
-	   else
-		   tty_dialog "Xdialog GUI  not installed " "see recommended ${SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_url}"
-	   fi
-	fi
-	 else
-		 
-		tty_yesyno " Would you like to use Xdialog GUI for interactions  "
-			xdialog_openurl=${tty_yesyno_response}
-			xdialog_openurl_valid=${tty_yesyno_response_valid}
-		   # ########### # ############ ###########
-	   if [ "${xdialog_openurl}" == "y" ]; then
-		# ## tty_echo "Open Browser with xdialog_openurl"
-		   # ## sleep 3
-		   # ## can't download it without AUTH, so open the URL in browser
-		  # ##  tty_waitforpath "which xdialog"
-		  InstalledSoftware_path_GUI__dialog_required=0
-		  InstalledSoftware_path_GUI__dialog_use=1
-		else
-			InstalledSoftware_path_GUI_dialog="No"
-	   fi	 
-		 
-fi
- 
-tty_echo "##### dialog :: $InstalledSoftware_path_GUI_dialog"
-
-install_proc_script=$(  echo "${installResources}/${SYSTEM_HOST}_proc_script.inc.sh" )
+install_proc_script=$( find $( pwd )  -name "${SYSTEM_HOST}_proc_script.inc.sh" )
 
 if [ -x "${install_proc_script}" ] && [ -f  "${install_proc_script}" ] ; then
-    ${install_proc_script}
+    source ${install_proc_script}
 else
     echo " ######## Warning : incomplete Install.sh::${install_proc_script} support for : ${SYSTEM_HOST} "
 fi
- 
+if [ ${InstalledSoftware_path_GUI__dialog_use} -gt 0 ]; then
+    source $( find $PWD -name "install_box.sh" -type f -print )
+fi
+
+
+# ########## # ########### ########### ########### ##########
+# ########## # ########### ########### ########### ##########
+echo " :: SYSTEM_TARGET_IDEGUI_APP_sdk :: ${SYSTEM_TARGET_IDEGUI_APP_sdk} "
+
+if [ "${SYSTEM_TARGET_IDEGUI_APP_sdk}"  == "--NO--" ]; then
+    if [ -w "${SYSTEM_HOST_IDEGUI_APP_SUPPORT_xcode3_dir}" ]; then
+            tty_echo "####  >>>> Permissions properly set up, continuing install."
+    else
+            tty_echo "####  >>>> For this script to complete successfully, the directory ${SYSTEM_HOST_IDEGUI_APP_SUPPORT_xcode3_dir} must be writeable by you, and we've detected that it isn't.  "
+            exit 1
+    fi
+
+else
+    echo " Install in  : ${SYSTEM_TARGET_IDEGUI_APP_sdk}";
+fi

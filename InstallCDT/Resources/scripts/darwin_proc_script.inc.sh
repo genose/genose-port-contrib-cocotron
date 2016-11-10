@@ -1,14 +1,11 @@
 #!/bin/sh
 
 # ########## # ########### ########### ########### ##########
-# ##
-# ##    Cocotron installer community updates
-# ##    Based from Christopher J. W. Lloyd
-# ##        :: Cocotron project ::
+# ########## # ########### ########### ########### ##########
 # ##
 # ##    Created by Genose.org (Sebastien Ray. Cotillard)
 # ##    Date 10-oct-2016
-# ##    last update 25-oct-2016
+# ##    last update 10-nov-2016
 # ##
 # ##    Please support genose.org, the author and his projects
 # ##    
@@ -18,12 +15,10 @@
 # ##    // http://project2306.genose.org  // git :: project2306_ide //
 # ##    /////////////////////////////////////////////////////////////
 # ##
-# ##    -- Cocotron community updates
-# ##
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
 
-source $( find $(dirname $0) -name common_functions.sh -type f -print )
+# source $( find $(dirname $0) -name common_functions.sh -type f -print )
 
 
 
@@ -32,7 +27,7 @@ source $( find $(dirname $0) -name common_functions.sh -type f -print )
 # ## Xcode specific
 
 InstalledSoftware_path_Mac_xcodebuild=$(which xcodebuild)
-InstalledSoftware_path_Mac_xcode_select=$(which xcode-selects && echo "-p" || echo "tty_echo ./")
+InstalledSoftware_path_Mac_xcode_select=$(which xcode-selects && echo "-p" || echo "false" )
 
 InstalledSoftware_path_Mac_xcode=$( dirname $(ls -d  $( ${InstalledSoftware_path_Mac_xcode_select} 2>$SCRIPT_TTY)  2>$SCRIPT_TTY ) )
 InstalledSoftware_path_Mac_xcode_version=$(
@@ -41,10 +36,10 @@ InstalledSoftware_path_Mac_xcode_version=$(
 tty_echo "";
 }
 )
-
-if [ ${#InstalledSoftware_path_Mac_xcode} -lt 5 ]; then
+echo ";;;;;;; ${InstalledSoftware_path_Mac_xcode} ;;; ${InstalledSoftware_path_Mac_xcode_select}  "
+if [ ${#InstalledSoftware_path_Mac_xcode} -lt 8 ]; then
     tty_dialog "You MUST Install Apple XCode to continue ..." " see recommended for ${SYSTEM_HOST_VERSION_NAME}:${SYSTEM_HOST_VERSION} :: ${SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_url}  :: (${InstalledSoftware_path_Mac_xcode})"
-	if [ "${SYSTEM_HOST}" == "Darwin" ]; then
+	if [ "${SYSTEM_HOST}" == "darwin" ]; then
 		tty_yesyno " Would you like to visit ${SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_url} "
 			xcode_openurl=${tty_yesyno_response}
 			xcode_openurl_valid=${tty_yesyno_response_valid}
@@ -53,27 +48,26 @@ if [ ${#InstalledSoftware_path_Mac_xcode} -lt 5 ]; then
 		   tty_echo "Open Browser with ${SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_url}"
 		   # ## sleep 3
 		   # ## can't download it without AUTH, so open the URL in browser
-		   # ## open "${SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_url}"
-		   
+		   open "${SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_url}"
+		   sleep 5
 		   tty_waitforpath "which xcode-select"
 	   else
 		   tty_dialog "${SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_name} not installed " "see recommended ${SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_url}"
 	   fi
 	fi
-	exit_witherror "${SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_name} not installed for ${SYSTEM_HOST_VERSION_NAME}:${SYSTEM_HOST_VERSION}" 
+	# exit_witherror "${SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_name} not installed for ${SYSTEM_HOST_VERSION_NAME}:${SYSTEM_HOST_VERSION}" 
 fi
+InstalledSoftware_path_Mac_xcodebuild=$(which xcodebuild)
+InstalledSoftware_path_Mac_xcode_select=$(which xcode-select && echo "-p" || echo "false" )
 
+InstalledSoftware_path_Mac_xcode=$( dirname $(ls -d  $( ${InstalledSoftware_path_Mac_xcode_select} 2>$SCRIPT_TTY)  2>$SCRIPT_TTY ) )
+InstalledSoftware_path_Mac_xcode_version=$(
+
+( test -x "${InstalledSoftware_path_Mac_xcode}" && test "${#InstalledSoftware_path_Mac_xcode}" -gt 5 ) && { /usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" $InstalledSoftware_path_Mac_xcode/version.plist  2>/dev/null ; } || {
+tty_echo "";
+}
+)
 tty_echo "#### Installed ${SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_name} : (${InstalledSoftware_path_Mac_xcode_version}) : ${InstalledSoftware_path_Mac_xcode}"
-
-# ########## # ########### ########### ########### ##########
-# ########## # ########### ########### ########### ##########
-
-if [ -w /Library/Application\ Support/Developer/Shared/Xcode/Specifications ]; then
-	tty_echo "####  >>>> Permissions properly set up, continuing install."
-else
-	tty_echo "####  >>>> For this script to complete successfully, the directory /Library/Application Support/Develper/Shared/Xcode/Specifications must be writeable by you, and we've detected that it isn't.  "
-	exit 1
-fi
 
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
@@ -93,13 +87,27 @@ macPortRelease_avail=$( echo ${macPortRelease_alt_package[*]} | grep -i "${macPo
 
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
-
+echo "" > /tmp/macport_update.txt
 InstalledSoftware_path_Mac_macport=$(which port )
 InstalledSoftware_path_Mac_macport_version=$( ( test ${#InstalledSoftware_path_Mac_macport} -gt 5 ) &&
-{  ${InstalledSoftware_path_Mac_macport} version | awk '{ print  $2 }' ; } || { echo "None"; } )
+{  ${InstalledSoftware_path_Mac_macport} version 2>/tmp/macport_update.txt | awk '{ print  $2 }' ; } || { echo "None"; } )
 
 if [ ${#InstalledSoftware_path_Mac_macport} -gt 5 ]; then
 /bin/echo
+
+selfupdate_macport=$(cat /tmp/macport_update.txt | grep -i "selfupdate" | wc -c ) 
+
+if [ "${selfupdate_macport}" -gt 5 ]; then
+    tty_echo "macport need to update repository .... "
+    tty_yesyno " macport need to update repository .... \n Would you like to updatez ${InstalledSoftware_path_Mac_macport} "
+    macport_update=${tty_yesyno_response}
+    macport_update_valid=${tty_yesyno_response_valid}
+    # ########### # ############ ###########
+    if [ "${macport_update}" == "y" ]; then
+        $InstalledSoftware_path_Mac_macport selupdate
+    fi
+fi
+
 else
     InstalledSoftware_path_Mac_macport_version="No"
     InstalledSoftware_path_Mac_macport="see http://macports.org"

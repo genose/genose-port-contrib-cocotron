@@ -1,0 +1,4 @@
+system_install_desc="Solaris brand"
+system_brand="opensolaris solaris"
+system_arch="i386 x64 sparc"
+default_arch="i386"

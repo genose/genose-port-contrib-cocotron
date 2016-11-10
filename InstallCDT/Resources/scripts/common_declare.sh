@@ -16,18 +16,6 @@
 # ##    /////////////////////////////////////////////////////////////
 # ##
 # ########## # ########### ########### ########### ##########
-# ########## # ########### ########### ########### ##########
-# ##
-# ##    -- Cocotron community updates
-# ##
-# ##    Cocotron installer community updates
-# ##    Based from Christopher J. W. Lloyd
-# ##        :: Cocotron project ::
-# ##
-# ########## # ########### ########### ########### ##########
-# ########## # ########### ########### ########### ##########
-
-
 
 # #### # #### # ####
 # ## set a default value awise a NULL / not declared param
@@ -94,8 +82,12 @@ install_script_check_script="${install_script_check_script}" && [[ "${install_sc
 install_script_check=$(  basename $realpathx_return  | grep -vi "\_log" | tr "\/" "\\n" | grep -i "install" | grep -vi "installcdt"  || echo "--NO--" )
 
 install_script_check=$( echo "${install_script_check[*]}" | tr " " "\\n" | tr "\." "\\n"| grep -i "install"   || echo "--NO--" )
+
+# ########## # ########### ########### ########### ##########
+# ########## # ########### ########### ########### ##########
  
- 
+SDK_STYLE="sdk"
+
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
 

@@ -164,12 +164,16 @@ productCrossPorting_Name="Cocotron"
 productCrossPorting_Version="1.0"
 productCrossPorting_Folder="/Developer/${productCrossPorting_Name}/${productCrossPorting_Version}"
 productCrossPorting_downloadFolder="${productCrossPorting_Folder}/Downloads"
+productCrossPorting_sourceFolder="${productCrossPorting_Folder}/Source"
+productCrossPorting_binFolder="${productCrossPorting_Folder}/bin"
+
+productCrossPorting_default_compiler="gcc"
+
 productCrossPorting_Target_default="Windows"
 productCrossPorting_Target_default_arch="i386"
 productCrossPorting_Target_default_arch_wordSize="32"
-productCrossPorting_Target_default_compiler="gcc"
 
-productCrossPorting_sourceFolder="${productCrossPorting_Folder}/Source"
+productCrossPorting_Target_default_compiler="gcc"
 
 productCrossPorting_Target_default_compiler_dir_build_platform="${productCrossPorting_Folder}/build/$productCrossPorting_Target_default/$productCrossPorting_Target_default_arch"
 productCrossPorting_Target_default_compiler_dir_base_platform="${productCrossPorting_Folder}/$productCrossPorting_Target_default/$productCrossPorting_Target_default_arch"
@@ -184,6 +188,12 @@ productCrossPorting_Target_default_compiler_dir_name="i386-mingw32msvc/"
 productCrossPorting_Target_default_compiler_dir_system=`pwd`/../system/${productCrossPorting_Target_default_compiler_dir_name}
 
 productCrossPorting_Target_default_compiler_basedir="${productCrossPorting_Target_default_compiler_dir_base_platform}/${productCrossPorting_Target_default_compiler}-${productCrossPorting_Target_default_compiler_version}/"
+
+
+productCrossPorting_set_compiler="gcc"
+productCrossPorting_set_compiler_dir_system="${productCrossPorting_Target_default_compiler_dir_system}"
+
+
 
 if [ -f "${productCrossPorting_Target_default_compiler_dir_base_interface}" ]; then
     echo ""
@@ -202,7 +212,7 @@ else
     mkdir -p $productCrossPorting_Target_default_compiler_dir_system/include
 fi
 
-productCrossPorting_Target_avail=("Windows" "Linux" "BSD" "Solaris" "Darwin")
+productCrossPorting_Target_avail=("Windows" "Linux" "BSD" "Solaris" "darwin")
 
 
 

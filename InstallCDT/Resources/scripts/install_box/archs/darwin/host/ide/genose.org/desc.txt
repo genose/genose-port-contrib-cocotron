@@ -1,0 +1,3 @@
+editor_desc="Genose.org - Project 2306 IDE"
+editor_version="2016"
+editor_download="http://project2306.genose.org"

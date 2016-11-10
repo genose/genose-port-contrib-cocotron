@@ -1,0 +1,67 @@
+
+/Developer/Cocotron/cocotron/InstallCDT/
+
+installFolder=/Developer
+productName=Cocotron
+productVersion=1.0
+# ## Windows / linux
+targetPlatform
+# ## i386
+targetArchitecture
+
+# ## GCC / LLVM
+compiler
+compilerVersion
+compilerVersionDate
+# ## solaris / FreeBSD release
+osVersion
+# ## cpu bits 
+wordSize
+
+# ##### #############@
+target relative 
+# ##### #############@
+compilerTarget = i386-pc-mingw32msvc$osVersion
+compilerConfigureFlags
+binutilsConfigureFlags
+
+
+# ##### #############@
+path relative 
+# ##### #############@
+scriptResources="$installResources/scripts"
+toolResources="$installResources/tools"
+
+# ## /Developer/Cocotron/1.0
+productFolder=$installFolder/$productName/$productVersion
+
+# ## /Developer/Cocotron/1.0/Downloads
+downloadFolder=$productFolder/Downloads
+
+# ## /Developer/Cocotron/1.0/Source
+sourceFolder=$productFolder/Source
+
+# ## /Developer/Cocotron/1.0/PlatformInterfaces/i386-pc-mingw32msvc$osVersion
+# ## PREFIX=`pwd`/../system/i386-mingw32msvc
+# ## INCLUDE=$PREFIX/include
+# ## BIN=$PREFIX/bin
+# ## LIB=$PREFIX/lib
+# CXX = /Developer/Cocotron/1.0/Windows/i386/gcc-4.3.1/bin/i386-pc-mingw32msvc-g++
+# C = /Developer/Cocotron/1.0/Windows/i386/gcc-4.3.1/bin/i386-pc-mingw32msvc-gcc
+# LIB = /Developer/Cocotron/1.0/Windows/i386/gcc-4.3.1/bin/i386-pc-mingw32msvc-ar cr
+
+interfaceFolder=$productFolder/PlatformInterfaces/$compilerTarget
+
+# ## /Developer/Cocotron/1.0/build/windows/i386/
+buildFolder=$productFolder/build/$targetPlatform/$targetArchitecture
+
+# ## /Developer/Cocotron/1.0/windows/i386/gcc-4.2.1
+# ## /Developer/Cocotron/1.0/windows/i386/llvm-clang-trunk
+resultFolder=$productFolder/$targetPlatform/$targetArchitecture/$compiler-$compilerVersion
+
+# ## /Developer/Cocotron/1.0/bin
+toolFolder=$productFolder/bin
+
+PATH="$resultFolder/bin:$PATH"
+
+BASEDIR=$productFolder/$targetPlatform/$targetArchitecture
