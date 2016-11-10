@@ -1,0 +1,4 @@
+system_install_desc="Haiku / BeOS  (Experimental)"
+system_brand="haiku"
+system_arch="i386 x64"
+default_arch="i386"

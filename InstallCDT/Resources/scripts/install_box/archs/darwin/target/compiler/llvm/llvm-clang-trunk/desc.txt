@@ -1,0 +1,5 @@
+compiler_desc="LLVM Clang"
+compiler_version="truck"
+
+compiler_date=""
+compiler_args=""

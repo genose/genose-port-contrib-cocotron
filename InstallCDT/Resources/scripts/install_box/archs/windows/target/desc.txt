@@ -1,0 +1,4 @@
+system_install_desc="Windows brand"
+system_brand="windows"
+system_arch="i386 x64"
+default_arch="i386"

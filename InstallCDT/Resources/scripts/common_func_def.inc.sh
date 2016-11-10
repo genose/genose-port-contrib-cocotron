@@ -4,7 +4,7 @@
 # ##
 # ##    Created by Genose.org (Sebastien Ray. Cotillard)
 # ##    Date 10-oct-2016
-# ##    last update 31-oct-2016
+# ##    last update 10-nov-2016
 # ##
 # ##    Please support genose.org, the author and his projects
 # ##    
@@ -44,16 +44,40 @@ function tty_echo() {
 	/bin/echo "${local_PARAMS[@]}" >>  "${SCRIPT_TTY}"
     local_PARAMS=""
 }
-function tty_dialog() {
-tty_echo " "
-tty_echo "########### # ########### ########### ########### ###########"  
-tty_echo "########### # ########### ########### ########### ###########"  
-tty_echo "# ##    $1 ::                                  "  
-tty_echo "# ##        -- $2                                     "  
-tty_echo "########### # ########### ########### ########### ###########"  
-tty_echo "########### # ########### ########### ########### ###########"  
-tty_echo " "
 
+function tty_dialog() {
+# ## echo " dialog received :: "$*
+    tty_dialog_ask=$(echo $@   | tr ":" "\:" | sed -e"s; ;\ ;g"  | sed -e"s;:+:;\\
+;g"  )
+    # ## echo "====== ::::;;;;" ${tty_dialog_ask[@]}
+    # ## InstalledSoftware_path_GUI__dialog_use=1
+    if [ ${InstalledSoftware_path_GUI__dialog_use-0} -gt 0 ]; then
+     
+cat > /tmp/install_box.tmp <<EOF
+#!/bin/bash
+ 
+    xdialog 	--title "Information " \
+    --infobox " $tty_dialog_ask \n\\
+     \n\\
+    "  0 120 10 
+     
+EOF
+
+dailog_result=$( sh /tmp/install_box.tmp 2>&1 && echo $? )
+
+
+    else
+        tty_dialog_title=$1
+        tty_dialog_message=$2
+        tty_echo " "
+        tty_echo "########### # ########### ########### ########### ###########"  
+        tty_echo "########### # ########### ########### ########### ###########"  
+        tty_echo "# ##    $tty_dialog_title ::                                  "  
+        tty_echo "# ##        -- $tty_dialog_message                                     "  
+        tty_echo "########### # ########### ########### ########### ###########"  
+        tty_echo "########### # ########### ########### ########### ###########"  
+        tty_echo " "
+     fi
 }
 
 # ########## # ########### ########### ########### ##########
@@ -64,7 +88,7 @@ CallStackHistory=$(history |tail -n15)
 
 last_script_name=$(echo $CallStackHistory | tr " " "\n" | grep -i "\.sh" | tail -n1 )
 
-last=$(echo $CallStackHistory |tail -n5 | sed 's/[0-9]* //')
+last=$(echo $CallStackHistory | tail -n5 | sed 's/[0-9]* //')
 # printf "##### >>>> Call Stack / last command ($last_script_name) :: []"
 #echo "++++"
 #	for line_last in $( echo ""$last"" | tr ";" "\n" ) ; do
@@ -109,39 +133,41 @@ tyy_in=$(echo $SCRIPT_TTY | sed -e 's;/dev/tty;;g' )
 # ########## # ########### ########### ########### ##########
 
 function tty_waitforpath () {
-
-tty_awaitingpath=$1
-tty_awaitingpath_since=0
-tty_awaitingpath_since_too_long=300
-
-tty_awaitingpath_valid_path=$( $( echo "$tty_awaitingpath" ) || echo false )
-tty_awaitingpath_valid=$( test -x $tty_awaitingpath_valid_path && echo 1 || echo 0 )
-
-# ########### # ############ ###########
-echo "#### >>>>> Awainting for path : ${tty_awaitingpath} :: ${tty_awaitingpath_valid}"
-while [  $tty_awaitingpath_valid -eq 0  ]; do
-printf "." >> $SCRIPT_TTY
-sleep 1
-
-tty_awaitingpath_valid_path=$( $( echo "$tty_awaitingpath" ) || echo false )
-tty_awaitingpath_valid=$( test -x $tty_awaitingpath_valid_path && echo 1 || echo 0 )
-let "tty_awaitingpath_since= tty_awaitingpath_since + 1"
-let "tty_awaitingpath_since_long= ((tty_awaitingpath_since %60) == 0)?0:1"
-
-
-if [ $tty_awaitingpath_since_too_long -lt $tty_awaitingpath_since ]; then
-tty_echo " "
-exit_witherror " Still Waiting ... Too Long, Come back when it's done "
-fi
-
-if [ $tty_awaitingpath_since_long -eq 0 ]; then
-
-tty_echo " Still Waiting "
-fi
-done
-
-tty_echo "####### ####### ####### ####### ####### ####### ####### ####### "
-tty_echo "####### ####### ####### ####### ####### ####### ####### ####### "
+    
+    tty_awaitingpath=$1
+    tty_awaitingpath_since=0
+    tty_awaitingpath_since_too_long=300
+    
+    tty_awaitingpath_valid_path=$( $( echo "$tty_awaitingpath" ) || echo false )
+    tty_awaitingpath_valid=$( test -x $tty_awaitingpath_valid_path && echo 1 || echo 0 )
+    
+    # ########### # ############ ###########
+     tty_awaitingpath_valid=$( test -x $tty_awaitingpath_valid_path && echo 1 || echo 0 )
+    echo "#### >>>>> Awaiting for path : ${tty_awaitingpath} :: ${tty_awaitingpath_valid}"
+    while [  $tty_awaitingpath_valid -eq 0  ]; do
+        printf "." >> $SCRIPT_TTY
+        sleep 1
+        
+        tty_awaitingpath_valid_path=$( $( echo "$tty_awaitingpath" ) || echo false )
+        tty_awaitingpath_valid=$( test -x $tty_awaitingpath_valid_path && echo 1 || echo 0 )
+        let "tty_awaitingpath_since= tty_awaitingpath_since + 1"
+        let "tty_awaitingpath_since_long= ((tty_awaitingpath_since %60) == 0)?0:1"
+        
+        
+        if [ $tty_awaitingpath_since_too_long -lt $tty_awaitingpath_since ]; then
+            tty_echo " "
+            exit_witherror " Still Waiting ... Too Long, Come back when it's done "
+        fi
+        
+        if [ $tty_awaitingpath_since_long -eq 0 ]; then
+            
+            tty_echo " Still Waiting "
+        fi
+    done
+    echo "..........."
+    echo "#### >>>>> quit for path : ${tty_awaitingpath} :: ${tty_awaitingpath_valid}"
+    tty_echo "####### ####### ####### ####### ####### ####### ####### ####### "
+    tty_echo "####### ####### ####### ####### ####### ####### ####### ####### "
 
 }
 
@@ -153,43 +179,79 @@ function tty_yesyno () {
 
 tty_yesyno_response=""
 tty_yesyno_response_valid=0
+tty_yesyno_ask="$1"    
+    # ########### # ############ ###########
+    while [  $tty_yesyno_response_valid -eq 0 ]; do
+        tty_yesyno_response_valid=0
+        tty_yesyno_response=""
 
-# ########### # ############ ###########
-while [  $tty_yesyno_response_valid -eq 0 ]; do
-tty_yesyno_response_valid=0
-tty_yesyno_response=""
-# ###########
-read -t 10 -p ">>>>>>>>> $1  ? (Y/n) Default is (Yes, timeout : 10sec) : "  tty_yesyno_response
-# ###########
+        echo "" > /tmp/install_box.tmp
+ if [ ${InstalledSoftware_path_GUI__dialog_use} -gt 0 ];then
+     
+cat > /tmp/install_box.tmp <<EOF
+#!/bin/bash
 
-tty_yesyno_response=$( echo "$tty_yesyno_response" | tr "[:upper:]" "[:lower:]" )
-
-if [ "$tty_yesyno_response" == "" ]; then
-tty_yesyno_response="y"
-tty_echo " --- Using default answer ::(${tty_yesyno_response}) --- "
-fi
-# ###########
-if [ "$tty_yesyno_response" == "y" ] || [ "$tty_yesyno_response" == "yes" ]; then
-tty_yesyno_response="y"
-tty_yesyno_response_valid=1
-break
-fi
-# ###########
-if [ "$tty_yesyno_response" == "n" ] || [ "$tty_yesyno_response" == "no" ]; then
-tty_yesyno_response="n"
-tty_yesyno_response_valid=1
-break
-fi
-
-# ###########
-tty_echo "####### ####### ####### ####### ####### ####### ####### ####### "
-tty_echo "#### Please answer by (Y or n) Default is (Y) ..."
-tty_echo "####### ####### ####### ####### ####### ####### ####### ####### "
-
-done
-
-tty_echo "####### ####### ####### ####### ####### ####### ####### ####### "
-tty_echo "####### ####### ####### ####### ####### ####### ####### ####### "
+    xdialog 	--title "Resume for Installation Targeting ${SYSTEM_TARGET} " \
+    --timeout 10 \
+    --yesno " $tty_yesyno_ask \n\\
+     \n\\
+    (Y/n) Default is (Yes, timeout : 10sec)  \n\\
+    "  0 0     
+EOF
+            
+            dailog_result=$( sh /tmp/install_box.tmp 2>&1  && echo $? ||  echo $?  )
+            echo "::YESYNO::" $dailog_result
+            switch_case=$( echo ${dailog_result} | tr "xx_" "\\n"  |  tail -n1 | awk '{if(length($2)){print $2}else{print $1}}' )
+            case  $switch_case  in
+            255)
+                tty_yesyno_response="y";;
+            0)
+                echo "Yes chosen."
+                tty_yesyno_response="y";;
+            1)
+                echo "No chosen."
+                tty_yesyno_response="n";;
+            *)
+                echo "Box closed. / unknow option"
+                int_user
+            ;;
+            esac
+        
+    else
+        # ###########
+        read -t 10 -p ">>>>>>>>> $1  ? (Y/n) Default is (Yes, timeout : 10sec) : "  tty_yesyno_response
+        # ###########
+    fi
+        
+        
+        tty_yesyno_response=$( echo "$tty_yesyno_response" | tr "[:upper:]" "[:lower:]" )
+        
+        if [ "$tty_yesyno_response" == "" ]; then
+            tty_yesyno_response="y"
+            tty_echo " --- Using default answer ::(${tty_yesyno_response}) --- "
+        fi
+        # ###########
+        if [ "$tty_yesyno_response" == "y" ] || [ "$tty_yesyno_response" == "yes" ]; then
+            tty_yesyno_response="y"
+            tty_yesyno_response_valid=1
+            break
+        fi
+        # ###########
+        if [ "$tty_yesyno_response" == "n" ] || [ "$tty_yesyno_response" == "no" ]; then
+            tty_yesyno_response="n"
+            tty_yesyno_response_valid=1
+            break
+        fi
+        
+        # ###########
+        tty_echo "####### ####### ####### ####### ####### ####### ####### ####### "
+        tty_echo "#### Please answer by (Y or n) Default is (Y) ..."
+        tty_echo "####### ####### ####### ####### ####### ####### ####### ####### "
+        
+    done
+    
+    tty_echo "####### ####### ####### ####### ####### ####### ####### ####### "
+    tty_echo "####### ####### ####### ####### ####### ####### ####### ####### "
 
 }
 

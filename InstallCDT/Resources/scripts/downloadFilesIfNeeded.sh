@@ -187,7 +187,7 @@ function doCheckVersion ()
             tty_echo"# ########## # ########## # ########## # ########## # ##########"
             tty_echo" #### >>>> Something Moved .... !!! Please Report This !!!!"
             tty_echo" #### >>>> Something Moved .... !!! Please Report This !!!!"
-            tty_echo" #### >>>> Please Report This :: >>>> ${urlHosting_file_base} <<<<"
+            tty_echo" #### >>>> Please Report This :: > > > > ${urlHosting_file_base} < < < <"
             tty_echo" #### >>>> Something Moved .... !!! Please Report This !!!!"
             tty_echo"# ########## # ########## # ########## # ########## # ##########"
             tty_echo"# ########## # ########## # ########## # ########## # ##########"

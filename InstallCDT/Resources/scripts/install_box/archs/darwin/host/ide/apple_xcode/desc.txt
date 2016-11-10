@@ -1,0 +1,4 @@
+editor_desc="Apple - XCode IDE"
+editor_version=""
+editor_download="http://adcdownload.apple.com/Developer_Tools"
+# ## http://adcdownload.apple.com/Developer_Tools/Xcode_7.2.1/Xcode_7.2.1.dmg

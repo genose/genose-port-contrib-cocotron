@@ -1,0 +1,4 @@
+system_install_desc="BSD Family"
+system_brand="openbsd netbsd freebsd"
+system_arch="i386"
+default_arch="i386"

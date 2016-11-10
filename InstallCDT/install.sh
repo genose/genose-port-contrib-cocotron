@@ -63,9 +63,17 @@
 # ##
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
-PWD=$( echo $PWD || pwd )
+# ########## # ########### ########### ########### ##########
+# ##
+echo "Starting up install ..."
+PWD=${PWD-$(pwd)}
 source $( find $PWD -name common_functions.sh -type f -print )
-
+# ########## # ########### ########### ########### ##########
+# ##
+# ########## # ########### ########### ########### ##########
+# ##
+# ########## # ########### ########### ########### ##########
+# ## Cocotron Project
 #Copyright (c) 2006 Christopher J. W. Lloyd
 #
 #Permission is hereby granted, free of charge, to any person obtaining a copy of this
@@ -92,18 +100,21 @@ source $( find $PWD -name common_functions.sh -type f -print )
 # ##  ((sw_vers 2>/dev/null | grep -i "ProductVersion" ) ||  ( uname -r | awk '{ print  "/."$1 }' ))  | tr "." " " | awk '{ print  $2"."$3 }'
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
-tty_echo "########### # ########### ########### ########### ###########"
-tty_echo "########### # ########### ########### ########### ###########"
-tty_echo "# ##                                                     ## #"
-tty_echo "# ##     Welcome to The Cocotron's InstallCDT script     ## #"
-tty_echo "# ##                                                     ## #"
-tty_echo "# ##     Running on ($SCRIPT_TTY):($SYSTEM_HOST : $SYSTEM_HOST_VERSION : $SYSTEM_HOST_VERSION_NAME)      ## #"
-tty_echo "# ##                                                     ## #"
-tty_echo "########### # ########### ########### ########### ###########"
-tty_echo "########### # ########### ########### ########### ###########"
 
 init_trap_master $0
 
+tty_dialog "########### # ########### ########### ########### ###########" :+:\
+ "########### # ########### ########### ########### ###########" :+:\
+"# ##                                                     ## #" :+:\
+"# ##     Welcome to The Cocotron's InstallCDT script     ## #" :+:\
+"# ##                                                     ## #" :+:\
+"# ##     Running on ($SCRIPT_TTY):($SYSTEM_HOST : $SYSTEM_HOST_VERSION : $SYSTEM_HOST_VERSION_NAME)      ## #" :+:\
+"# ##                                                     ## #" :+:\
+"########### # ########### ########### ########### ###########" :+:\
+"########### # ########### ########### ########### ###########" :+:\
+
+
+ 
 source $( find $PWD -name common_install_init.inc.sh -type f -print )
 
 # ## set eu :: darwin problematic
@@ -155,7 +166,7 @@ elif [ $productCrossPorting_Target_default = "Solaris" ];then
 		tty_echo "Unsupported architecture $productCrossPorting_Target_default_arch on $productCrossPorting_Target_default"
 		exit 1
 	 fi
-elif [ $productCrossPorting_Target_default = *"arwin"* ];then
+elif [ $productCrossPorting_Target_default = "darwin" ];then
 	if [ $productCrossPorting_Target_default_arch = "i386" ];then
 		productCrossPorting_Target_default_compiler="${productCrossPorting_Target_default_arch}-unknown-darwin${osVersion}"
 		compilerConfigureFlags="--enable-version-specific-runtime-libs --enable-shared --enable-threads=posix --disable-checking --disable-libunwind-exceptions --with-system-zlib --enable-__cxa_atexit"
@@ -188,6 +199,7 @@ PATH="$resultFolder/bin:$PATH"
 
 downloadCompilerIfNeeded(){
 ###
+productCrossPorting_Target_default_compiler="gcc"
 tty_echo "Downloading ${productCrossPorting_Target_default_compiler}-${productCrossPorting_Target_default_compiler_version}${productCrossPorting_Target_default_compiler_version_Date} (if needed) ..."
 
 # ## ${url_google_cocotron_Download_GPL3}/binutils-$binutilsVersion.tar.gz
@@ -272,6 +284,8 @@ configureAndInstall_binutils() {
 	pushd $buildFolder/binutils-$binutilsVersion
 
 	CFLAGS="-m${productCrossPorting_Target_default_arch_wordSize} -Wformat=0 -Wno-error -Wno-error=unused-value" $productCrossPorting_sourceFolder/binutils-$binutilsVersion/configure --prefix="$resultFolder" --target=$productCrossPorting_Target_default_compiler $binutilsConfigureFlags
+	tty_echo $buildFolder/binutils-$binutilsVersion
+	tty_echo $CFlAGS
 	make
 	make install
 	popd
@@ -384,8 +398,7 @@ if [ "${install_compiler_section_response}" == "y" ]; then
 	
 	tty_echo "COCOTRON  :: Platform Interface  :: May Build interface for : $productCrossPorting_Target_default"
 	
-	"create${productCrossPorting_Target_default}InterfaceIfNeeded"
-	# ## 1>>$INSTALL_SCRIPT_LOG  2>>$INSTALL_SCRIPT_LOG_ERR
+	"create${productCrossPorting_Target_default}InterfaceIfNeeded" 1>>$INSTALL_SCRIPT_LOG  2>>$INSTALL_SCRIPT_LOG_ERR
 	tty_echo "COCOTRON  :: Platform Interface  :: completed"
 	
 	# ########## # ########### ########### ########### ##########
@@ -408,7 +421,7 @@ if [ "${install_compiler_section_response}" == "y" ]; then
 	# ########## # ########### ########### ########### ##########
 	
 	tty_echo "COCOTRON  :: Tools :: Build and install.  This could take a while.."
-	
+	echo "bin util " >>$INSTALL_SCRIPT_LOG 
 	tty_echo "COCOTRON  :: Tools  :: binutils ..."
 	configureAndInstall_binutils 1>>$INSTALL_SCRIPT_LOG  2>>$INSTALL_SCRIPT_LOG_ERR
 	
@@ -505,7 +518,7 @@ ls $INSTALL_SCRIPT_DIR/*_*.sh | sort
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
 other_script=($(ls $INSTALL_SCRIPT_DIR/install_*.sh | sort ))
-for  cur_script in  ${other_script[*]} ; do
+for  cur_script in  ${other_script[@]} ; do
 	tty_echo ">>>> Build : ${cur_script} "
 	${cur_script} 1>>$INSTALL_SCRIPT_LOG  2>>$INSTALL_SCRIPT_LOG_ERR
 	history | tail -n2
