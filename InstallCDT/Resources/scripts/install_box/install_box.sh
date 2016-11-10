@@ -144,8 +144,9 @@ EOF
 # ################## # ##################
 dailog_result=$( sh /tmp/install_box.tmp 2>&1  && echo $? )
 SDK_STYLE="--NO--"
-echo "SDK_STYLE :: ${dailog_result}  :: "$?
+
 switch_case=$( echo ${dailog_result} | tr "xx_" "\\n"  |  tail -n1 | awk '{if(length($2)){print $2}else{print $1}}' )
+echo "SDK_STYLE :: ${dailog_result}  :: "$?"::"$switch_case
 case  $switch_case in
   0)
     echo "Yes chosen."
@@ -250,7 +251,7 @@ case  $switch_case  in
   *)
     echo "Box closed."
     
-     xdialog  --timeout 10 	--title "Information "    --infobox "Installation Cancelled ...  "  0 64 10 
+     xdialog  --timeout 10 	--title "Information "    --msgbox "Installation Cancelled ...  "  0 64 
     int_user
     ;;
 esac

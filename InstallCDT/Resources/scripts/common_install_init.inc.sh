@@ -258,26 +258,26 @@ if [ "${#InstalledSoftware_path_terminal}" -gt 5 ]; then
             # ## darwin Specific first
             # ## can be adapted to Linux with GNU Screen or TYY/PTS shell
 
-            touch $INSTALL_SCRIPT_DIR/show_install_log.sh && chmod 755 $INSTALL_SCRIPT_DIR/show_install_log.sh
+            touch /tmp/show_install_log.sh && chmod 755 /tmp/show_install_log.sh
             echo '#!/bin/sh
             cd '${INSTALL_SCRIPT_DIR}'
 echo " finding functions ...."
 source $( find '${INSTALL_SCRIPT_DIR}' -name common_functions.sh -type f -print )
 echo " found functions ...."
-' > $INSTALL_SCRIPT_DIR/show_install_log.sh
-            echo "tail -f ${INSTALL_SCRIPT_LOG}" >> $INSTALL_SCRIPT_DIR/show_install_log.sh
+' > /tmp/show_install_log.sh
+            echo "tail -f ${INSTALL_SCRIPT_LOG}" >> /tmp/show_install_log.sh
 
-            touch $INSTALL_SCRIPT_DIR/show_install_log_err.sh && chmod 755 $INSTALL_SCRIPT_DIR/show_install_log_err.sh
+            touch /tmp/show_install_log_err.sh && chmod 755 /tmp/show_install_log_err.sh
             echo '#!/bin/sh
             cd '${INSTALL_SCRIPT_DIR}'
 echo " finding functions ...."
 source $( find '${INSTALL_SCRIPT_DIR}' -name common_functions.sh -type f -print )
 echo " found functions ...."
-' > $INSTALL_SCRIPT_DIR/show_install_log_err.sh
-            echo "tail -f ${INSTALL_SCRIPT_LOG_ERR}" >> $INSTALL_SCRIPT_DIR/show_install_log_err.sh
+' > /tmp/show_install_log_err.sh
+            echo "tail -f ${INSTALL_SCRIPT_LOG_ERR}" >> /tmp/show_install_log_err.sh
 
-            ${InstalledSoftware_path_terminal} $INSTALL_SCRIPT_DIR/show_install_log.sh &
-            ${InstalledSoftware_path_terminal} $INSTALL_SCRIPT_DIR/show_install_log_err.sh &
+            ${InstalledSoftware_path_terminal} /tmp/show_install_log.sh &
+            ${InstalledSoftware_path_terminal} /tmp/show_install_log_err.sh &
         fi
         # ###########
     else
