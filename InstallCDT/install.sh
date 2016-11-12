@@ -94,7 +94,7 @@ source $( find $PWD -name common_functions.sh -type f -print )
 #OR OTHER DEALINGS IN THE SOFTWARE.
 #
 # Inspired by the build-cross.sh script by Sam Lantinga, et al
-# Usage: install.sh <platform> <architecture> <productCrossPorting_Target_default_compiler> <productCrossPorting_Target_default_compiler-version> <osVersion>"
+# Usage: install.sh <platform> <architecture> <productCrossPorting_Target_compiler> <productCrossPorting_Target_compiler-version> <osVersion>"
 # Windows i386, Linux i386, Solaris sparc
 
 # ##  ((sw_vers 2>/dev/null | grep -i "ProductVersion" ) ||  ( uname -r | awk '{ print  "/."$1 }' ))  | tr "." " " | awk '{ print  $2"."$3 }'
@@ -120,98 +120,89 @@ source $( find $PWD -name common_install_init.inc.sh -type f -print )
 # ## set eu :: darwin problematic
 set -eu
  
-if [ $productCrossPorting_Target_default = "Windows" ];then
-	if [ $productCrossPorting_Target_default_arch = "i386" ];then
-		productCrossPorting_Target_default_compiler="i386-pc-mingw32msvc${osVersion}"
+if [ $productCrossPorting_Target = "Windows" ];then
+	if [ $productCrossPorting_Target_arch = "i386" ];then
+		productCrossPorting_Target_compiler="i386-pc-mingw32msvc${osVersion}"
 		compilerConfigureFlags=""
 	else
-		tty_echo "Unsupported architecture $productCrossPorting_Target_default_arch on $productCrossPorting_Target_default"
+		tty_echo "Unsupported architecture $productCrossPorting_Target_arch on $productCrossPorting_Target"
 	exit 1
 	fi
-elif [ $productCrossPorting_Target_default = "Linux" ];then
-	if [ $productCrossPorting_Target_default_arch = "i386" ];then
-		productCrossPorting_Target_default_compiler="i386-ubuntu-linux${osVersion}"
+elif [ $productCrossPorting_Target = "Linux" ];then
+	if [ $productCrossPorting_Target_arch = "i386" ];then
+		productCrossPorting_Target_compiler="i386-ubuntu-linux${osVersion}"
 		compilerConfigureFlags="--enable-version-specific-runtime-libs --enable-shared --enable-threads=posix --disable-checking --disable-libunwind-exceptions --with-system-zlib --enable-__cxa_atexit"
-	elif [ $productCrossPorting_Target_default_arch = "arm" ];then
-		productCrossPorting_Target_default_compiler="arm-none-linux-gnueabi${osVersion}"
+	elif [ $productCrossPorting_Target_arch = "arm" ];then
+		productCrossPorting_Target_compiler="arm-none-linux-gnueabi${osVersion}"
 		compilerConfigureFlags="--enable-version-specific-runtime-libs --enable-shared --enable-threads=posix --disable-checking --disable-libunwind-exceptions --with-system-zlib --enable-__cxa_atexit"
-	elif [ $productCrossPorting_Target_default_arch = "ppc" ];then
-   	 	productCrossPorting_Target_default_compiler="powerpc-unknown-linux${osVersion}"
+	elif [ $productCrossPorting_Target_arch = "ppc" ];then
+   	 	productCrossPorting_Target_compiler="powerpc-unknown-linux${osVersion}"
     		compilerConfigureFlags="--enable-version-specific-runtime-libs --enable-shared --enable-threads=posix --disable-checking --disable-libunwind-exceptions --with-system-zlib --enable-__cxa_atexit"
-	elif [ $productCrossPorting_Target_default_arch = "x86_64" ];then
-		productCrossPorting_Target_default_compiler="x86_64-pc-linux${osVersion}"
+	elif [ $productCrossPorting_Target_arch = "x86_64" ];then
+		productCrossPorting_Target_compiler="x86_64-pc-linux${osVersion}"
 		compilerConfigureFlags="--enable-version-specific-runtime-libs --enable-shared --enable-threads=posix --disable-checking --disable-libunwind-exceptions --with-system-zlib --enable-__cxa_atexit"
 		binutilsConfigureFlags="--enable-64-bit-bfd"
 	else
-		tty_echo "Unsupported architecture $productCrossPorting_Target_default_arch on $productCrossPorting_Target_default"
+		tty_echo "Unsupported architecture $productCrossPorting_Target_arch on $productCrossPorting_Target"
 		exit 1
 	fi
-elif [ $productCrossPorting_Target_default = "FreeBSD" ];then
-	if [ $productCrossPorting_Target_default_arch = "i386" ];then
-		productCrossPorting_Target_default_compiler="i386-pc-freebsd${osVersion}"
+elif [ $productCrossPorting_Target = "FreeBSD" ];then
+	if [ $productCrossPorting_Target_arch = "i386" ];then
+		productCrossPorting_Target_compiler="i386-pc-freebsd${osVersion}"
 		compilerConfigureFlags="--enable-version-specific-runtime-libs --enable-shared --enable-threads=posix --disable-checking --disable-libunwind-exceptions --with-system-zlib --enable-__cxa_atexit"
-	elif [ $productCrossPorting_Target_default_arch = "x86_64" ];then
-		productCrossPorting_Target_default_compiler="x86_64-pc-freebsd${osVersion}"
+	elif [ $productCrossPorting_Target_arch = "x86_64" ];then
+		productCrossPorting_Target_compiler="x86_64-pc-freebsd${osVersion}"
 		compilerConfigureFlags="--enable-version-specific-runtime-libs --enable-shared --enable-threads=posix --disable-checking --disable-libunwind-exceptions --with-system-zlib --enable-__cxa_atexit"
 		binutilsConfigureFlags="--enable-64-bit-bfd"
 	else
-		tty_echo "Unsupported architecture $productCrossPorting_Target_default_arch on $productCrossPorting_Target_default"
+		tty_echo "Unsupported architecture $productCrossPorting_Target_arch on $productCrossPorting_Target"
 		exit 1
 	fi
-elif [ $productCrossPorting_Target_default = "Solaris" ];then
-	if [ $productCrossPorting_Target_default_arch = "sparc" ];then
-		productCrossPorting_Target_default_compiler="sparc-sun-solaris${osVersion}"
+elif [ $productCrossPorting_Target = "Solaris" ];then
+	if [ $productCrossPorting_Target_arch = "sparc" ];then
+		productCrossPorting_Target_compiler="sparc-sun-solaris${osVersion}"
 		compilerConfigureFlags="--enable-version-specific-runtime-libs --enable-shared --enable-threads=posix --disable-checking --disable-libunwind-exceptions --with-system-zlib --enable-__cxa_atexit"
 	else
-		tty_echo "Unsupported architecture $productCrossPorting_Target_default_arch on $productCrossPorting_Target_default"
+		tty_echo "Unsupported architecture $productCrossPorting_Target_arch on $productCrossPorting_Target"
 		exit 1
 	 fi
-elif [ $productCrossPorting_Target_default = "darwin" ];then
-	if [ $productCrossPorting_Target_default_arch = "i386" ];then
-		productCrossPorting_Target_default_compiler="${productCrossPorting_Target_default_arch}-unknown-darwin${osVersion}"
+elif [ $productCrossPorting_Target = "darwin" ];then
+	if [ $productCrossPorting_Target_arch = "i386" ];then
+		productCrossPorting_Target_compiler="${productCrossPorting_Target_arch}-unknown-darwin${osVersion}"
 		compilerConfigureFlags="--enable-version-specific-runtime-libs --enable-shared --enable-threads=posix --disable-checking --disable-libunwind-exceptions --with-system-zlib --enable-__cxa_atexit"
 	else
-		tty_echo "Unsupported architecture $productCrossPorting_Target_default_arch on $productCrossPorting_Target_default"
+		tty_echo "Unsupported architecture $productCrossPorting_Target_arch on $productCrossPorting_Target"
 		exit 1
 	 fi
 
 else
-	tty_echo "Unsupported platform $productCrossPorting_Target_default"
+	tty_echo "Unsupported platform $productCrossPorting_Target"
 	exit 1
 fi
-
+ 
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
 
-interfaceFolder=$productCrossPorting_Target_default_compiler_dir_base_interface_compiler
-buildFolder=$productCrossPorting_Target_default_compiler_dir_build_platform
-resultFolder=$productCrossPorting_Target_default_compiler_dir_base_platform/$productCrossPorting_Target_default_compiler-$productCrossPorting_Target_default_compiler_version
-toolFolder=$productCrossPorting_Folder/bin
+PATH="$productCrossPorting_Host_compiler_basedir/bin:$PATH"
 
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
-
-PATH="$resultFolder/bin:$PATH"
-
-# ########## # ########### ########### ########### ##########
-# ########## # ########### ########### ########### ##########
-
 
 downloadCompilerIfNeeded(){
 ###
-productCrossPorting_Target_default_compiler="gcc"
-tty_echo "Downloading ${productCrossPorting_Target_default_compiler}-${productCrossPorting_Target_default_compiler_version}${productCrossPorting_Target_default_compiler_version_Date} (if needed) ..."
+
+tty_echo "Downloading ${productCrossPorting_Host_compiler}-${productCrossPorting_Host_compiler_version}${productCrossPorting_Host_compiler_version_Date} (if needed) ..."
 
 # ## ${url_google_cocotron_Download_GPL3}/binutils-$binutilsVersion.tar.gz
 # ## https://ftp.gnu.org/gnu/gmp/gmp-$gmpVersion.tar.bz2 https://ftp.gnu.org/gnu/binutils/binutils-$binutilsVersion.tar.bz2 \
 
 	$scriptResources/downloadFilesIfNeeded.sh $productCrossPorting_downloadFolder \
-	"${url_google_cocotron_Download_GPL3}/${productCrossPorting_Target_default_compiler}-${productCrossPorting_Target_default_compiler_version}${productCrossPorting_Target_default_compiler_version_Date}.tar.bz2 \	
+	"${url_google_cocotron_Download_GPL3}/${productCrossPorting_Host_compiler}-${productCrossPorting_Host_compiler_version}${productCrossPorting_Host_compiler_version_Date}.tar.bz2 \	
 	${url_google_cocotron_Download_ARCHIVE}/cocotron-binutils-2-21/binutils-$binutilsVersion.tar.gz \
 	${url_google_cocotron_Download_GPL3}/mpfr-$mpfrVersion.tar.bz2"
 	
 	$scriptResources/unarchiveFiles.sh $productCrossPorting_downloadFolder $productCrossPorting_sourceFolder \
-	"${productCrossPorting_Target_default_compiler}-${productCrossPorting_Target_default_compiler_version}${productCrossPorting_Target_default_compiler_version_Date} \
+	"${productCrossPorting_Host_compiler}-${productCrossPorting_Host_compiler_version}${productCrossPorting_Host_compiler_version_Date} \
 	binutils-$binutilsVersion gmp-$gmpVersion \
 	mpfr-$mpfrVersion"
 }
@@ -223,7 +214,7 @@ tty_echo "Downloading ${productCrossPorting_Target_default_compiler}-${productCr
 createWindowsInterfaceIfNeeded(){
 	"$scriptResources/downloadFilesIfNeeded.sh" $productCrossPorting_downloadFolder "${url_google_cocotron_Download_GPL3}/mingwrt-${mingwruntimeVersion}-mingw32-dev.tar.gz ${url_google_cocotron_Download_GPL3}/w32api-${mingwapiVersion}-mingw32-dev.tar.gz"
 
-	"$scriptResources/unarchiveFiles.sh" $productCrossPorting_downloadFolder $interfaceFolder "mingwrt-$mingwruntimeVersion-mingw32-dev w32api-${mingwapiVersion}-mingw32-dev"
+	"$scriptResources/unarchiveFiles.sh" $productCrossPorting_downloadFolder $productCrossPorting_Target_compiler_dir_base_interface_compiler "mingwrt-$mingwruntimeVersion-mingw32-dev w32api-${mingwapiVersion}-mingw32-dev"
 }
 
 # ########## # ########### ########### ########### ##########
@@ -265,12 +256,13 @@ tty_echo "Done."
 # ########## # ########### ########### ########### ##########
 
 copyPlatformInterface(){
-	if [ ! -d $interfaceFolder ];then
-		exit_witherror "Interface (headers, libraries, etc.) not present at "$interfaceFolder", exiting"
+	if [ ! -d $productCrossPorting_Target_compiler_dir_base_interface_compiler ];then
+		exit_witherror "Interface (headers, libraries, etc.) not present at "$productCrossPorting_Target_compiler_dir_base_interface_compiler", exiting"
 		# ## exit 1
 	else
-		mkdir -p $resultFolder/$productCrossPorting_Target_default_compiler
-		(cd $interfaceFolder;bsdtar -cf - *) | (cd $resultFolder/$productCrossPorting_Target_default_compiler;bsdtar -xf -)
+		mkdir -p $productCrossPorting_Host_compiler_basedir/$productCrossPorting_Target_compiler
+		# ###### TODO bsdtar
+		(cd $productCrossPorting_Host_compiler_basedir;bsdtar -cf - *) | (cd $productCrossPorting_Host_compiler_basedir/$productCrossPorting_Target_compiler;bsdtar -xf -)
 	fi
 }
 
@@ -279,12 +271,12 @@ copyPlatformInterface(){
 
 configureAndInstall_binutils() {
 	tty_echo "Configuring, building and installing binutils "$binutilsVersion
-	rm -rf $buildFolder/binutils-$binutilsVersion
-	mkdir -p $buildFolder/binutils-$binutilsVersion
-	pushd $buildFolder/binutils-$binutilsVersion
+	rm -rf $productCrossPorting_Target_compiler_dir_build_platform/binutils-$binutilsVersion
+	mkdir -p $productCrossPorting_Target_compiler_dir_build_platform/binutils-$binutilsVersion
+	pushd $productCrossPorting_Target_compiler_dir_build_platform/binutils-$binutilsVersion
 
-	CFLAGS="-m${productCrossPorting_Target_default_arch_wordSize} -Wformat=0 -Wno-error -Wno-error=unused-value" $productCrossPorting_sourceFolder/binutils-$binutilsVersion/configure --prefix="$resultFolder" --target=$productCrossPorting_Target_default_compiler $binutilsConfigureFlags
-	tty_echo $buildFolder/binutils-$binutilsVersion
+	CFLAGS="-m${productCrossPorting_Target_arch_wordSize} -Wformat=0 -Wno-error -Wno-error=unused-value" $productCrossPorting_sourceFolder/binutils-$binutilsVersion/configure --prefix="$productCrossPorting_Host_compiler_basedir" --target=$productCrossPorting_Target_compiler $binutilsConfigureFlags
+	tty_echo $productCrossPorting_Host_compiler_basedir/binutils-$binutilsVersion
 	tty_echo $CFlAGS
 	make
 	make install
@@ -296,22 +288,22 @@ configureAndInstall_binutils() {
 
 configureAndInstall_gmpAndMpfr() {
 	tty_echo "Configuring and building and installing gmp "$gmpVersion
-	rm -rf $buildFolder/gmp-$gmpVersion
-	mkdir -p $buildFolder/gmp-$gmpVersion
-	pushd $buildFolder/gmp-$gmpVersion
+	rm -rf $productCrossPorting_Target_compiler_dir_build_platform/gmp-$gmpVersion
+	mkdir -p $productCrossPorting_Target_compiler_dir_build_platform/gmp-$gmpVersion
+	pushd $productCrossPorting_Target_compiler_dir_build_platform/gmp-$gmpVersion
 
-	ABI=${productCrossPorting_Target_default_arch_wordSize} $productCrossPorting_sourceFolder/gmp-$gmpVersion/configure --prefix="$resultFolder"
+	ABI=${productCrossPorting_Target_arch_wordSize} $productCrossPorting_sourceFolder/gmp-$gmpVersion/configure --prefix="$productCrossPorting_Host_compiler_basedir"
 	make
 	make install
 
 	popd
 	
     tty_echo "Configuring and building mpfr "$mpfrVersion
-	rm -rf $buildFolder/mpfr-$mpfrVersion
-	mkdir -p $buildFolder/mpfr-$mpfrVersion
-	pushd $buildFolder/mpfr-$mpfrVersion
+	rm -rf $productCrossPorting_Target_compiler_dir_build_platform/mpfr-$mpfrVersion
+	mkdir -p $productCrossPorting_Target_compiler_dir_build_platform/mpfr-$mpfrVersion
+	pushd $productCrossPorting_Target_compiler_dir_build_platform/mpfr-$mpfrVersion
 
-	$productCrossPorting_sourceFolder/mpfr-$mpfrVersion/configure --prefix="$resultFolder" --with-gmp-build=$buildFolder/gmp-$gmpVersion
+	$productCrossPorting_sourceFolder/mpfr-$mpfrVersion/configure --prefix="$productCrossPorting_Host_compiler_basedir" --with-gmp-build=$productCrossPorting_Target_compiler_dir_build_platform/gmp-$gmpVersion
 	make
 	make install
 
@@ -322,17 +314,19 @@ configureAndInstall_gmpAndMpfr() {
 # ########## # ########### ########### ########### ##########
 
 configureAndInstall_compiler() {
-	tty_echo "Configuring, building and installing $productCrossPorting_Target_default_compiler "$productCrossPorting_Target_default_compiler_version
+	tty_echo "Configuring, building and installing $productCrossPorting_Host_compiler "$productCrossPorting_Host_compiler_version
 
-if [ "$productCrossPorting_Target_default_compiler" = "gcc" ]; then	
-# ##  rm -rf $buildFolder/$productCrossPorting_Target_default_compiler-$productCrossPorting_Target_default_compiler_version
-	mkdir -p $buildFolder/$productCrossPorting_Target_default_compiler-$productCrossPorting_Target_default_compiler_version
-	pushd $buildFolder/$productCrossPorting_Target_default_compiler-$productCrossPorting_Target_default_compiler_version
+if [ "$productCrossPorting_Host_compiler" = "gcc" ]; then	
+# ##  rm -rf $productCrossPorting_Target_compiler_dir_build_platform/$productCrossPorting_Host_compiler-$productCrossPorting_Host_compiler_version
+	mkdir -p $productCrossPorting_Target_compiler_dir_build_platform/$productCrossPorting_Host_compiler-$productCrossPorting_Host_compiler_version
+	pushd $productCrossPorting_Target_compiler_dir_build_platform/$productCrossPorting_Host_compiler-$productCrossPorting_Host_compiler_version
 # make clean
-	CFLAGS="-m${productCrossPorting_Target_default_arch_wordSize}" $productCrossPorting_sourceFolder/$productCrossPorting_Target_default_compiler-$productCrossPorting_Target_default_compiler_version/configure -v --prefix="$resultFolder" --target=$productCrossPorting_Target_default_compiler \
-		--with-gnu-as --with-gnu-ld --with-headers=$resultFolder/$productCrossPorting_Target_default_compiler/include \
+	CFLAGS="-m${productCrossPorting_Target_arch_wordSize}" $productCrossPorting_sourceFolder/$productCrossPorting_Host_compiler-$productCrossPorting_Host_compiler_version/configure -v \
+		--prefix="$productCrossPorting_Host_compiler_basedir" --target=$productCrossPorting_Target_compiler \
+		--with-gnu-as --with-gnu-ld --with-headers=$productCrossPorting_Host_compiler_basedir/$productCrossPorting_Target_compiler/include \
 		--without-newlib --disable-multilib --disable-libssp --disable-nls --enable-languages="$enableLanguages" \
-		--with-gmp=$buildFolder/gmp-$gmpVersion --enable-decimal-float --with-mpfr=$resultFolder --enable-checking=release \
+		--with-gmp=$productCrossPorting_Target_compiler_dir_build_platform/gmp-$gmpVersion --enable-decimal-float \
+		--with-mpfr=$productCrossPorting_Host_compiler_basedir --enable-checking=release \
 		--enable-objc-gc \
 		$compilerConfigureFlags
 	echo "MAKEINFO = :" >> Makefile
@@ -340,21 +334,22 @@ if [ "$productCrossPorting_Target_default_compiler" = "gcc" ]; then
 	make install
 	popd
 
-elif [ "$productCrossPorting_Target_default_compiler" = "llvm-clang" ]; then	
-	if [ ! -e "$productCrossPorting_Folder/$productCrossPorting_Target_default_compiler-$productCrossPorting_Target_default_compiler_version/bin/clang" ]; then
-		rm -rf $productCrossPorting_Folder/build/$productCrossPorting_Target_default_compiler-$productCrossPorting_Target_default_compiler_version
-		mkdir -p $productCrossPorting_Folder/build/$productCrossPorting_Target_default_compiler-$productCrossPorting_Target_default_compiler_version
-		pushd $productCrossPorting_Folder/build/$productCrossPorting_Target_default_compiler-$productCrossPorting_Target_default_compiler_version
+elif [ "$productCrossPorting_Host_compiler" = "llvm-clang" ]; then	
+	if [ ! -e "$productCrossPorting_Folder/$productCrossPorting_Host_compiler-$productCrossPorting_Host_compiler_version/bin/clang" ]; then
+		rm -rf $productCrossPorting_Target_compiler_dir_build_platform/$productCrossPorting_Host_compiler-$productCrossPorting_Host_compiler_version
+		mkdir -p $productCrossPorting_Target_compiler_dir_build_platform/$productCrossPorting_Host_compiler-$productCrossPorting_Host_compiler_version
+		pushd $productCrossPorting_Target_compiler_dir_build_platform/$productCrossPorting_Host_compiler-$productCrossPorting_Host_compiler_version
 make clean
-		$productCrossPorting_sourceFolder/$productCrossPorting_Target_default_compiler-$productCrossPorting_Target_default_compiler_version/configure --enable-optimized --prefix="$productCrossPorting_Folder/$productCrossPorting_Target_default_compiler-$productCrossPorting_Target_default_compiler_version"
+		$productCrossPorting_sourceFolder/$productCrossPorting_Host_compiler-$productCrossPorting_Host_compiler_version/configure --enable-optimized \
+		--prefix="$productCrossPorting_Folder/$productCrossPorting_Host_compiler-$productCrossPorting_Host_compiler_version"
 		make 
 		make install
 		popd
 	else
-		tty_echo "$productCrossPorting_Target_default_compiler $productCrossPorting_Target_default_compiler already exists"
+		tty_echo "Compiler $productCrossPorting_Host_compiler already exists"
 	fi
 else
-	tty_echo "Unknown $productCrossPorting_Target_default_compiler $productCrossPorting_Target_default_compiler"
+	tty_echo "Unknown Compiler $productCrossPorting_Host_compiler"
 	exit 1
 fi
 
@@ -365,16 +360,16 @@ fi
 
 stripBinaries() {
 	tty_echo -n "Stripping binaries ..."
-	for x in `find $resultFolder/bin -type f -print`
+	for x in `find $productCrossPorting_Target_compiler_basedir/bin -type f -print`
 	do
 		strip $x
 	done
-	for x in `find $resultFolder/$productCrossPorting_Target_default_compiler/bin/ -type f -print`
+	for x in `find $productCrossPorting_Target_compiler_basedir/$productCrossPorting_Target_compiler/bin/ -type f -print`
 	do
 		strip $x
 	done
-    if [ "$productCrossPorting_Target_default_compiler" = "gcc" ]; then
-	    for x in `find $resultFolder/libexec/$productCrossPorting_Target_default_compiler/$productCrossPorting_Target_default_compiler/$productCrossPorting_Target_default_compiler_version -type f -print`
+    if [ "$productCrossPorting_Host_compiler" = "gcc" ]; then
+	    for x in `find $productCrossPorting_Target_compiler_basedir/libexec/$productCrossPorting_Host_compiler/$productCrossPorting_Target_compiler/$productCrossPorting_Host_compiler_version -type f -print`
 	    do
 		    strip $x
 	    done
@@ -386,7 +381,7 @@ stripBinaries() {
 # ########## # ########### ########### ########### ##########
 	tty_echo "########### # ########### ########### ########### ###########"
 	tty_echo "########### # ########### ########### ########### ###########"
-	tty_yesyno " ##### >>>>>> Install compiler $productCrossPorting_Target_default_compiler section ... "
+	tty_yesyno " ##### >>>>>> Install compiler $productCrossPorting_Host_compiler section ... "
 	tty_echo "########### # ########### ########### ########### ###########"
 	tty_echo "########### # ########### ########### ########### ###########"
 	install_compiler_section_response=${tty_yesyno_response}
@@ -396,9 +391,9 @@ if [ "${install_compiler_section_response}" == "y" ]; then
 	# ########## # ########### ########### ########### ##########
 	# ########## # ########### ########### ########### ##########
 	
-	tty_echo "COCOTRON  :: Platform Interface  :: May Build interface for : $productCrossPorting_Target_default"
+	tty_echo "COCOTRON  :: Platform Interface  :: May Build interface for : $productCrossPorting_Target"
 	
-	"create${productCrossPorting_Target_default}InterfaceIfNeeded" 1>>$INSTALL_SCRIPT_LOG  2>>$INSTALL_SCRIPT_LOG_ERR
+	"create${productCrossPorting_Target}InterfaceIfNeeded" 1>>$INSTALL_SCRIPT_LOG  2>>$INSTALL_SCRIPT_LOG_ERR
 	tty_echo "COCOTRON  :: Platform Interface  :: completed"
 	
 	# ########## # ########### ########### ########### ##########
@@ -412,7 +407,7 @@ if [ "${install_compiler_section_response}" == "y" ]; then
 	# ########## # ########### ########### ########### ##########
 	
 	tty_echo "COCOTRON  :: Platform Interface  :: Copying the platform interface.  This could take a while.."
-	if [ $productCrossPorting_Target_default != "darwin" ]; then
+	if [ $productCrossPorting_Target != "darwin" ]; then
 		copyPlatformInterface 1>>$INSTALL_SCRIPT_LOG  2>>$INSTALL_SCRIPT_LOG_ERR
 	fi
 	tty_echo "COCOTRON  :: Platform Interface  :: completed"
@@ -460,7 +455,8 @@ if [ "${install_compiler_section_response}" == "y" ]; then
 	
 	tty_echo "COCOTRON  :: SPECS  :: Creating specifications ..."
 	
-	"$scriptResources/createSpecifications.sh" $productCrossPorting_Target_default $productCrossPorting_Target_default_arch $productName $productVersion $productCrossPorting_Target_default_compiler "$installResources/Specifications"  $productCrossPorting_Target_default_compiler $productCrossPorting_Target_default_compiler_version
+	"$scriptResources/createSpecifications.sh" $productCrossPorting_Host_compiler $productCrossPorting_Target $productCrossPorting_Name $productCrossPorting_Version \
+	$productCrossPorting_Target_compiler "$installResources/Specifications"  $productCrossPorting_Host_compiler $productCrossPorting_Host_compiler_version
 	
 	tty_echo "COCOTRON  :: SPECS  :: completed"
 	
@@ -469,38 +465,39 @@ if [ "${install_compiler_section_response}" == "y" ]; then
 	
 	
 	tty_echo "COCOTRON  :: Building tools ..."
-	mkdir -p $toolFolder
-	cc "$toolResources/retargetBundle.m" -framework Foundation -o $toolFolder/retargetBundle
+	mkdir -p $productCrossPorting_binFolder
+	cc "$toolResources/retargetBundle.m" -framework Foundation -o $productCrossPorting_binFolder/retargetBundle
 	tty_echo "done."
 	
 	# ########## # ########### ########### ########### ##########
 	# ########## # ########### ########### ########### ##########
 	
-	if [ "$productCrossPorting_Target_default_compiler" = "gcc" ]; then
-		(cd $resultFolder/..;ln -fs $productCrossPorting_Target_default_compiler-$productCrossPorting_Target_default_compiler_version g++-$productCrossPorting_Target_default_compiler_version)
-	elif [ "$productCrossPorting_Target_default_compiler" = "llvm-clang" ]; then	
-		(cd $resultFolder/..;ln -fs $productCrossPorting_Target_default_compiler-$productCrossPorting_Target_default_compiler_version llvm-clang++-$productCrossPorting_Target_default_compiler_version)
+	if [ "${productCrossPorting_Host_compiler}" = "gcc" ]; then
+		(cd ${productCrossPorting_Target_compiler_basedir}/..;ln -fs ${productCrossPorting_Host_compiler}-${productCrossPorting_Host_compiler_version} g++-${productCrossPorting_Host_compiler_version})
+	elif [ "${productCrossPorting_Host_compiler}" = "llvm-clang" ]; then	
+		(cd ${productCrossPorting_Target_compiler_basedir}/..;ln -fs ${productCrossPorting_Host_compiler}-${productCrossPorting_Host_compiler_version} llvm-clang++-${productCrossPorting_Host_compiler_version})
 	else
-		tty_echo "Unknown $productCrossPorting_Target_default_compiler $productCrossPorting_Target_default_compiler"
+		tty_echo "Unknown Compiler ${productCrossPorting_Host_compiler}"
 		exit 1
 	fi
 	
 	# ########## # ########### ########### ########### ##########
 	# ########## # ########### ########### ########### ##########
 	
-	if [ "$productCrossPorting_Target_default_compiler" = "llvm-clang" ]; then
+	if [ "${productCrossPorting_Host_compiler}" = "llvm-clang" ]; then
 	# you need to install also gcc because -ccc-gcc-name is required for cross compiling with clang (this is required for choosing the right assembler 'as' tool. 
 	# there is no flag for referencing only this tool :-(
-	tty_echo -n "Creating clang script for architecture $productCrossPorting_Target_default_arch ...in " $installFolder/$productName/$productVersion/$productCrossPorting_Target_default/$productCrossPorting_Target_default_arch/llvm-clang-$productCrossPorting_Target_default_compiler_version/bin/$productCrossPorting_Target_default_compiler-llvm-clang
+	tty_echo -n "Creating clang script for architecture $productCrossPorting_Target_arch ...in " ${productCrossPorting_Target_compiler_dir_base_platform}/llvm-clang-${productCrossPorting_Host_compiler_version}/bin/${productCrossPorting_Target_compiler}-llvm-clang
 	
-	tty_echo '#!/bin/sh
-
-source $( find $(dirname $0) -name common_functions.sh -type f -print )
-' > $installFolder/$productName/$productVersion/$productCrossPorting_Target_default/$productCrossPorting_Target_default_arch/llvm-clang-$productCrossPorting_Target_default_compiler_version/bin/$productCrossPorting_Target_default_compiler-llvm-clang
+	echo '#!/bin/sh \
+\
+source $( find $(dirname $0) -name common_functions.sh -type f -print ) \
+' > ${productCrossPorting_Target_compiler_dir_base_platform}/llvm-clang-${productCrossPorting_Host_compiler_version}/bin/${productCrossPorting_Target_compiler}-llvm-clang
 	
-	tty_echo "$productCrossPorting_Folder/$productCrossPorting_Target_default_compiler-$productCrossPorting_Target_default_compiler_version/bin/clang -fcocotron-runtime -ccc-host-triple $productCrossPorting_Target_default_compiler -ccc-gcc-name $installFolder/$productName/$productVersion/$productCrossPorting_Target_default/$productCrossPorting_Target_default_arch/gcc-$productCrossPorting_Target_default_compiler_version/bin/$productCrossPorting_Target_default_compiler-gcc \
-	-I$installFolder/$productName/$productVersion/$productCrossPorting_Target_default/$productCrossPorting_Target_default_arch/llvm-clang-$productCrossPorting_Target_default_compiler_version/$productCrossPorting_Target_default_compiler/include \"\$@\"" >> $installFolder/$productName/$productVersion/$productCrossPorting_Target_default/$productCrossPorting_Target_default_arch/llvm-clang-$productCrossPorting_Target_default_compiler_version/bin/$productCrossPorting_Target_default_compiler-llvm-clang
-	chmod +x $installFolder/$productName/$productVersion/$productCrossPorting_Target_default/$productCrossPorting_Target_default_arch/llvm-clang-$productCrossPorting_Target_default_compiler_version/bin/$productCrossPorting_Target_default_compiler-llvm-clang
+	echo "$productCrossPorting_Folder/$productCrossPorting_Target_compiler-$productCrossPorting_Target_compiler_version/bin/clang -fcocotron-runtime -ccc-host-triple $productCrossPorting_Target_compiler -ccc-gcc-name $installFolder/$productName/$productVersion/$productCrossPorting_Target/$productCrossPorting_Target_arch/gcc-$productCrossPorting_Host_compiler_version/bin/$productCrossPorting_Target_compiler-gcc \
+	-I${productCrossPorting_Target_compiler_dir_base_platform}/llvm-clang-${productCrossPorting_Host_compiler_version}/${productCrossPorting_Target_compiler}/include \"\$@\""  >> ${productCrossPorting_Target_compiler_dir_base_platform}/llvm-clang-$productCrossPorting_Host_compiler_version/bin/$productCrossPorting_Target_compiler-llvm-clang
+	
+	chmod +x ${productCrossPorting_Target_compiler_dir_base_platform}/llvm-clang-${productCrossPorting_Host_compiler_version}/bin/${productCrossPorting_Target_compiler}-llvm-clang
 	tty_echo "done."
 	fi
 	
@@ -509,7 +506,7 @@ source $( find $(dirname $0) -name common_functions.sh -type f -print )
 	
 	/bin/echo
 else
-	tty_echo "#### >>>> skipping productCrossPorting_Target_default_compiler Section ...."
+	tty_echo "#### >>>> skipping productCrossPorting_Target_compiler Section ...."
 fi
 tty_echo "COCOTRON  :: Libraries :: Install other script ..."
 

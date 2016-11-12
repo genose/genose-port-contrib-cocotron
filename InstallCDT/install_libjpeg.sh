@@ -42,7 +42,7 @@ $scriptResources/unarchiveFiles.sh $productCrossPorting_downloadFolder $BUILD  $
 echo "***************************************** *"
 echo "***************************************** *"
 echo "Configure with  :: "
-echo " --prefix=$productCrossPorting_Target_default_compiler_dir_system "
+echo " --prefix=$productCrossPorting_Target_compiler_dir_system "
 echo " --disable-shared "
 echo " --host=$TARGET "
 echo " --target=$TARGET "
@@ -50,8 +50,8 @@ echo " CC=$GCC "
 echo " RANLIB=" $RANLIB
 echo "***************************************** *"
 echo "***************************************** *"
-productCrossPorting_Target_default_compiler_dir_system="${productCrossPorting_Target_default_compiler_dir_system}/${packedProduct_type}${packedProduct}"
-./configure --prefix="$productCrossPorting_Target_default_compiler_dir_system" --disable-shared -host=$TARGET -target=$TARGET CC=$GCC RANLIB=$RANLIB
+productCrossPorting_Target_compiler_dir_system="${productCrossPorting_Target_compiler_dir_system}/${packedProduct_type}${packedProduct}"
+./configure --prefix="$productCrossPorting_Target_compiler_dir_system" --disable-shared -host=$TARGET -target=$TARGET CC=$GCC RANLIB=$RANLIB
 
 tty_echo "Install ${packedProduct} on TARGET : ${TARGET} ::  ${AS} ::  ${AR} :: ${RANLIB}"
 

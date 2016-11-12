@@ -37,6 +37,6 @@ echo "Installing ${packedProduct} ..."
 
 $scriptResources/downloadFilesIfNeeded.sh $productCrossPorting_downloadFolder -c "${packedVersionCheck}"  "${url_google_cocotron_Download_GPL3}/${packedProduct}-${packedVersion}.zip"
 
-$scriptResources/unarchiveFiles.sh  "${productCrossPorting_downloadFolder}" "${productCrossPorting_Target_default_compiler_dir_system}"  "${packedProduct}-${packedVersion}"
+$scriptResources/unarchiveFiles.sh  "${productCrossPorting_downloadFolder}" "${productCrossPorting_Target_compiler_dir_system}"  "${packedProduct}-${packedVersion}"
 
 tty_echo "#### ${packedProduct} installed in (${PWD}) "

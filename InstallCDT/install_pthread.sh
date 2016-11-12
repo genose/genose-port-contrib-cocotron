@@ -33,9 +33,9 @@ ftp://sourceware.org/pub/${packedProduct}${packedVersionPlatform}/${packedProduc
 ftp://sourceware.org/pub/${packedProduct}${packedVersionPlatform}/${packedProduct_type}-latest/include/semaphore.h"
 
 
-cp $TMPDIR/pthreadGC2.dll  ${productCrossPorting_Target_default_compiler_dir_system}/bin || send_exit $0 $LINENO
-cp $TMPDIR/libpthreadGC2.a  ${productCrossPorting_Target_default_compiler_dir_system}/lib || send_exit $0 $LINENO
-cp $TMPDIR/pthread.h    ${productCrossPorting_Target_default_compiler_dir_system}/include || send_exit $0 $LINENO
-cp $TMPDIR/sched.h      ${productCrossPorting_Target_default_compiler_dir_system}/include || send_exit $0 $LINENO
-cp $TMPDIR/semaphore.h  ${productCrossPorting_Target_default_compiler_dir_system}/include || send_exit $0 $LINENO
+cp $TMPDIR/pthreadGC2.dll  ${productCrossPorting_Target_compiler_dir_system}/bin || send_exit $0 $LINENO
+cp $TMPDIR/libpthreadGC2.a  ${productCrossPorting_Target_compiler_dir_system}/lib || send_exit $0 $LINENO
+cp $TMPDIR/pthread.h    ${productCrossPorting_Target_compiler_dir_system}/include || send_exit $0 $LINENO
+cp $TMPDIR/sched.h      ${productCrossPorting_Target_compiler_dir_system}/include || send_exit $0 $LINENO
+cp $TMPDIR/semaphore.h  ${productCrossPorting_Target_compiler_dir_system}/include || send_exit $0 $LINENO
 

@@ -48,13 +48,13 @@ $scriptResources/downloadFilesIfNeeded.sh $downloadFolder ftp://ftp.simplesystem
     cd ${unarchivedFile}/lib 
 pwd 
 
-INSTALL_PREFIX=${productCrossPorting_Target_default_compiler_dir_system}/libpng
+INSTALL_PREFIX=${productCrossPorting_Target_compiler_dir_system}/libpng
 BINARY_PATH=$INSTALL_PREFIX/bin
 INCLUDE_PATH=$INSTALL_PREFIX/include
 LIBRARY_PATH=$INSTALL_PREFIX/lib
 
-export LDFLAGS="-L$(ls -d ${productCrossPorting_Target_default_compiler_dir_system}/zlib*| head -n1 )/lib"
-export CFLAGS="-I$(ls -d ${productCrossPorting_Target_default_compiler_dir_system}/zlib* | head -n1 )/include"
+export LDFLAGS="-L$(ls -d ${productCrossPorting_Target_compiler_dir_system}/zlib*| head -n1 )/lib"
+export CFLAGS="-I$(ls -d ${productCrossPorting_Target_compiler_dir_system}/zlib* | head -n1 )/include"
 
 GCC="$GCC $CFLAGS"
 make clean

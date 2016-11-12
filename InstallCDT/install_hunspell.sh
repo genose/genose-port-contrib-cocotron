@@ -46,14 +46,14 @@ pwd
 
 cd src || echo "Error ...." && ls -la $BUILD  && send_exit $0 $LINENO  | tee >&2 >> $SCRIPT_TTY
 
-productCrossPorting_Target_default_compiler_dir_system="${productCrossPorting_Target_default_compiler_dir_system}/${packedProduct}-${packedVersion}"
+productCrossPorting_Target_compiler_dir_system="${productCrossPorting_Target_compiler_dir_system}/${packedProduct}-${packedVersion}"
  
-${productCrossPorting_Target_default_compiler_basedir}/bin/i386-pc-mingw32msvc-g++ -shared -O2 -ansi -pedantic ${packedProduct}/affentry.cxx ${packedProduct}/affixmgr.cxx ${packedProduct}/hashmgr.cxx ${packedProduct}/suggestmgr.cxx ${packedProduct}/csutil.cxx ${packedProduct}/phonet.cxx ${packedProduct}/${packedProduct}.cxx ${packedProduct}/filemgr.cxx ${packedProduct}/hunzip.cxx ${packedProduct}/replist.cxx parsers/textparser.cxx parsers/firstparser.cxx parsers/htmlparser.cxx parsers/latexparser.cxx parsers/manparser.cxx -I${packedProduct} -Iwin_api win_api/${packedProduct}dll.c -o ${packedProduct}."${packedVersion}".dll -Wl,--out-implib,lib${packedProduct}."${packedVersion}".a
+${productCrossPorting_Target_compiler_basedir}/bin/i386-pc-mingw32msvc-g++ -shared -O2 -ansi -pedantic ${packedProduct}/affentry.cxx ${packedProduct}/affixmgr.cxx ${packedProduct}/hashmgr.cxx ${packedProduct}/suggestmgr.cxx ${packedProduct}/csutil.cxx ${packedProduct}/phonet.cxx ${packedProduct}/${packedProduct}.cxx ${packedProduct}/filemgr.cxx ${packedProduct}/hunzip.cxx ${packedProduct}/replist.cxx parsers/textparser.cxx parsers/firstparser.cxx parsers/htmlparser.cxx parsers/latexparser.cxx parsers/manparser.cxx -I${packedProduct} -Iwin_api win_api/${packedProduct}dll.c -o ${packedProduct}."${packedVersion}".dll -Wl,--out-implib,lib${packedProduct}."${packedVersion}".a
 
 
-cp win_api/${packedProduct}dll.h                $productCrossPorting_Target_default_compiler_dir_system/include  || echo "Error ...."  && send_exit $0 $LINENO  | tee >&2 >> $SCRIPT_TTY
-cp ${packedProduct}/*.hxx                       $productCrossPorting_Target_default_compiler_dir_system/include  || echo "Error ...."  && send_exit $0 $LINENO  | tee >&2 >> $SCRIPT_TTY
-cp ${packedProduct}/*.h                         $productCrossPorting_Target_default_compiler_dir_system/include  || echo "Error ...."  && send_exit $0 $LINENO  | tee >&2 >> $SCRIPT_TTY
-cp "${packedProduct}.${packedVersion}".dll      $productCrossPorting_Target_default_compiler_dir_system/bin      || echo "Error ...."  && send_exit $0 $LINENO  | tee >&2 >> $SCRIPT_TTY
-cp "lib${packedProduct}.${packedVersion}".a     $productCrossPorting_Target_default_compiler_dir_system/lib      || echo "Error ...."  && send_exit $0 $LINENO  | tee >&2 >> $SCRIPT_TTY
+cp win_api/${packedProduct}dll.h                $productCrossPorting_Target_compiler_dir_system/include  || echo "Error ...."  && send_exit $0 $LINENO  | tee >&2 >> $SCRIPT_TTY
+cp ${packedProduct}/*.hxx                       $productCrossPorting_Target_compiler_dir_system/include  || echo "Error ...."  && send_exit $0 $LINENO  | tee >&2 >> $SCRIPT_TTY
+cp ${packedProduct}/*.h                         $productCrossPorting_Target_compiler_dir_system/include  || echo "Error ...."  && send_exit $0 $LINENO  | tee >&2 >> $SCRIPT_TTY
+cp "${packedProduct}.${packedVersion}".dll      $productCrossPorting_Target_compiler_dir_system/bin      || echo "Error ...."  && send_exit $0 $LINENO  | tee >&2 >> $SCRIPT_TTY
+cp "lib${packedProduct}.${packedVersion}".a     $productCrossPorting_Target_compiler_dir_system/lib      || echo "Error ...."  && send_exit $0 $LINENO  | tee >&2 >> $SCRIPT_TTY
 

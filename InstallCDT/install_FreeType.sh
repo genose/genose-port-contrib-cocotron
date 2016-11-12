@@ -34,7 +34,7 @@ echo "Installing ${packedProduct} ..."
 
 $scriptResources/downloadFilesIfNeeded.sh $productCrossPorting_downloadFolder -c "${packedVersionCheck}" "http://downloads.sourceforge.net/gnuwin32/${packedProduct}-${packedVersion}${packedVersionPack}.zip"
 
-productCrossPorting_Target_default_compiler_dir_system="${productCrossPorting_Target_default_compiler_dir_system}/${packedProduct}-${packedVersion}"
+productCrossPorting_Target_compiler_dir_system="${productCrossPorting_Target_compiler_dir_system}/${packedProduct}-${packedVersion}"
 
-$scriptResources/unarchiveFiles.sh  $productCrossPorting_downloadFolder $productCrossPorting_Target_default_compiler_dir_system   "${packedProduct}-${packedVersion}${packedVersionPack}"
+$scriptResources/unarchiveFiles.sh  $productCrossPorting_downloadFolder $productCrossPorting_Target_compiler_dir_system   "${packedProduct}-${packedVersion}${packedVersionPack}"
 

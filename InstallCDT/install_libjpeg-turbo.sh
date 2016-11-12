@@ -39,7 +39,7 @@ $scriptResources/unarchiveFiles.sh  $productCrossPorting_downloadFolder $BUILD  
     cd ${unarchivedFile}
 
 make clean
-productCrossPorting_Target_default_compiler_dir_system="${productCrossPorting_Target_default_compiler_dir_system}/${packedProduct_depend}"
+productCrossPorting_Target_compiler_dir_system="${productCrossPorting_Target_compiler_dir_system}/${packedProduct_depend}"
 
 ./configure --prefix="$PREFIX"  --disable-shared --host=$TARGET --target=$TARGET  AR=$AR AS=$AS CC=$GCC RANLIB=$RANLIB --with-jpeg8
 

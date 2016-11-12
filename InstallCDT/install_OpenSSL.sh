@@ -30,12 +30,12 @@ source $( find $(dirname $0) -name common_functions.sh -type f -print )
 packedVersion="${packedVersionMajor}${packedVersionMinor}${packedVersionRev}${packedVersionPlatform}${packedVersionArch}${packedVersionPack}"
 echo "Installing ${packedProduct} ..."
 
-productCrossPorting_Target_default_compiler_dir_system="${productCrossPorting_Target_default_compiler_dir_system}/${packedProduct}-${packedVersion}"
+productCrossPorting_Target_compiler_dir_system="${productCrossPorting_Target_compiler_dir_system}/${packedProduct}-${packedVersion}"
 
 
-INCLUDE=$productCrossPorting_Target_default_compiler_dir_system/include
-BIN=$productCrossPorting_Target_default_compiler_dir_system/bin
-LIB=$productCrossPorting_Target_default_compiler_dir_system/lib
+INCLUDE=$productCrossPorting_Target_compiler_dir_system/include
+BIN=$productCrossPorting_Target_compiler_dir_system/bin
+LIB=$productCrossPorting_Target_compiler_dir_system/lib
 
 $scriptResources/downloadFilesIfNeeded.sh $productCrossPorting_downloadFolder -c "${packedVersionCheck}"  "http://downloads.sourceforge.net/gnuwin32/${packedProduct}-${packedVersion}-lib.zip" -c "${packedVersionCheck}" "http://downloads.sourceforge.net/gnuwin32/${packedProduct}-${packedVersion}-bin.zip"
  
@@ -52,8 +52,8 @@ $scriptResources/unarchiveFiles.sh  $productCrossPorting_downloadFolder $TMPDIR 
     
     cd ${unarchivedFile}
 pwd
-cp -v bin/libssl32.dll $productCrossPorting_Target_default_compiler_dir_system/bin/ || echo "Copy Error ...."  && send_exit $0 $LINENO | tee >&2 >> $SCRIPT_TTY
-cp -v lib/libcrypto.a $productCrossPorting_Target_default_compiler_dir_system/lib/ || echo "Error ...."  && send_exit $0 $LINENO | tee >&2 >> $SCRIPT_TTY
-cp -v lib/libssl.a $productCrossPorting_Target_default_compiler_dir_system/lib/ || echo "Error ...."   && send_exit $0 $LINENO | tee >&2 >> $SCRIPT_TTY
-cp -vr include/${packedProduct} $productCrossPorting_Target_default_compiler_dir_system/include/ || echo "Error ...."   && send_exit $0 $LINENO | tee >&2 >> $SCRIPT_TTY
+cp -v bin/libssl32.dll $productCrossPorting_Target_compiler_dir_system/bin/ || echo "Copy Error ...."  && send_exit $0 $LINENO | tee >&2 >> $SCRIPT_TTY
+cp -v lib/libcrypto.a $productCrossPorting_Target_compiler_dir_system/lib/ || echo "Error ...."  && send_exit $0 $LINENO | tee >&2 >> $SCRIPT_TTY
+cp -v lib/libssl.a $productCrossPorting_Target_compiler_dir_system/lib/ || echo "Error ...."   && send_exit $0 $LINENO | tee >&2 >> $SCRIPT_TTY
+cp -vr include/${packedProduct} $productCrossPorting_Target_compiler_dir_system/include/ || echo "Error ...."   && send_exit $0 $LINENO | tee >&2 >> $SCRIPT_TTY
 

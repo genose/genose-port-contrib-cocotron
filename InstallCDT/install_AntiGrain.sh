@@ -32,9 +32,9 @@ source $( find $(dirname $0) -name common_functions.sh -type f -print )
 packedVersion="${packedVersionMajor}${packedVersionMinor}${packedVersionRev}${packedVersionPlatform}${packedVersionArch}${packedVersionPack}"
 echo "Installing ${packedProduct} ..."
 
-productCrossPorting_Target_default_compiler_dir_system="${productCrossPorting_Target_default_compiler_dir_system}/${packedProduct}-${packedVersion}"
+productCrossPorting_Target_compiler_dir_system="${productCrossPorting_Target_compiler_dir_system}/${packedProduct}-${packedVersion}"
 
-echo " :::: ${productCrossPorting_Target_default_compiler_dir_system}"
+echo " :::: ${productCrossPorting_Target_compiler_dir_system}"
 send_exit
 $scriptResources/downloadFilesIfNeeded.sh $productCrossPorting_downloadFolder -c "${packedVersionCheck}" "http://www.antigrain.com/${packedProduct}-${packedVersion}.zip"
 
@@ -67,9 +67,9 @@ cd ..
 cat > Makefile.in.Cocotron <<EOF
 AGGLIBS= -lagg 
 AGGCXXFLAGS = -O3
-CXX = ${productCrossPorting_Target_default_compiler_basedir}/bin/i386-pc-mingw32msvc-g++
-C = ${productCrossPorting_Target_default_compiler_basedir}/bin/i386-pc-mingw32msvc-gcc
-LIB = ${CrossPorting_Target_default_compiler_basedir}/bin/i386-pc-mingw32msvc-ar cr
+CXX = ${productCrossPorting_Target_compiler_basedir}/bin/i386-pc-mingw32msvc-g++
+C = ${productCrossPorting_Target_compiler_basedir}/bin/i386-pc-mingw32msvc-gcc
+LIB = ${CrossPorting_Target_compiler_basedir}/bin/i386-pc-mingw32msvc-ar cr
 
 .PHONY : clean
 EOF
@@ -85,6 +85,6 @@ touch gpc/gpc.c
 
 make
 
-mkdir -p $productCrossPorting_Target_default_compiler_dir_system
-(tar -cf - --exclude "Makefile*" include) | (cd $productCrossPorting_Target_default_compiler_dir_system;tar -xf -)
-cp src/libagg.a $productCrossPorting_Target_default_compiler_dir_system
+mkdir -p $productCrossPorting_Target_compiler_dir_system
+(tar -cf - --exclude "Makefile*" include) | (cd $productCrossPorting_Target_compiler_dir_system;tar -xf -)
+cp src/libagg.a $productCrossPorting_Target_compiler_dir_system

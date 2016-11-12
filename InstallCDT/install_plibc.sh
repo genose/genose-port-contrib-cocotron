@@ -26,9 +26,9 @@
 source $( find $(dirname $0) -name common_functions.sh -type f -print )
 
 
-INCLUDE="${productCrossPorting_Target_default_compiler_dir_system}/include"
-BIN="${productCrossPorting_Target_default_compiler_dir_system}/bin"
-LIB="${productCrossPorting_Target_default_compiler_dir_system}/lib"
+INCLUDE="${productCrossPorting_Target_compiler_dir_system}/include"
+BIN="${productCrossPorting_Target_compiler_dir_system}/bin"
+LIB="${productCrossPorting_Target_compiler_dir_system}/lib"
 
 # ## All automatic
 
@@ -47,13 +47,13 @@ $scriptResources/unarchiveFiles.sh  $productCrossPorting_downloadFolder $TMPDIR 
     
     cd ${unarchivedFile}
 pwd
-mkdir -p $productCrossPorting_Target_default_compiler_dir_system/bin
-cp bin/libplibc-1.dll  $productCrossPorting_Target_default_compiler_dir_system/bin || send_exit $0 $LINENO
+mkdir -p $productCrossPorting_Target_compiler_dir_system/bin
+cp bin/libplibc-1.dll  $productCrossPorting_Target_compiler_dir_system/bin || send_exit $0 $LINENO
 
-mkdir -p $productCrossPorting_Target_default_compiler_dir_system/lib
-cp lib/libplibc.dll.a $productCrossPorting_Target_default_compiler_dir_system/lib/libplibc.a || send_exit $0 $LINENO
+mkdir -p $productCrossPorting_Target_compiler_dir_system/lib
+cp lib/libplibc.dll.a $productCrossPorting_Target_compiler_dir_system/lib/libplibc.a || send_exit $0 $LINENO
 
-mkdir -p $productCrossPorting_Target_default_compiler_dir_system/include
-cp -Rv include/* $productCrossPorting_Target_default_compiler_dir_system/include/ || send_exit $0 $LINENO
+mkdir -p $productCrossPorting_Target_compiler_dir_system/include
+cp -Rv include/* $productCrossPorting_Target_compiler_dir_system/include/ || send_exit $0 $LINENO
 
 tty_echo "#### ${packedProduct} installed in (${PWD}) "

@@ -56,7 +56,7 @@ SYSTEM_TARGET_TYPE=3
 # ########
 # ########
 
-SYSTEM_TARGET_VERSION="7"
+SYSTEM_TARGET_VERSION=""
 SYSTEM_TARGET="windows"
 
 
@@ -90,8 +90,8 @@ install_script_check=$( echo "${install_script_check[*]}" | tr " " "\\n" | tr "\
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
  
-SDK_STYLE="sdk"
-
+SDK_STYLE=""
+SDK_STYLE_PATH="/Applications/Xcode.app/Contents/Developer/Platforms/${SYSTEM_TARGET}.platform/Developer/SDKs/${SYSTEM_TARGET}${SYSTEM_TARGET_VERSION}.sdk/"
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
 
@@ -151,16 +151,16 @@ packedProduct_type=$(       eval "echo "$( echo '${'$( basename $0 | tr "_" "\ "
 packedProduct_install=$(    eval "echo "$( echo '${'$( basename $0 | tr "_" "\ " | tr "." "\ " | tr "[:upper:]" "[:lower:]" | awk '{ print $2 }' )'Product_install}') )
 
 
-GCC=$(   echo $( ls "${productCrossPorting_Target_default_compiler_dir_base_platform}/${productCrossPorting_Target_default_compiler}-${productCrossPorting_Target_default_compiler_version}"/bin/*gcc | head -n1 ) )
+GCC=$(   echo $( ls "${productCrossPorting_Target_compiler_dir_base_platform}/${productCrossPorting_Target_compiler}-${productCrossPorting_Target_compiler_version}"/bin/*gcc | head -n1 ) )
 # ## |  tr -s " " ":" | cut -d':' -f 2 | awk "{print $1;  fflush();}"
 
-AS=$(    echo $( ls "${productCrossPorting_Target_default_compiler_dir_base_platform}/${productCrossPorting_Target_default_compiler}-${productCrossPorting_Target_default_compiler_version}"/bin/*as | head -n1 ) )
-AR=$(    echo $( ls "${productCrossPorting_Target_default_compiler_dir_base_platform}/${productCrossPorting_Target_default_compiler}-${productCrossPorting_Target_default_compiler_version}"/bin/*ar | head -n1 )  )
-RANLIB=$( echo $( ls "${productCrossPorting_Target_default_compiler_dir_base_platform}/${productCrossPorting_Target_default_compiler}-${productCrossPorting_Target_default_compiler_version}"/bin/*ranlib | head -n1 ) )
+AS=$(    echo $( ls "${productCrossPorting_Target_compiler_dir_base_platform}/${productCrossPorting_Target_compiler}-${productCrossPorting_Target_compiler_version}"/bin/*as | head -n1 ) )
+AR=$(    echo $( ls "${productCrossPorting_Target_compiler_dir_base_platform}/${productCrossPorting_Target_compiler}-${productCrossPorting_Target_compiler_version}"/bin/*ar | head -n1 )  )
+RANLIB=$( echo $( ls "${productCrossPorting_Target_compiler_dir_base_platform}/${productCrossPorting_Target_compiler}-${productCrossPorting_Target_compiler_version}"/bin/*ranlib | head -n1 ) )
 
-INCLUDE="${productCrossPorting_Target_default_compiler_dir_system}/include"
-BIN="${productCrossPorting_Target_default_compiler_dir_system}/bin"
-LIB="${productCrossPorting_Target_default_compiler_dir_system}/lib"
+INCLUDE="${productCrossPorting_Target_compiler_dir_system}/include"
+BIN="${productCrossPorting_Target_compiler_dir_system}/bin"
+LIB="${productCrossPorting_Target_compiler_dir_system}/lib"
  
 export TARGET=$( $GCC -dumpmachine )
 export MAKE=$( echo "${MAKE}" && true || which make )
@@ -176,7 +176,7 @@ mkdir -p $TMPDIR
 rm -Rv $TMPDIR/* 2>/dev/null
 # cd $TMPDIR
 
-mkdir -p $productCrossPorting_Target_default_compiler_dir_system
-mkdir -p $productCrossPorting_Target_default_compiler_dir_system/include
-mkdir -p $productCrossPorting_Target_default_compiler_dir_system/bin
-mkdir -p $productCrossPorting_Target_default_compiler_dir_system/lib
+mkdir -p $productCrossPorting_Target_compiler_dir_system
+mkdir -p $productCrossPorting_Target_compiler_dir_system/include
+mkdir -p $productCrossPorting_Target_compiler_dir_system/bin
+mkdir -p $productCrossPorting_Target_compiler_dir_system/lib

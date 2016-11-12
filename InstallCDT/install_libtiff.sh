@@ -33,7 +33,7 @@ cd   ${BUILD}/${BUILD}${packedProduct}-${packedVersion}
 
 pwd 
 
-INSTALL_PREFIX=${productCrossPorting_Target_default_compiler_dir_system}/libtiff
+INSTALL_PREFIX=${productCrossPorting_Target_compiler_dir_system}/libtiff
 BINARY_PATH=$INSTALL_PREFIX/bin
 INCLUDE_PATH=$INSTALL_PREFIX/include
 LIBRARY_PATH=$INSTALL_PREFIX/lib
@@ -47,8 +47,8 @@ mkdir -pv $INCLUDE_PATH
 make clean
 
 ./configure --prefix="$INSTALL_PREFIX"   --disable-shared -host=$TARGET -target=$TARGET   AR=$AR CC=$GCC RANLIB=$RANLIB AS=$AS \
-          --with-jpeg-include-dir=${productCrossPorting_Target_default_compiler_dir_system}/${libtiffProduct_depend}/include --with-jpeg-lib-dir=${productCrossPorting_Target_default_compiler_dir_system}/${libjpegProduct_install}/lib \
-          --with-zlib-include-dir=${productCrossPorting_Target_default_compiler_dir_system}/${zlibProduct}-${zlibVersion}/include --with-zlib-lib-dir=${productCrossPorting_Target_default_compiler_dir_system}/${zlibProduct}-${zlibVersion}/lib \
+          --with-jpeg-include-dir=${productCrossPorting_Target_compiler_dir_system}/${libtiffProduct_depend}/include --with-jpeg-lib-dir=${productCrossPorting_Target_compiler_dir_system}/${libjpegProduct_install}/lib \
+          --with-zlib-include-dir=${productCrossPorting_Target_compiler_dir_system}/${zlibProduct}-${zlibVersion}/include --with-zlib-lib-dir=${productCrossPorting_Target_compiler_dir_system}/${zlibProduct}-${zlibVersion}/lib \
          --enable-mdi --disable-jpeg12 --disable-cxx --disable-shared 
 
 make && make install

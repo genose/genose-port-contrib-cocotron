@@ -30,7 +30,7 @@ source $( find $(dirname $0) -name common_functions.sh -type f -print )
 packedVersion="${packedVersionMajor}${packedVersionMinor}${packedVersionRev}${packedVersionPlatform}${packedVersionArch}${packedVersionPack}"
 echo "Installing ${packedProduct} ..."
 
-productCrossPorting_Target_default_compiler_dir_system="${productCrossPorting_Target_default_compiler_dir_system}/${packedProduct}-${packedVersion}"
+productCrossPorting_Target_compiler_dir_system="${productCrossPorting_Target_compiler_dir_system}/${packedProduct}-${packedVersion}"
 
 rm -Rv $productCrossPorting_downloadFolder/${packedProduct}*
 
@@ -47,11 +47,11 @@ $scriptResources/unarchiveFiles.sh  $productCrossPorting_downloadFolder "${TMPDI
     
     cd ${unarchivedFile}
     
-    cp -vp sqlite3.* ${productCrossPorting_Target_default_compiler_dir_system}/bin/
+    cp -vp sqlite3.* ${productCrossPorting_Target_compiler_dir_system}/bin/
 
-# ## build the new binarie file like :: cp -vp $productCrossPorting_Target_default_compiler_dir_system/bin/sqlite3.dll $productCrossPorting_Target_default_compiler_dir_system/lib/libsqlite3.a
+# ## build the new binarie file like :: cp -vp $productCrossPorting_Target_compiler_dir_system/bin/sqlite3.dll $productCrossPorting_Target_compiler_dir_system/lib/libsqlite3.a
 
-${productCrossPorting_Target_default_compiler_basedir}/bin/i386-pc-mingw32msvc-dlltool --def ${productCrossPorting_Target_default_compiler_dir_system}/bin/sqlite3.def --dllname sqlite3.dll --output-lib ${productCrossPorting_Target_default_compiler_dir_system}/lib/libsqlite3.a
+${productCrossPorting_Target_compiler_basedir}/bin/i386-pc-mingw32msvc-dlltool --def ${productCrossPorting_Target_compiler_dir_system}/bin/sqlite3.def --dllname sqlite3.dll --output-lib ${productCrossPorting_Target_compiler_dir_system}/lib/libsqlite3.a
 
 
 tty_echo "#### ${packedProduct} installed in (${PWD}) "

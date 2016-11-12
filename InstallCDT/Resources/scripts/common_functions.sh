@@ -21,7 +21,7 @@ bootstrapped_function=${bootstrapped_function-$( echo 0 )}
 # ## echo " ::::get  bootstrapped_function :::: ${bootstrapped_function} "
 
 
-if [ ${bootstrapped_function-0} -lt 1 ]; then  
+if [ "${bootstrapped_function-0}" == "0" ]; then  
     # ##### ##### ##### ##### ##### ####
     # ##### ##### ##### ##### ##### #### 
     testbash_backyard_valid=1
@@ -116,22 +116,28 @@ if [ ${bootstrapped_function-0} -lt 1 ]; then
     if [ ${testbash_backyard_valid} -eq 1 ]; then
         # ## echo " Bash compatible :: True "
         # ## PWD=$( echo $PWD || pwd )
+        pwd
         PWD=${PWD-$(pwd)}
-        _script=$( echo "$PWD/$0" | sed -e "s;${PWD};;g"  | sed -e "s;\.\/;;g" ) 
+        _script=${_script-$( echo "$PWD/$0"  | sed -e "s;\.\/;;g" | sed -e "s;${PWD};;g"  | sed -e "s;\.\/;;g" ) }
+        #_script=$( echo "$PWD/$0"  | sed -e "s;\.\/;;g" | sed -e "s;${PWD};;g"  | sed -e "s;\.\/;;g" ) 
+        #
         _script="$PWD/$0"
-        echo " ==== "$PWD
+        echo " ww==== "$PWD
+        echo " ll==== "$0
         _script=$( echo "$_script" | sed -e "s;${PWD}/${PWD};${PWD};g" | sed -e "s;\.\/;;g" )
-        echo " ==== "$_script
+        echo " dd==== "$_script
         
-        
-         
+     
     # ## todo :: test -x on find 
         ( test -x "${PWD}/common_functions.sh" ) && { echo "${PWD}/common_functions.sh"; } || {
-                                                                                               PWD=$( find $( dirname $_script ) -name common_functions.sh -type f | xargs dirname )
+                                                                                                echo ""
+                                                                                                 find $PWD -name common_functions.sh -type f | xargs dirname 
                                                                                                } 
         
         # ##
         echo "Bootstrap functions .... in ;; $PWD ;;"
+        
+         
         source $( find $PWD -name "common_func_def.inc.sh" -type f -print )
         # ##
         echo "Bootstrap functions .... "
@@ -143,9 +149,9 @@ if [ ${bootstrapped_function-0} -lt 1 ]; then
         echo " #### QUIT ####"
         exit
     fi
-    bootstrapped_function=255
+    bootstrapped_function="$_script"
 else
-    echo " :::: bootstrapped_function :::: ${bootstrapped_function} "
+    echo " :::: previously bootstrapped_function :::: ${bootstrapped_function} "
 fi
 # ## echo "unexpected exit .... Bootstrap functions .... "
 # ########## # ########### ########### ########### ##########

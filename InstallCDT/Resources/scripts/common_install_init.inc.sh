@@ -57,6 +57,7 @@ SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_use=""
 SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_major=""
 SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_url=""
 SYSTEM_HOST_IDEGUI_APP_SUPPORT_xcode3_dir="/Library/Application\ Support/Developer/Shared/Xcode/Specifications"
+SYSTEM_HOST_IDEGUI_APP_SUPPORT_SDK_dir="/Library/Application\ Support/Developer/Shared/Xcode/Specifications"
 
 
 SYSTEM_TARGET_IDEGUI_APP_sdk="--NO--"

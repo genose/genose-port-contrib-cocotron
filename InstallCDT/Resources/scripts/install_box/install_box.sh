@@ -27,16 +27,51 @@ _script=$( echo "$_script" | sed -e "s;\.\/;;g" )
 PWD=$( find $( dirname $_script | xargs dirname ) -name common_functions.sh -type f | xargs dirname )
 _script=$( find $PWD -name "install_box.sh" -type f   ) 
  
-# ## echo " script :: "$_script
+# ##
+echo " script $PWD :: "$_script
 # ################## # ##################
 # ################## # ##################
-
+ 
 install_box_dir=$( echo $_script | xargs dirname )
 # ## echo " :::install_box_dir:: "$install_box_dir
 # ################## # ##################
 # ################## # ##################
 
 source $(  find $(dirname $install_box_dir | xargs dirname  ) -name common_functions.sh -type f -print )
+
+# ################## # ##################
+# ################## # ##################
+
+cat > /tmp/install_box.tmp <<EOF
+#!/bin/bash
+
+xdialog 	--title "Target style for Target ${SYSTEM_TARGET} ?" \
+        --yesno " Would you like to pack all Installation in platform/SDK style ? \
+        \n This will move files to somethink like \n\
+ \n \
+ \n SDKROOT = \
+ \n  -  ${SDK_STYLE_PATH} \
+ \n    \
+ \n - {SDKROOT}/${SYSTEM_TARGET}.sdk/usr/include \
+ \n - {SDKROOT}/${SYSTEM_TARGET}.sdk/bin/GCC \
+ \n - {SDKROOT}/${SYSTEM_TARGET}.sdk/usr/include \
+ \n - {SDKROOT}/${SYSTEM_TARGET}.sdk/Frameworks \
+ \n
+" 0 0 
+EOF
+ 
+# ################## # ##################
+# ################## # ##################
+
+dailog_result_SDK=$( sh /tmp/install_box.tmp 2>&1  && echo $? )
+ switch_case_SDK=$( echo ${dailog_result_SDK} | tr "xx_" "\\n"  |  tail -n1 | awk '{if(length($2)){print $2}else{print $1}}' )
+echo "SDK_STYLE :: ${dailog_result}  :: "$?"::"$switch_case
+case  $switch_case_SDK in
+  0)
+    echo "Yes chosen."
+    SDK_STYLE="SDK"
+    ;;
+esac
 
 # ################## # ##################
 # ################## # ##################
@@ -58,7 +93,7 @@ for descfile in ${targetListDesc[@]} ; do
     compilerDescDir=$( find $compiler_desc_dir -name "desc.txt" -type f    | grep -i "compiler" | sort )
     
     echo  $system_desc "...." ${system_install_desc}
-    echo ${system_install_desc}    | sed -e "s;\(.*$\);\"x${SYSTEM_HOST}\_${system_desc}:default\" \"From ${SYSTEM_HOST} \-\-\\ \>\> to SDK : \1\" off 0 xxzzxx;g" >> /tmp/install_box_desc.tmp
+    echo ${system_install_desc}    | sed -e "s;\(.*$\);\"x${SYSTEM_HOST}\_${system_desc}:default\" \"From ${SYSTEM_HOST} \-\-\\ \>\> to ${SDK_STYLE} : \1\" off 0 xxzzxx;g" >> /tmp/install_box_desc.tmp
      
         for desccompiler in ${compilerDescDir[@]} ; do
             source $desccompiler
@@ -90,12 +125,11 @@ switch_case=$( echo ${dailog_result} | tr "xx_" "\\n"  |  tail -n1 | awk '{if(le
 case  $switch_case in
   0)
     echo "Yes chosen.";;
-  1)
-    echo "No chosen."
-    int_user
-    ;;
+  
   *)
     echo "Box closed."
+    
+     xdialog  --timeout 10 	--title "Information "    --msgbox "Installation Cancelled ...  "  0 64 
     int_user
     ;;
 esac
@@ -123,52 +157,29 @@ esac
 SYSTEM_TARGET="${platform_choose}"
 
 
-cat > /tmp/install_box.tmp <<EOF
-#!/bin/bash
 
-xdialog 	--title "Target style for Target ${SYSTEM_TARGET} ?" \
-        --yesno " Would you like to pack all Installation in platform/SDK style ? \
-        \n This will move files to somethink like \n\
- \n \
- \n SDKROOT = \
- \n -  /Applications/Xcode.app/Contents/Developer/Platforms/AppleTVOS.platform/Developer/SDKs/ \
- \n  --OR -- \
- \n  -  /Applications/Xcode.app/Contents/Developer/Platforms/${SYSTEM_TARGET}.platform/Developer/SDKs/ \
- \n    \
- \n - {SDKROOT}/${SYSTEM_TARGET}.sdk/usr/include \
- \n - {SDKROOT}/${SYSTEM_TARGET}.sdk/bin/GCC \
- \n - {SDKROOT}/${SYSTEM_TARGET}.sdk/usr/include \
- \n - {SDKROOT}/${SYSTEM_TARGET}.sdk/Frameworks \
- \n
-" 0 0 
-EOF
- 
-# ################## # ##################
-# ################## # ##################
-dailog_result=$( sh /tmp/install_box.tmp 2>&1  && echo $? )
-SDK_STYLE="--NO--"
 
-switch_case=$( echo ${dailog_result} | tr "xx_" "\\n"  |  tail -n1 | awk '{if(length($2)){print $2}else{print $1}}' )
-echo "SDK_STYLE :: ${dailog_result}  :: "$?"::"$switch_case
-case  $switch_case in
+echo "SDK_STYLE :: ${dailog_result_SDK}  :: "$?"::"$switch_case_SDK
+case  $switch_case_SDK in
   0)
     echo "Yes chosen."
-    SDK_STYLE="/Applications/Xcode.app/Contents/Developer/Platforms/${SYSTEM_TARGET}.platform/Developer/SDKs/${SYSTEM_TARGET}${SYSTEM_TARGET_VERSION}.sdk/"
-    echo "Should Create : ${SDK_STYLE} "
-    echo "${SDK_STYLE}/System/Library/CoreServices"
-    echo "${SDK_STYLE}/System/Library/Frameworks"
-    echo "${SDK_STYLE}/System/Library/Printers"
-    echo "${SDK_STYLE}/System/Library/PrivateFrameworks"
+    SDK_STYLE="SDK"
+    SDK_STYLE_PATH="/Applications/Xcode.app/Contents/Developer/Platforms/${SYSTEM_TARGET}.platform/Developer/SDKs/${SYSTEM_TARGET}${SYSTEM_TARGET_VERSION}.sdk/"
+    echo "Should Create : ${SDK_STYLE_PATH} "
+    echo "${SDK_STYLE_PATH}/System/Library/CoreServices"
+    echo "${SDK_STYLE_PATH}/System/Library/Frameworks"
+    echo "${SDK_STYLE_PATH}/System/Library/Printers"
+    echo "${SDK_STYLE_PATH}/System/Library/PrivateFrameworks"
     
-    echo "${SDK_STYLE}/usr"
+    echo "${SDK_STYLE_PATH}/usr"
     
-    echo "${SDK_STYLE}/usr/bin"
-    echo "${SDK_STYLE}/usr/include"
-    echo "${SDK_STYLE}/usr/lib"
-    echo "${SDK_STYLE}/usr/libexec"
-    echo "${SDK_STYLE}/usr/share"
+    echo "${SDK_STYLE_PATH}/usr/bin"
+    echo "${SDK_STYLE_PATH}/usr/include"
+    echo "${SDK_STYLE_PATH}/usr/lib"
+    echo "${SDK_STYLE_PATH}/usr/libexec"
+    echo "${SDK_STYLE_PATH}/usr/share"
     
-    echo "${SDK_STYLE}/SDKSettings.plist"
+    echo "${SDK_STYLE_PATH}/SDKSettings.plist"
     echo " ====== ======== SEtting ===== ======== "
     
     SYSTEM_HOST_IDEGUI_TARGET_SDK_plist_spec=$( find  $(dirname $install_box_dir | xargs dirname  ) -iname "SDKSettings.plist" -print )
@@ -197,19 +208,19 @@ case  $switch_case in
     }
     
     plist_settarget "DisplayName"  "${SYSTEM_HOST_IDEGUI_TARGET_SDK_plist_spec}"
-    echo "SDK Display name : ${plist_set}"
+    echo "SDK  Display name : ${plist_set}"
     
     plist_settarget 'CanonicalName'                                     "${SYSTEM_HOST_IDEGUI_TARGET_SDK_plist_spec}"   
-    echo "SDK CanonicalName : ${plist_set}"
+    echo "SDK  CanonicalName : ${plist_set}"
     
     plist_settarget 'MinimalDisplayName'                                "${SYSTEM_HOST_IDEGUI_TARGET_SDK_plist_spec}"
-    echo "SDK MinimalDisplayName : "
+    echo "SDK  MinimalDisplayName :  ${plist_set} "
 
     plist_settarget 'Version'                                           "${SYSTEM_HOST_IDEGUI_TARGET_SDK_plist_spec}"
-    echo "SDK  Version : ${plist_set} "
+    echo "SDK  Version (package min MacOS version): ${plist_set} "
     
     plist_settarget 'DefaultProperties:MACOSX_DEPLOYMENT_TARGET'         "${SYSTEM_HOST_IDEGUI_TARGET_SDK_plist_spec}"
-    echo "SDK  :DefaultProperties:MACOSX_DEPLOYMENT_TARGET: ${plist_set} "
+    echo "SDK  DefaultProperties:MACOSX_DEPLOYMENT_TARGET: ${plist_set} "
     
     plist_settarget 'DefaultProperties:PLATFORM_NAME'                    "${SYSTEM_HOST_IDEGUI_TARGET_SDK_plist_spec}"
     echo "SDK  DefaultProperties:PLATFORM_NAME : ${plist_set} "
@@ -229,6 +240,8 @@ case  $switch_case in
     echo "No chosen.";;
   *)
     echo "Box closed."
+    
+     xdialog  --timeout 10 	--title "Information "    --msgbox "Installation Cancelled ...  "  0 64 
     int_user
     ;;
 esac
@@ -285,10 +298,11 @@ switch_case=$( echo ${dailog_result} | tr "xx_" "\\n" |  tail -n1 | awk '{if(len
 case  $switch_case  in
   0)
     echo "Yes chosen.";;
-  1)
-    echo "No chosen.";;
+ 
   *)
     echo "Box closed."
+    
+     xdialog  --timeout 10 	--title "Information "    --msgbox "Installation Cancelled ...  "  0 64 
     int_user
     ;;
 esac
@@ -298,15 +312,60 @@ editor_choosetxt=$( echo $dailog_result | tr "xx_" "\\n" | head -n1  )
 
 echo $editor_choose"::::" $editor_choosetxt
 
+
+
+
+
+
+
+
+SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_url=$( echo ${SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_url} | sed -e "s;\({\([a-zA-Z0-9_]*\)}\);$\1;g" | sed -e "s;\ ;;g" | xargs echo )
+
+SYSTEM_TARGET_IDEGUI_APP_sdk="${SDK_STYLE_PATH}"
+
+productCrossPorting_Folder="${SDK_STYLE_PATH}"
+productCrossPorting_Host_compiler="${productCrossPorting_Host_default_compiler}"
+productCrossPorting_Host_compiler_basedir="${productCrossPorting_Host_default_compiler_basedir}"
+productCrossPorting_Host_compiler_version="${productCrossPorting_Host_default_compiler_version}"
+productCrossPorting_Host_compiler_version_Date="${productCrossPorting_Host_default_compiler_version_Date}"
+productCrossPorting_Name="${productCrossPorting_default_Name}"
+productCrossPorting_Target="${productCrossPorting_Target_default}"
+productCrossPorting_Target_Folder_arch="${productCrossPorting_Target_default_Folder_arch}"
+productCrossPorting_Target_arch="${productCrossPorting_Target_default_arch}"
+productCrossPorting_Target_arch_wordSize="${productCrossPorting_Target_default_arch_wordSize}"
+productCrossPorting_Target_compiler="${productCrossPorting_Target_default_compiler}"
+productCrossPorting_Target_compiler_basedir="${productCrossPorting_Target_default_compiler_basedir}"
+productCrossPorting_Target_compiler_dir_base_interface="${productCrossPorting_Target_default_compiler_dir_base_interface}"
+productCrossPorting_Target_compiler_dir_base_interface_compiler="${productCrossPorting_Target_default_compiler_dir_base_interface_compiler}"
+productCrossPorting_Target_compiler_dir_base_platform="${productCrossPorting_Target_default_compiler_dir_base_platform}"
+productCrossPorting_Target_compiler_dir_build_platform="${productCrossPorting_Target_default_compiler_dir_build_platform}"
+productCrossPorting_Target_compiler_dir_name="${productCrossPorting_Target_default_compiler_dir_name}"
+productCrossPorting_Target_compiler_dir_system="${productCrossPorting_Target_default_compiler_dir_system}"
+productCrossPorting_Target_compiler_version="${productCrossPorting_Target_default_compiler_version}"
+productCrossPorting_Target_compiler_version_Date="${productCrossPorting_Target_default_compiler_version_Date}"
+productCrossPorting_Version="${productCrossPorting_default_Version}"
+productCrossPorting_binFolder="${productCrossPorting_default_binFolder}"
+productCrossPorting_compiler="${productCrossPorting_default_compiler}"
+productCrossPorting_downloadFolder="${productCrossPorting_default_downloadFolder}"
+productCrossPorting_sourceFolder="${productCrossPorting_default_sourceFolder}"
+ 
+
+
+
+
+
+
 cat > /tmp/install_box.tmp <<EOF
 #!/bin/bash
 
 xdialog 	--title "Resume for Installation Targeting ${SYSTEM_TARGET} " \
         --yesno " Installation wil use  the following in platform/SDK   \n \\
         Target : ${SYSTEM_TARGET} \n \\
+        Target Version : ${SYSTEM_TARGET_VERSION} \n \\
         Compiler : ${compiler_choose} \\n \\
         Editor / IDE : ${editor_choosetxt} \\n \\
-   "  30 64 0     
+        Path : ${productCrossPorting_Folder} \\n \\
+   "  30 0 0     
 EOF
 
 dailog_result=$( sh /tmp/install_box.tmp 2>&1  && echo $? )
@@ -350,8 +409,4 @@ done
 $DIALOG --title "${titrebarre}" --gauge "Bonjour, ceci est une barre d'avancement" 20 70 0
 
 # ## note :: sed -e "s;\({\([a-zA-Z0-9_]*\)}\);$\2;g"
-SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_url=$( echo ${SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_url} | sed -e "s;\({\([a-zA-Z0-9_]*\)}\);$\1;g" | sed -e "s;\ ;;g" | xargs echo )
-productCrossPorting_Target_arch=${productCrossPorting_Target_default_arch}
-productCrossPorting_Target_compiler=${productCrossPorting_Target_default_compiler}
 
-SYSTEM_TARGET_IDEGUI_APP_sdk="${SDK_STYLE}"

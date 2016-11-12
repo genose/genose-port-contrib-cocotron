@@ -39,13 +39,13 @@ cd $TMPDIR
 
 $scriptResources/unarchiveFiles.sh  $productCrossPorting_downloadFolder $TMPDIR "${packedProduct}${packedVersionPack}${packedVersion}"  
 
-mkdir -pv $productCrossPorting_Target_default_compiler_dir_system/bin
-cp -vp ${packedProduct}32.dll $productCrossPorting_Target_default_compiler_dir_system/bin || echo "Error ...." && ls -la $TMPDIR  && send_exit $0 $LINENO
+mkdir -pv $productCrossPorting_Target_compiler_dir_system/bin
+cp -vp ${packedProduct}32.dll $productCrossPorting_Target_compiler_dir_system/bin || echo "Error ...." && ls -la $TMPDIR  && send_exit $0 $LINENO
 
-mkdir -pv $productCrossPorting_Target_default_compiler_dir_system/lib
-cp -vp ${packedProduct}32.lib $productCrossPorting_Target_default_compiler_dir_system/lib || echo "Error ...." && send_exit $0 $LINENO
+mkdir -pv $productCrossPorting_Target_compiler_dir_system/lib
+cp -vp ${packedProduct}32.lib $productCrossPorting_Target_compiler_dir_system/lib || echo "Error ...." && send_exit $0 $LINENO
 
-mkdir -pv $productCrossPorting_Target_default_compiler_dir_system/include/GLUT
-cp -vp ${packedProduct}.h $productCrossPorting_Target_default_compiler_dir_system/include/GLUT/GLUT.h || echo "Error ...." && send_exit $0 $LINENO
+mkdir -pv $productCrossPorting_Target_compiler_dir_system/include/GLUT
+cp -vp ${packedProduct}.h $productCrossPorting_Target_compiler_dir_system/include/GLUT/GLUT.h || echo "Error ...." && send_exit $0 $LINENO
 
 

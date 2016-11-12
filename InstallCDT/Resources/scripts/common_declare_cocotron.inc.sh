@@ -160,40 +160,51 @@ url_google_cocotron_Download_GPL3="https://storage.googleapis.com/google-code-ar
 url_google_cocotron_Download_ARCHIVE="https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/"
 # ########### ##########
 
-productCrossPorting_Name="Cocotron"
-productCrossPorting_Version="1.0"
-productCrossPorting_Folder="/Developer/${productCrossPorting_Name}/${productCrossPorting_Version}"
-productCrossPorting_downloadFolder="${productCrossPorting_Folder}/Downloads"
-productCrossPorting_sourceFolder="${productCrossPorting_Folder}/Source"
-productCrossPorting_binFolder="${productCrossPorting_Folder}/bin"
+productCrossPorting_default_Name="Cocotron"
+productCrossPorting_default_Version="1.0"
+if [ "${#SDK_STYLE}" -lt 2 ]; then
+    productCrossPorting_default_Folder="/Developer/${productCrossPorting_default_Name}/${productCrossPorting_default_Version}"
+else
+    productCrossPorting_default_Folder="/${SDK_STYLE_PATH}"
+fi
+    
+productCrossPorting_default_downloadFolder="${productCrossPorting_default_Folder}/tmp/Downloads"
+productCrossPorting_default_sourceFolder="${productCrossPorting_default_Folder}/tmp/Source"
+productCrossPorting_default_binFolder="${productCrossPorting_default_Folder}/bin"
 
 productCrossPorting_default_compiler="gcc"
 
-productCrossPorting_Target_default="Windows"
+productCrossPorting_Target_default="windows"
 productCrossPorting_Target_default_arch="i386"
 productCrossPorting_Target_default_arch_wordSize="32"
 
-productCrossPorting_Target_default_compiler="gcc"
+productCrossPorting_Target_default_Folder_arch="${productCrossPorting_default_Folder}/${productCrossPorting_Target_default_arch}"
 
-productCrossPorting_Target_default_compiler_dir_build_platform="${productCrossPorting_Folder}/build/$productCrossPorting_Target_default/$productCrossPorting_Target_default_arch"
-productCrossPorting_Target_default_compiler_dir_base_platform="${productCrossPorting_Folder}/$productCrossPorting_Target_default/$productCrossPorting_Target_default_arch"
+#i386-pc-mingw32msvc$osVersion
+productCrossPorting_Target_default_compiler="i386-pc-mingw32msvc${SYSTEM_TARGET_VERSION}"
+#gcc / llvm
 
-productCrossPorting_Target_default_compiler_dir_base_interface="${productCrossPorting_Folder}/PlatformInterfaces/"
-productCrossPorting_Target_default_compiler_dir_base_interface_compiler="${productCrossPorting_Folder}/PlatformInterfaces/"
+
+productCrossPorting_Target_default_compiler_dir_build_platform="${productCrossPorting_default_Folder}/build/$productCrossPorting_Target_default/$productCrossPorting_Target_default_arch"
+productCrossPorting_Target_default_compiler_dir_base_platform="${productCrossPorting_default_Folder}/$productCrossPorting_Target_default/$productCrossPorting_Target_default_arch"
+
+productCrossPorting_Target_default_compiler_dir_base_interface="${productCrossPorting_default_Folder}/PlatformInterfaces/"
+productCrossPorting_Target_default_compiler_dir_base_interface_compiler="${productCrossPorting_default_Folder}/PlatformInterfaces/${productCrossPorting_Target_default_compiler}"
 
 productCrossPorting_Target_default_compiler_version="4.3.1"
 productCrossPorting_Target_default_compiler_version_Date=""
 
 productCrossPorting_Target_default_compiler_dir_name="i386-mingw32msvc/"
-productCrossPorting_Target_default_compiler_dir_system=`pwd`/../system/${productCrossPorting_Target_default_compiler_dir_name}
+productCrossPorting_Target_default_compiler_dir_system="${productCrossPorting_default_Folder}/system/${productCrossPorting_Target_default_compiler_dir_name}"
 
 productCrossPorting_Target_default_compiler_basedir="${productCrossPorting_Target_default_compiler_dir_base_platform}/${productCrossPorting_Target_default_compiler}-${productCrossPorting_Target_default_compiler_version}/"
 
 
-productCrossPorting_set_compiler="gcc"
-productCrossPorting_set_compiler_dir_system="${productCrossPorting_Target_default_compiler_dir_system}"
+productCrossPorting_Host_default_compiler_version="4.3.1"
+productCrossPorting_Host_default_compiler_version_Date=""
+productCrossPorting_Host_default_compiler="gcc"
 
-
+productCrossPorting_Host_default_compiler_basedir="${productCrossPorting_Target_default_compiler_dir_base_platform}/${productCrossPorting_Host_default_compiler}-${productCrossPorting_Host_default_compiler_version}/"
 
 if [ -f "${productCrossPorting_Target_default_compiler_dir_base_interface}" ]; then
     echo ""
@@ -212,7 +223,7 @@ else
     mkdir -p $productCrossPorting_Target_default_compiler_dir_system/include
 fi
 
-productCrossPorting_Target_avail=("Windows" "Linux" "BSD" "Solaris" "darwin")
+productCrossPorting_Target_avail=$( ls -d ./install_box/archs/* )
 
 
 
@@ -320,3 +331,32 @@ elif [  "${install_script_check}" == "install" ]; then
             productCrossPorting_Target_default_arch_wordSize="32"
     fi
 fi
+
+#finalise definition ....
+cat /Developer/Cocotron/cocotron/InstallCDT/Resources/scripts/common_declare_cocotron.inc.sh | grep -i "productCrossPorting_" | grep -i "_default" | grep -i "=" | grep -vi "\]" | grep -vi "\#" | sed -e "s;\ ;;g" | tr "=" "\ " | awk '{print $1}' | grep -i "_default" | sort | uniq | sed -e "s;\([a-zA-Z0-9_]*\);\1 \"$\{\1\}\";g" | awk '{ b=gsub(/_default/,"", $1); print $b"="$2 }' |sort | uniq 
+productCrossPorting_Folder="${productCrossPorting_default_Folder}"
+productCrossPorting_Host_compiler="${productCrossPorting_Host_default_compiler}"
+productCrossPorting_Host_compiler_basedir="${productCrossPorting_Host_default_compiler_basedir}"
+productCrossPorting_Host_compiler_version="${productCrossPorting_Host_default_compiler_version}"
+productCrossPorting_Host_compiler_version_Date="${productCrossPorting_Host_default_compiler_version_Date}"
+productCrossPorting_Name="${productCrossPorting_default_Name}"
+productCrossPorting_Target="${productCrossPorting_Target_default}"
+productCrossPorting_Target_Folder_arch="${productCrossPorting_Target_default_Folder_arch}"
+productCrossPorting_Target_arch="${productCrossPorting_Target_default_arch}"
+productCrossPorting_Target_arch_wordSize="${productCrossPorting_Target_default_arch_wordSize}"
+productCrossPorting_Target_compiler="${productCrossPorting_Target_default_compiler}"
+productCrossPorting_Target_compiler_basedir="${productCrossPorting_Target_default_compiler_basedir}"
+productCrossPorting_Target_compiler_dir_base_interface="${productCrossPorting_Target_default_compiler_dir_base_interface}"
+productCrossPorting_Target_compiler_dir_base_interface_compiler="${productCrossPorting_Target_default_compiler_dir_base_interface_compiler}"
+productCrossPorting_Target_compiler_dir_base_platform="${productCrossPorting_Target_default_compiler_dir_base_platform}"
+productCrossPorting_Target_compiler_dir_build_platform="${productCrossPorting_Target_default_compiler_dir_build_platform}"
+productCrossPorting_Target_compiler_dir_name="${productCrossPorting_Target_default_compiler_dir_name}"
+productCrossPorting_Target_compiler_dir_system="${productCrossPorting_Target_default_compiler_dir_system}"
+productCrossPorting_Target_compiler_version="${productCrossPorting_Target_default_compiler_version}"
+productCrossPorting_Target_compiler_version_Date="${productCrossPorting_Target_default_compiler_version_Date}"
+productCrossPorting_Version="${productCrossPorting_default_Version}"
+productCrossPorting_binFolder="${productCrossPorting_default_binFolder}"
+productCrossPorting_compiler="${productCrossPorting_default_compiler}"
+productCrossPorting_downloadFolder="${productCrossPorting_default_downloadFolder}"
+productCrossPorting_sourceFolder="${productCrossPorting_default_sourceFolder}"
+
