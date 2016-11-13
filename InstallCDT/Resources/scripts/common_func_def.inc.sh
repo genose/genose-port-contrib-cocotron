@@ -56,7 +56,7 @@ function tty_dialog() {
 cat > /tmp/install_box.tmp <<EOF
 #!/bin/bash
  
-    xdialog 	--title "Information " \
+    "${InstalledSoftware_path_GUI_dialog}" 	--title "Information " \
     --infobox " $tty_dialog_ask \n\\
      \n\\
     "  0 120 10 
@@ -186,12 +186,12 @@ tty_yesyno_ask="$1"
         tty_yesyno_response=""
 
         echo "" > /tmp/install_box.tmp
- if [ ${InstalledSoftware_path_GUI__dialog_use} -gt 0 ];then
+ if [ ${InstalledSoftware_path_GUI__dialog_use} -gt 0 ]; then
      
 cat > /tmp/install_box.tmp <<EOF
 #!/bin/bash
 
-    xdialog 	--title "Resume for Installation Targeting ${SYSTEM_TARGET} " \
+    "${InstalledSoftware_path_GUI_dialog}" 	--title "Resume for Installation Targeting ${SYSTEM_TARGET} " \
     --timeout 10 \
     --yesno " $tty_yesyno_ask \n\\
      \n\\
@@ -203,8 +203,7 @@ EOF
             echo "::YESYNO::" $dailog_result
             switch_case=$( echo ${dailog_result} | tr "xx_" "\\n"  |  tail -n1 | awk '{if(length($2)){print $2}else{print $1}}' )
             case  $switch_case  in
-            255)
-                tty_yesyno_response="y";;
+           
             0)
                 echo "Yes chosen."
                 tty_yesyno_response="y";;
@@ -213,6 +212,7 @@ EOF
                 tty_yesyno_response="n";;
             *)
                 echo "Box closed. / unknow option"
+                "${InstalledSoftware_path_GUI_dialog}"  --timeout 10 	--title "Information "    --msgbox "Installation Cancelled ...  "  20 80
                 int_user
             ;;
             esac

@@ -27,7 +27,7 @@
 # ## Xcode specific
 
 InstalledSoftware_path_Mac_xcodebuild=$(which xcodebuild)
-InstalledSoftware_path_Mac_xcode_select=$(which xcode-selects && echo "-p" || echo "false" )
+InstalledSoftware_path_Mac_xcode_select=$(which xcode-select && echo "-p" || echo "false" )
 
 InstalledSoftware_path_Mac_xcode=$( dirname $(ls -d  $( ${InstalledSoftware_path_Mac_xcode_select} 2>$SCRIPT_TTY)  2>$SCRIPT_TTY ) )
 InstalledSoftware_path_Mac_xcode_version=$(

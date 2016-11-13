@@ -327,6 +327,9 @@ else
 fi
 if [ ${InstalledSoftware_path_GUI__dialog_use} -gt 0 ]; then
     source $( find $PWD -name "install_box.sh" -type f -print )
+else
+    echo
+    # ## source $( find $PWD -name "install_text.sh" -type f -print )
 fi
 
 
@@ -339,7 +342,7 @@ if [ "${SYSTEM_TARGET_IDEGUI_APP_sdk}"  == "--NO--" ]; then
             tty_echo "####  >>>> Permissions properly set up, continuing install."
     else
             tty_echo "####  >>>> For this script to complete successfully, the directory ${SYSTEM_HOST_IDEGUI_APP_SUPPORT_xcode3_dir} must be writeable by you, and we've detected that it isn't.  "
-            exit 1
+            # ## exit 1
     fi
 
 else

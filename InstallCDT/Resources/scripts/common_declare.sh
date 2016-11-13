@@ -80,6 +80,12 @@ realpathx "$0"
 # ## echo "Declared :::: " $0 " :::: returned :::: "$realpathx_return
 ## 
 installResources=$( echo $( dirname $( find $( dirname $( dirname "${realpathx_return}/" | grep -i "Resources" ||  echo "${realpathx_return}/" ) ) -name common_functions.sh -type f -exec  dirname {} \;    )   ) )
+
+if [ "${#installResources}" -eq 5 ]; then
+    echo ":::: #### ERROR :::: Something WENT Wrong "
+    exit
+fi
+
 install_script_check_script=$( basename $realpathx_return | grep -i "install\_" | grep -vi "\_log" || echo "--NO--" )
 install_script_check_script="${install_script_check_script}" && [[ "${install_script_check_script}" == "--NO--" ]] || install_script_check_script=$( echo "${install_script_check_script}" | tr "\-" "\ " | awk '{print $2}' )
 
@@ -104,6 +110,9 @@ toolResources="$installResources/tools"
 INSTALL_SCRIPT_DIR=$(dirname $installResources  )
 INSTALL_SCRIPT_LOG=/tmp/install_log.log
 INSTALL_SCRIPT_LOG_ERR=/tmp/install_log.err.log
+INSTALL_SCRIPT_DEF="/tmp/install_common_declare.inc.sh"
+
+ 
 
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
@@ -114,7 +123,28 @@ tty_dialog "Unable to locate Resources directory at "$installResources
 fi
 
 PWD=$( echo $PWD || pwd )
+
+
+INSTALL_SCRIPT_DEF_SIZE=$( du -h "${INSTALL_SCRIPT_DEF}" 2>/dev/null && true | sed 's/\([0-9]*\).*/\1/' || echo 0 )
+
+let "INSTALL_SCRIPT_DEF_SIZE= INSTALL_SCRIPT_DEF_SIZE+0"
+
+if [ -f "${INSTALL_SCRIPT_DEF}" ] && [ ${INSTALL_SCRIPT_DEF_SIZE} -gt 1 ]; then
+    # ## finalised build declaration
+    echo " :::: Precached  :: ${INSTALL_SCRIPT_DEF_SIZE} :: ${INSTALL_SCRIPT_DEF}"
+       cat       "${INSTALL_SCRIPT_DEF}"
+    source "${INSTALL_SCRIPT_DEF}"
+else
+    echo  "#!/bin/bash" > "${INSTALL_SCRIPT_DEF}" 
     source $( find $installResources -name "common_declare_*.inc.sh" -type f -print )
+    
+    find $installResources -name "common_declare_*.inc.sh" -type f -exec cat {} \;  | grep -i "productCrossPorting_" | grep -i "_default" | grep -i "=" | grep -vi "\]" | grep -vi "\#" | sed -e "s;\ ;;g" | tr "=" "\ " | awk '{print $1}' | grep -i "_default" | sort | uniq | sed -e "s;\([a-zA-Z0-9_]*\);\1 \"$\{\1\}\";g" | awk '{ b=gsub(/_default/,"", $1); print $b"="$2 }' |sort | uniq >> "${INSTALL_SCRIPT_DEF}"
+    
+    # ## finalised build declaration
+    source "${INSTALL_SCRIPT_DEF}"
+    cat       "${INSTALL_SCRIPT_DEF}"
+    exit
+fi
 
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
@@ -123,7 +153,7 @@ packedVersionMajor=""
 packedVersionMinor=""
 packedVersionRev=""
 packedVersionPlatform=".win32"
-packedVersionArch="-X86"
+packedVersionArch="-i386"
 packedVersionCheck="${packedVersionMajor-xx}:${packedVersionMinor-xx}:${packedVersionRev-xx}:${packedVersionPlatform-xx}:${packedVersionArch-xx}"
 packedVersion="${packedVersionMajor-xx}${packedVersionMinor-xx}${packedVersionRev-xx}${packedVersionPlatform-xx}${packedVersionArch-xx}"
 packedProduct=""
@@ -150,7 +180,7 @@ packedProduct_type=$(       eval "echo "$( echo '${'$( basename $0 | tr "_" "\ "
 
 packedProduct_install=$(    eval "echo "$( echo '${'$( basename $0 | tr "_" "\ " | tr "." "\ " | tr "[:upper:]" "[:lower:]" | awk '{ print $2 }' )'Product_install}') )
 
-
+if [ -d "${productCrossPorting_Target_compiler_dir_base_platform}/${productCrossPorting_Target_compiler}-${productCrossPorting_Target_compiler_version}" ]; then
 GCC=$(   echo $( ls "${productCrossPorting_Target_compiler_dir_base_platform}/${productCrossPorting_Target_compiler}-${productCrossPorting_Target_compiler_version}"/bin/*gcc | head -n1 ) )
 # ## |  tr -s " " ":" | cut -d':' -f 2 | awk "{print $1;  fflush();}"
 
@@ -161,6 +191,8 @@ RANLIB=$( echo $( ls "${productCrossPorting_Target_compiler_dir_base_platform}/$
 INCLUDE="${productCrossPorting_Target_compiler_dir_system}/include"
 BIN="${productCrossPorting_Target_compiler_dir_system}/bin"
 LIB="${productCrossPorting_Target_compiler_dir_system}/lib"
+ 
+fi
  
 export TARGET=$( $GCC -dumpmachine )
 export MAKE=$( echo "${MAKE}" && true || which make )
@@ -176,7 +208,7 @@ mkdir -p $TMPDIR
 rm -Rv $TMPDIR/* 2>/dev/null
 # cd $TMPDIR
 
-mkdir -p $productCrossPorting_Target_compiler_dir_system
-mkdir -p $productCrossPorting_Target_compiler_dir_system/include
-mkdir -p $productCrossPorting_Target_compiler_dir_system/bin
-mkdir -p $productCrossPorting_Target_compiler_dir_system/lib
+# mkdir -p $productCrossPorting_Target_compiler_dir_system
+# mkdir -p $productCrossPorting_Target_compiler_dir_system/include
+# mkdir -p $productCrossPorting_Target_compiler_dir_system/bin
+# mkdir -p $productCrossPorting_Target_compiler_dir_system/lib

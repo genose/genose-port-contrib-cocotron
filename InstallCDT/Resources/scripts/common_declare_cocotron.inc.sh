@@ -247,7 +247,7 @@ elif [  "${install_script_check}" == "install" ]; then
     # ########## # ########### ########### ########### ##########
     # ########## # ########### ########### ########### ##########
     
-    if [ ""${2-$DEFAULT}"" = "" ];then
+    if [ ""${2-$DEFAULT}"" = "" ]; then
       productCrossPorting_Target_default_arch="${productCrossPorting_Target_default_arch}"
     else
       productCrossPorting_Target_default_arch=${2-$DEFAULT}
@@ -255,7 +255,7 @@ elif [  "${install_script_check}" == "install" ]; then
     # ########## # ########### ########### ########### ##########
     # ########## # ########### ########### ########### ##########
     
-    if [ ""${3-$DEFAULT}"" = "" ];then
+    if [ ""${3-$DEFAULT}"" = "" ]; then
             productCrossPorting_Target_default_compiler="${productCrossPorting_Target_default_compiler}"
     else
             productCrossPorting_Target_default_compiler=${3-$DEFAULT}
@@ -265,7 +265,7 @@ elif [  "${install_script_check}" == "install" ]; then
      
     # ## productCrossPorting_Target_default_compiler_version="4.3.1"
     
-    if [ ""${4-$DEFAULT}"" = "" ];then
+    if [ ""${4-$DEFAULT}"" = "" ]; then
       productCrossPorting_Target_default_compiler_version="${productCrossPorting_Target_default_compiler_version}"
     else
       productCrossPorting_Target_default_compiler_version=${4-$DEFAULT}
@@ -276,13 +276,13 @@ elif [  "${install_script_check}" == "install" ]; then
     # ########## # ########### ########### ########### ##########
     # ########## # ########### ########### ########### ##########
     
-    if [ ""${5-$DEFAULT}"" = "" ];then
+    if [ ""${5-$DEFAULT}"" = "" ]; then
             if [ "$productCrossPorting_Target_default_compiler" = "gcc" ]; then
                     productCrossPorting_Target_default_compiler_version=$productCrossPorting_Target_default_compiler_version
             elif [ "$productCrossPorting_Target_default_compiler" = "llvm-clang" ]; then
                     productCrossPorting_Target_default_compiler_version="trunk"
             else
-                    tty_echo "Unknown $productCrossPorting_Target_default_compiler "$productCrossPorting_Target_default_compiler
+                    tty_echo "Unknown compiler :: $productCrossPorting_Target_default_compiler "$productCrossPorting_Target_default_compiler
                     send_exit $0 $LINENO
             fi
     else
@@ -292,7 +292,7 @@ elif [  "${install_script_check}" == "install" ]; then
     # ########## # ########### ########### ########### ##########
     # ########## # ########### ########### ########### ##########
     
-    if [ ""${6-$DEFAULT}"" = "" ];then
+    if [ ""${6-$DEFAULT}"" = "" ]; then
             if [ "$productCrossPorting_Target_default_compiler" = "gcc" ]; then
             productCrossPorting_Target_default_compiler_version_Date="-02242010"
             elif [ "$productCrossPorting_Target_default_compiler" = "llvm-clang" ]; then
@@ -310,7 +310,7 @@ elif [  "${install_script_check}" == "install" ]; then
     
     osVersion=${7-${DEFAULT}}
     
-    if [ "${osVersion}" = "" ];then
+    if [ "${osVersion}" = "" ]; then
             if [ "${osVersion}" = "" ] && [ "${productCrossPorting_Target_default}" = "Solaris" ]; then
                     osVersion="2.10"
             elif [ "${osVersion}" = "" ] && [ "${productCrossPorting_Target_default}" = "FreeBSD" ]; then
@@ -325,7 +325,7 @@ elif [  "${install_script_check}" == "install" ]; then
     # ########## # ########### ########### ########### ##########
     # ########## # ########### ########### ########### ##########
     
-    if [ $productCrossPorting_Target_default_arch = "x86_64" ];then
+    if [ $productCrossPorting_Target_default_arch = "x86_64" ]; then
             productCrossPorting_Target_default_arch_wordSize="64"
     else
             productCrossPorting_Target_default_arch_wordSize="32"
@@ -333,7 +333,8 @@ elif [  "${install_script_check}" == "install" ]; then
 fi
 
 #finalise definition ....
-cat /Developer/Cocotron/cocotron/InstallCDT/Resources/scripts/common_declare_cocotron.inc.sh | grep -i "productCrossPorting_" | grep -i "_default" | grep -i "=" | grep -vi "\]" | grep -vi "\#" | sed -e "s;\ ;;g" | tr "=" "\ " | awk '{print $1}' | grep -i "_default" | sort | uniq | sed -e "s;\([a-zA-Z0-9_]*\);\1 \"$\{\1\}\";g" | awk '{ b=gsub(/_default/,"", $1); print $b"="$2 }' |sort | uniq 
+# ## rebuilt later
+cat >> "${INSTALL_SCRIPT_DEF}" <<EOF
 productCrossPorting_Folder="${productCrossPorting_default_Folder}"
 productCrossPorting_Host_compiler="${productCrossPorting_Host_default_compiler}"
 productCrossPorting_Host_compiler_basedir="${productCrossPorting_Host_default_compiler_basedir}"
@@ -360,3 +361,4 @@ productCrossPorting_compiler="${productCrossPorting_default_compiler}"
 productCrossPorting_downloadFolder="${productCrossPorting_default_downloadFolder}"
 productCrossPorting_sourceFolder="${productCrossPorting_default_sourceFolder}"
 
+EOF

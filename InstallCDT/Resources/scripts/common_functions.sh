@@ -153,6 +153,13 @@ if [ "${bootstrapped_function-0}" == "0" ]; then
 else
     echo " :::: previously bootstrapped_function :::: ${bootstrapped_function} "
 fi
+# ## so after all this shit, we finally take compiled path defs
+if [ -f "${INSTALL_SCRIPT_DEF}" ]; then
+    # ## finalised build declaration
+    source "${INSTALL_SCRIPT_DEF}"
+else
+    exit_witherror " :: file def are not found :: something went wrong "
+fi
 # ## echo "unexpected exit .... Bootstrap functions .... "
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########

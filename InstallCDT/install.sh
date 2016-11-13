@@ -66,6 +66,7 @@
 # ########## # ########### ########### ########### ##########
 # ##
 echo "Starting up install ..."
+rm -v  "/tmp/install_common_declare.inc.sh" 
 PWD=${PWD-$(pwd)}
 source $( find $PWD -name common_functions.sh -type f -print )
 # ########## # ########### ########### ########### ##########
@@ -120,25 +121,29 @@ source $( find $PWD -name common_install_init.inc.sh -type f -print )
 # ## set eu :: darwin problematic
 set -eu
  
-if [ $productCrossPorting_Target = "Windows" ];then
-	if [ $productCrossPorting_Target_arch = "i386" ];then
+ 
+ 
+ echo " target  :: " ${productCrossPorting_Target}
+ 
+if [ "${productCrossPorting_Target}" = "Windows" ]; then
+	if [ "${productCrossPorting_Target_arch}" = "i386" ]; then
 		productCrossPorting_Target_compiler="i386-pc-mingw32msvc${osVersion}"
 		compilerConfigureFlags=""
 	else
 		tty_echo "Unsupported architecture $productCrossPorting_Target_arch on $productCrossPorting_Target"
 	exit 1
 	fi
-elif [ $productCrossPorting_Target = "Linux" ];then
-	if [ $productCrossPorting_Target_arch = "i386" ];then
+elif [ "${productCrossPorting_Target}" = "Linux" ]; then
+	if [ $productCrossPorting_Target_arch = "i386" ]; then
 		productCrossPorting_Target_compiler="i386-ubuntu-linux${osVersion}"
 		compilerConfigureFlags="--enable-version-specific-runtime-libs --enable-shared --enable-threads=posix --disable-checking --disable-libunwind-exceptions --with-system-zlib --enable-__cxa_atexit"
-	elif [ $productCrossPorting_Target_arch = "arm" ];then
+	elif [ $productCrossPorting_Target_arch = "arm" ]; then
 		productCrossPorting_Target_compiler="arm-none-linux-gnueabi${osVersion}"
 		compilerConfigureFlags="--enable-version-specific-runtime-libs --enable-shared --enable-threads=posix --disable-checking --disable-libunwind-exceptions --with-system-zlib --enable-__cxa_atexit"
-	elif [ $productCrossPorting_Target_arch = "ppc" ];then
+	elif [ $productCrossPorting_Target_arch = "ppc" ]; then
    	 	productCrossPorting_Target_compiler="powerpc-unknown-linux${osVersion}"
     		compilerConfigureFlags="--enable-version-specific-runtime-libs --enable-shared --enable-threads=posix --disable-checking --disable-libunwind-exceptions --with-system-zlib --enable-__cxa_atexit"
-	elif [ $productCrossPorting_Target_arch = "x86_64" ];then
+	elif [ $productCrossPorting_Target_arch = "x86_64" ]; then
 		productCrossPorting_Target_compiler="x86_64-pc-linux${osVersion}"
 		compilerConfigureFlags="--enable-version-specific-runtime-libs --enable-shared --enable-threads=posix --disable-checking --disable-libunwind-exceptions --with-system-zlib --enable-__cxa_atexit"
 		binutilsConfigureFlags="--enable-64-bit-bfd"
@@ -146,11 +151,11 @@ elif [ $productCrossPorting_Target = "Linux" ];then
 		tty_echo "Unsupported architecture $productCrossPorting_Target_arch on $productCrossPorting_Target"
 		exit 1
 	fi
-elif [ $productCrossPorting_Target = "FreeBSD" ];then
-	if [ $productCrossPorting_Target_arch = "i386" ];then
+elif [ $productCrossPorting_Target = "FreeBSD" ]; then
+	if [ $productCrossPorting_Target_arch = "i386" ]; then
 		productCrossPorting_Target_compiler="i386-pc-freebsd${osVersion}"
 		compilerConfigureFlags="--enable-version-specific-runtime-libs --enable-shared --enable-threads=posix --disable-checking --disable-libunwind-exceptions --with-system-zlib --enable-__cxa_atexit"
-	elif [ $productCrossPorting_Target_arch = "x86_64" ];then
+	elif [ $productCrossPorting_Target_arch = "x86_64" ]; then
 		productCrossPorting_Target_compiler="x86_64-pc-freebsd${osVersion}"
 		compilerConfigureFlags="--enable-version-specific-runtime-libs --enable-shared --enable-threads=posix --disable-checking --disable-libunwind-exceptions --with-system-zlib --enable-__cxa_atexit"
 		binutilsConfigureFlags="--enable-64-bit-bfd"
@@ -158,16 +163,16 @@ elif [ $productCrossPorting_Target = "FreeBSD" ];then
 		tty_echo "Unsupported architecture $productCrossPorting_Target_arch on $productCrossPorting_Target"
 		exit 1
 	fi
-elif [ $productCrossPorting_Target = "Solaris" ];then
-	if [ $productCrossPorting_Target_arch = "sparc" ];then
+elif [ $productCrossPorting_Target = "Solaris" ]; then
+	if [ $productCrossPorting_Target_arch = "sparc" ]; then
 		productCrossPorting_Target_compiler="sparc-sun-solaris${osVersion}"
 		compilerConfigureFlags="--enable-version-specific-runtime-libs --enable-shared --enable-threads=posix --disable-checking --disable-libunwind-exceptions --with-system-zlib --enable-__cxa_atexit"
 	else
 		tty_echo "Unsupported architecture $productCrossPorting_Target_arch on $productCrossPorting_Target"
 		exit 1
 	 fi
-elif [ $productCrossPorting_Target = "darwin" ];then
-	if [ $productCrossPorting_Target_arch = "i386" ];then
+elif [ $productCrossPorting_Target = "darwin" ]; then
+	if [ $productCrossPorting_Target_arch = "i386" ]; then
 		productCrossPorting_Target_compiler="${productCrossPorting_Target_arch}-unknown-darwin${osVersion}"
 		compilerConfigureFlags="--enable-version-specific-runtime-libs --enable-shared --enable-threads=posix --disable-checking --disable-libunwind-exceptions --with-system-zlib --enable-__cxa_atexit"
 	else
@@ -256,7 +261,7 @@ tty_echo "Done."
 # ########## # ########### ########### ########### ##########
 
 copyPlatformInterface(){
-	if [ ! -d $productCrossPorting_Target_compiler_dir_base_interface_compiler ];then
+	if [ ! -d $productCrossPorting_Target_compiler_dir_base_interface_compiler ]; then
 		exit_witherror "Interface (headers, libraries, etc.) not present at "$productCrossPorting_Target_compiler_dir_base_interface_compiler", exiting"
 		# ## exit 1
 	else

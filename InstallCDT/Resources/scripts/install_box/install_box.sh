@@ -15,8 +15,10 @@
 # ##    /////////////////////////////////////////////////////////////
 # ##
 # ########## # ########### ########### ########### ##########
-DIALOG=${DIALOG=xdialog}
+InstalledSoftware_path_GUI_dialog=${InstalledSoftware_path_GUI_dialog-$(which xdialog)}
 PWD=${PWD-$(pwd)}
+
+echo ":::: DIALOG :: ${InstalledSoftware_path_GUI_dialog}"
 
 # ################## # ##################
 # ################## # ##################
@@ -27,8 +29,7 @@ _script=$( echo "$_script" | sed -e "s;\.\/;;g" )
 PWD=$( find $( dirname $_script | xargs dirname ) -name common_functions.sh -type f | xargs dirname )
 _script=$( find $PWD -name "install_box.sh" -type f   ) 
  
-# ##
-echo " script $PWD :: "$_script
+# ## echo " script $PWD :: "$_script
 # ################## # ##################
 # ################## # ##################
  
@@ -45,7 +46,7 @@ source $(  find $(dirname $install_box_dir | xargs dirname  ) -name common_funct
 cat > /tmp/install_box.tmp <<EOF
 #!/bin/bash
 
-xdialog 	--title "Target style for Target ${SYSTEM_TARGET} ?" \
+"${InstalledSoftware_path_GUI_dialog}" 	--title "Target style for Target ${SYSTEM_TARGET} ?" \
         --yesno " Would you like to pack all Installation in platform/SDK style ? \
         \n This will move files to somethink like \n\
  \n \
@@ -63,14 +64,30 @@ EOF
 # ################## # ##################
 # ################## # ##################
 
-dailog_result_SDK=$( sh /tmp/install_box.tmp 2>&1  && echo $? )
- switch_case_SDK=$( echo ${dailog_result_SDK} | tr "xx_" "\\n"  |  tail -n1 | awk '{if(length($2)){print $2}else{print $1}}' )
-echo "SDK_STYLE :: ${dailog_result}  :: "$?"::"$switch_case
+dailog_result_SDK=$( sh /tmp/install_box.tmp 2>&1 && true || echo $? )
+echo "SDK_STYLE :: ${dailog_result}  :: "$?"::"$switch_case_SDK
+ switch_case_SDK=$( echo ${dailog_result_SDK} | awk '{if(length($2)){print $2}else{print $1}}' )
+echo "SDK_STYLE :: ${dailog_result}  :: "$?"::"$switch_case_SDK
+
+# ## void value
+
+let "switch_case_SDK= switch_case_SDK+0"
+
+echo "SDK_STYLE :: as int ::"$switch_case_SDK
 case  $switch_case_SDK in
-  0)
-    echo "Yes chosen."
-    SDK_STYLE="SDK"
+    0)
+      echo "Yes chosen. SDK"
+      SDK_STYLE="SDK"
     ;;
+    1)
+        echo "No chosen. SDK"
+        SDK_STYLE=""
+    ;;
+    *)
+    echo "Box close chosen. SDK"
+     "${InstalledSoftware_path_GUI_dialog}"  --timeout 10 	--title "Information "    --msgbox "Installation Cancelled ...  "  20 80
+     int_user
+     ;;
 esac
 
 # ################## # ##################
@@ -108,7 +125,8 @@ targetList=$( cat /tmp/install_box_desc.tmp )
 cat > /tmp/install_box.tmp <<EOF
 #!/bin/bash
 
-xdialog --title "Installation from ${SYSTEM_HOST}" \
+"${InstalledSoftware_path_GUI_dialog}" --title "Installation from ${SYSTEM_HOST}" \
+    --check "Build only for 64Bits" "off" \
     --treeview "Choose Target System and Compiler " 32 120 0 \
     "all_default:default" "Install All Targetable Systems Supported with Default Parameters for all Target" off 0 \
     "x_latest:default"  "Latest Default target Avail / Compatible with my System (${SYSTEM_HOST})"  off 0 \
@@ -119,20 +137,33 @@ EOF
 # ################## # ##################
 # ################## # ##################
 
-dailog_result=$( sh /tmp/install_box.tmp 2>&1 && echo $? )
+dailog_result=$( sh /tmp/install_box.tmp 2>&1 && true && echo $? )
+echo ":::dailog_result:::${dailog_result}"
+switch_case=$( echo ${dailog_result} | tr "xx_" "\\n"  |  tail -n1 | awk '{if(length($2)){ if(length($3)){print $3}else{ print $2} }else{print $1}}' )
+do_longbits_switch_case=$( echo ${dailog_result} | tr "xx_" "\\n"  |  tail -n1 | awk '{if(length($2)){ print $2 }else{print $1}}' )
 
-switch_case=$( echo ${dailog_result} | tr "xx_" "\\n"  |  tail -n1 | awk '{if(length($2)){print $2}else{print $1}}' )
+if [ "${do_longbits_switch_case}" == "checked" ]; then
+    productCrossPorting_Target_arch_wordSize="64"
+    productCrossPorting_Target_arche="x86_64"
+else
+    productCrossPorting_Target_arch_wordSize="32"
+    productCrossPorting_Target_arch="i386"
+fi
+
+echo " :::switch_case: ${switch_case} "
 case  $switch_case in
   0)
     echo "Yes chosen.";;
   
   *)
-    echo "Box closed."
+    echo "Box closed. system "
     
-     xdialog  --timeout 10 	--title "Information "    --msgbox "Installation Cancelled ...  "  0 64 
+     "${InstalledSoftware_path_GUI_dialog}"  --timeout 10 	--title "Information "    --msgbox "Installation Cancelled ...  "  20 80 
     int_user
     ;;
 esac
+
+echo "::::" $dailog_result
 
 platform_choose=$( echo $dailog_result | tr "_" "\ " | tr ":" "\ " | awk '{ print $2 }' )
 
@@ -140,7 +171,7 @@ system_choose=$( echo $dailog_result | tr "_" "\ " | tr ":" "\ " | awk '{ print 
 
 compiler_choose=$( echo $dailog_result | tr ":" "\ " | awk '{ print $2 }' )
 
-echo "::::" $dailog_result
+echo "::::" $compiler_choose
 
 case $platform_choose in
     default)
@@ -239,9 +270,9 @@ case  $switch_case_SDK in
   1)
     echo "No chosen.";;
   *)
-    echo "Box closed."
+    echo "Box closed in SDK"
     
-     xdialog  --timeout 10 	--title "Information "    --msgbox "Installation Cancelled ...  "  0 64 
+     "${InstalledSoftware_path_GUI_dialog}"  --timeout 10 	--title "Information "    --msgbox "Installation Cancelled ...  "  20 80 
     int_user
     ;;
 esac
@@ -282,7 +313,7 @@ source "${install_box_dir}/archs/${SYSTEM_HOST}/host/ide/desc.txt"
 cat > /tmp/install_box.tmp <<EOF
 #!/bin/bash
 
-xdialog --title "Installation of ${SYSTEM_HOST} " \
+"${InstalledSoftware_path_GUI_dialog}" --title "Installation of ${SYSTEM_HOST} " \
     --treeview "Choose your IDE / Text Editor \\n
     ${ediitor_desc}" 32 120 0 \
     "none:none" "I already have one" off 0 \
@@ -290,7 +321,7 @@ xdialog --title "Installation of ${SYSTEM_HOST} " \
     ;g" )   
 EOF
  
-dailog_result=$( sh /tmp/install_box.tmp 2>&1  && echo $? )
+dailog_result=$( sh /tmp/install_box.tmp 2>&1 && true && echo $? )
 echo "::::" $dailog_result
  
 switch_case=$( echo ${dailog_result} | tr "xx_" "\\n" |  tail -n1 | awk '{if(length($2)){print $2}else{print $1}}' )
@@ -302,7 +333,7 @@ case  $switch_case  in
   *)
     echo "Box closed."
     
-     xdialog  --timeout 10 	--title "Information "    --msgbox "Installation Cancelled ...  "  0 64 
+     "${InstalledSoftware_path_GUI_dialog}"  --timeout 10 	--title "Information "    --msgbox "Installation Cancelled ...  "  20 80 
     int_user
     ;;
 esac
@@ -315,24 +346,35 @@ echo $editor_choose"::::" $editor_choosetxt
 
 
 
-
-
+ # ## finalised build declaration
+ # ## rebuild and overided by THIS script AFTER First Default Build
+cat >> "${INSTALL_SCRIPT_DEF}" <<EOF
 
 
 SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_url=$( echo ${SYSTEM_HOST_IDEGUI_RECOMMENDED_VERSION_url} | sed -e "s;\({\([a-zA-Z0-9_]*\)}\);$\1;g" | sed -e "s;\ ;;g" | xargs echo )
 
+
 SYSTEM_TARGET_IDEGUI_APP_sdk="${SDK_STYLE_PATH}"
 
+SDK_STYLE="SDK"
+SDK_STYLE_PATH="${SDK_STYLE_PATH}"
+
 productCrossPorting_Folder="${SDK_STYLE_PATH}"
-productCrossPorting_Host_compiler="${productCrossPorting_Host_default_compiler}"
+
+productCrossPorting_Host_compiler="${compiler_choose}"
+
 productCrossPorting_Host_compiler_basedir="${productCrossPorting_Host_default_compiler_basedir}"
 productCrossPorting_Host_compiler_version="${productCrossPorting_Host_default_compiler_version}"
 productCrossPorting_Host_compiler_version_Date="${productCrossPorting_Host_default_compiler_version_Date}"
+
 productCrossPorting_Name="${productCrossPorting_default_Name}"
+
 productCrossPorting_Target="${productCrossPorting_Target_default}"
 productCrossPorting_Target_Folder_arch="${productCrossPorting_Target_default_Folder_arch}"
-productCrossPorting_Target_arch="${productCrossPorting_Target_default_arch}"
-productCrossPorting_Target_arch_wordSize="${productCrossPorting_Target_default_arch_wordSize}"
+productCrossPorting_Target_arch="${productCrossPorting_Target_arch}"
+
+productCrossPorting_Target_arch_wordSize="${productCrossPorting_Target_arch_wordSize}"
+
 productCrossPorting_Target_compiler="${productCrossPorting_Target_default_compiler}"
 productCrossPorting_Target_compiler_basedir="${productCrossPorting_Target_default_compiler_basedir}"
 productCrossPorting_Target_compiler_dir_base_interface="${productCrossPorting_Target_default_compiler_dir_base_interface}"
@@ -350,21 +392,26 @@ productCrossPorting_downloadFolder="${productCrossPorting_default_downloadFolder
 productCrossPorting_sourceFolder="${productCrossPorting_default_sourceFolder}"
  
 
+EOF
 
-
-
+source "${INSTALL_SCRIPT_DEF}"
 
 
 cat > /tmp/install_box.tmp <<EOF
 #!/bin/bash
 
-xdialog 	--title "Resume for Installation Targeting ${SYSTEM_TARGET} " \
+"${InstalledSoftware_path_GUI_dialog}" 	--title "Resume for Installation Targeting ${SYSTEM_TARGET} " \
         --yesno " Installation wil use  the following in platform/SDK   \n \\
         Target : ${SYSTEM_TARGET} \n \\
         Target Version : ${SYSTEM_TARGET_VERSION} \n \\
-        Compiler : ${compiler_choose} \\n \\
+        \\n \\
+        Compiler : ${productCrossPorting_Target_compiler} \\n \\
+        Compiler arch : ${productCrossPorting_Target_arch} \\n \\
+        Compiler align : ${productCrossPorting_Target_arch_wordSize} \\n \\
+        \\n \\
         Editor / IDE : ${editor_choosetxt} \\n \\
-        Path : ${productCrossPorting_Folder} \\n \\
+        \\n \\
+        Final Path : ${productCrossPorting_Folder} \\n \\
    "  30 0 0     
 EOF
 
@@ -378,7 +425,7 @@ case  $switch_case  in
   *)
     echo "Box closed."
     
-     xdialog  --timeout 10 	--title "Information "    --msgbox "Installation Cancelled ...  "  0 64 
+     "${InstalledSoftware_path_GUI_dialog}"  --timeout 10 	--title "Information "    --msgbox "Installation Cancelled ...  "  20 80 
     int_user
     ;;
 esac
@@ -389,7 +436,7 @@ esac
 # ################## # ################## 
 
 compteur=10
-titrebarre="Installation en cours"
+titrebarre="Dummy Dialog :: Installation in progress"
 object_progress="..."
 
 (
@@ -406,7 +453,7 @@ if [ ${compteur} -gt 80 ]; then
 fi
 done
 ) |
-$DIALOG --title "${titrebarre}" --gauge "Bonjour, ceci est une barre d'avancement" 20 70 0
+$InstalledSoftware_path_GUI_dialog --title "${titrebarre}" --gauge "Bonjour, ceci est une barre d'avancement" 20 70 0
 
 # ## note :: sed -e "s;\({\([a-zA-Z0-9_]*\)}\);$\2;g"
 
