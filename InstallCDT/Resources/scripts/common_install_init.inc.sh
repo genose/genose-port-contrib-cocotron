@@ -325,6 +325,9 @@ if [ -x "${install_proc_script}" ] && [ -f  "${install_proc_script}" ] ; then
 else
     echo " ######## Warning : incomplete Install.sh::${install_proc_script} support for : ${SYSTEM_HOST} "
 fi
+
+echo " ::::: install proc clear .... "
+ls -la /tmp/install_common_declare.inc.sh
 if [ ${InstalledSoftware_path_GUI__dialog_use} -gt 0 ]; then
     source $( find $PWD -name "install_box.sh" -type f -print )
 else
@@ -332,7 +335,7 @@ else
     # ## source $( find $PWD -name "install_text.sh" -type f -print )
 fi
 
-
+echo " ::::: install proc install_box clear .... "
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
 echo " :: SYSTEM_TARGET_IDEGUI_APP_sdk :: ${SYSTEM_TARGET_IDEGUI_APP_sdk} "

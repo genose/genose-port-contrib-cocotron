@@ -57,7 +57,7 @@ SYSTEM_TARGET_TYPE=3
 # ########
 
 SYSTEM_TARGET_VERSION=""
-SYSTEM_TARGET="windows"
+productCrossPorting_Target="windows"
 
 
 # ########## # ########### ########### ########### ##########
@@ -97,7 +97,7 @@ install_script_check=$( echo "${install_script_check[*]}" | tr " " "\\n" | tr "\
 # ########## # ########### ########### ########### ##########
  
 SDK_STYLE=""
-SDK_STYLE_PATH="/Applications/Xcode.app/Contents/Developer/Platforms/${SYSTEM_TARGET}.platform/Developer/SDKs/${SYSTEM_TARGET}${SYSTEM_TARGET_VERSION}.sdk/"
+SDK_STYLE_PATH="/Applications/Xcode.app/Contents/Developer/Platforms/${productCrossPorting_Target}.platform/Developer/SDKs/${productCrossPorting_Target}${SYSTEM_TARGET_VERSION}.sdk/"
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
 
@@ -110,7 +110,7 @@ toolResources="$installResources/tools"
 INSTALL_SCRIPT_DIR=$(dirname $installResources  )
 INSTALL_SCRIPT_LOG=/tmp/install_log.log
 INSTALL_SCRIPT_LOG_ERR=/tmp/install_log.err.log
-INSTALL_SCRIPT_DEF="/tmp/install_common_declare.inc.sh"
+INSTALL_SCRIPT_DEF="/tmp/def_install_common_declare.inc.sh"
 
  
 
@@ -124,26 +124,35 @@ fi
 
 PWD=$( echo $PWD || pwd )
 
-
-INSTALL_SCRIPT_DEF_SIZE=$( du -h "${INSTALL_SCRIPT_DEF}" 2>/dev/null && true | sed 's/\([0-9]*\).*/\1/' || echo 0 )
+INSTALL_SCRIPT_DEF_SIZE=$( du -h "${INSTALL_SCRIPT_DEF}" 2>/dev/null | awk '{print $1}' | sed 's/\([0-9]*\).*/\1/' || echo 0 )
+echo "" > /tmp/install_box_desc.tmp
+INSTALL_SCRIPT_DEF_SIZE_empty=$( du -sh /tmp/install_box_desc.tmp  2>/dev/null | awk '{print $1}' | sed 's/\([0-9]*\).*/\1/' || echo 0 )
+# ## cause of allocation file is 4ko default 
+let "INSTALL_SCRIPT_DEF_SIZE_empty= INSTALL_SCRIPT_DEF_SIZE_empty+0"
 
 let "INSTALL_SCRIPT_DEF_SIZE= INSTALL_SCRIPT_DEF_SIZE+0"
-
+let "INSTALL_SCRIPT_DEF_SIZE= INSTALL_SCRIPT_DEF_SIZE-INSTALL_SCRIPT_DEF_SIZE_empty"
+echo " :::: Check Precached  :: ${INSTALL_SCRIPT_DEF_SIZE} Ko :: ${INSTALL_SCRIPT_DEF}"
+# ## 
 if [ -f "${INSTALL_SCRIPT_DEF}" ] && [ ${INSTALL_SCRIPT_DEF_SIZE} -gt 1 ]; then
     # ## finalised build declaration
-    echo " :::: Precached  :: ${INSTALL_SCRIPT_DEF_SIZE} :: ${INSTALL_SCRIPT_DEF}"
-       cat       "${INSTALL_SCRIPT_DEF}"
+    echo " :::: Precached  :: ${INSTALL_SCRIPT_DEF_SIZE} Ko :: ${INSTALL_SCRIPT_DEF}"
+    # ##    cat       "${INSTALL_SCRIPT_DEF}"
     source "${INSTALL_SCRIPT_DEF}"
 else
     echo  "#!/bin/bash" > "${INSTALL_SCRIPT_DEF}" 
     source $( find $installResources -name "common_declare_*.inc.sh" -type f -print )
     
-    find $installResources -name "common_declare_*.inc.sh" -type f -exec cat {} \;  | grep -i "productCrossPorting_" | grep -i "_default" | grep -i "=" | grep -vi "\]" | grep -vi "\#" | sed -e "s;\ ;;g" | tr "=" "\ " | awk '{print $1}' | grep -i "_default" | sort | uniq | sed -e "s;\([a-zA-Z0-9_]*\);\1 \"$\{\1\}\";g" | awk '{ b=gsub(/_default/,"", $1); print $b"="$2 }' |sort | uniq >> "${INSTALL_SCRIPT_DEF}"
+    find $installResources -name "common_declare_*.inc.sh" -type f -exec cat {} \;   | grep -i "productCrossPorting_" | grep -i "_default" | grep -i "=" | grep -vi "\]" | grep -vi "\#" | sed -e "s;\ ;;g" | tr "=" "\ " | awk '{print $1}' | grep -i "_default"  | uniq | sed -e "s;\([a-zA-Z0-9_]*\);\1 \"$\{\1\}\";g" | awk '{ b=gsub(/_default/,"", $1); print $b"="$2 }' | uniq  >> "${INSTALL_SCRIPT_DEF}"
     
+    echo "" > "${INSTALL_SCRIPT_DEF}.compiled"
     # ## finalised build declaration
+    
+    # ##
+    while read line; do eval " echo $line" |  grep -i "\=" | sed -e "s;\=;\=\";g" -e "s;\(.*\);\1\";g"   >>"${INSTALL_SCRIPT_DEF}.compiled"; done <  "${INSTALL_SCRIPT_DEF}"
+    cat "${INSTALL_SCRIPT_DEF}.compiled" > "${INSTALL_SCRIPT_DEF}"
     source "${INSTALL_SCRIPT_DEF}"
-    cat       "${INSTALL_SCRIPT_DEF}"
-    exit
+    # ##    exit
 fi
 
 # ########## # ########### ########### ########### ##########
@@ -181,9 +190,10 @@ packedProduct_type=$(       eval "echo "$( echo '${'$( basename $0 | tr "_" "\ "
 packedProduct_install=$(    eval "echo "$( echo '${'$( basename $0 | tr "_" "\ " | tr "." "\ " | tr "[:upper:]" "[:lower:]" | awk '{ print $2 }' )'Product_install}') )
 
 if [ -d "${productCrossPorting_Target_compiler_dir_base_platform}/${productCrossPorting_Target_compiler}-${productCrossPorting_Target_compiler_version}" ]; then
-GCC=$(   echo $( ls "${productCrossPorting_Target_compiler_dir_base_platform}/${productCrossPorting_Target_compiler}-${productCrossPorting_Target_compiler_version}"/bin/*gcc | head -n1 ) )
+    
+GCC=$(  find "${productCrossPorting_Target_compiler_dir_base_platform}/${productCrossPorting_Target_compiler}-${productCrossPorting_Target_compiler_version}/bin/" -iname "*gcc" | head -n1  )
 # ## |  tr -s " " ":" | cut -d':' -f 2 | awk "{print $1;  fflush();}"
-
+echo "Installed GCC in :: $GCC "
 AS=$(    echo $( ls "${productCrossPorting_Target_compiler_dir_base_platform}/${productCrossPorting_Target_compiler}-${productCrossPorting_Target_compiler_version}"/bin/*as | head -n1 ) )
 AR=$(    echo $( ls "${productCrossPorting_Target_compiler_dir_base_platform}/${productCrossPorting_Target_compiler}-${productCrossPorting_Target_compiler_version}"/bin/*ar | head -n1 )  )
 RANLIB=$( echo $( ls "${productCrossPorting_Target_compiler_dir_base_platform}/${productCrossPorting_Target_compiler}-${productCrossPorting_Target_compiler_version}"/bin/*ranlib | head -n1 ) )
@@ -191,12 +201,12 @@ RANLIB=$( echo $( ls "${productCrossPorting_Target_compiler_dir_base_platform}/$
 INCLUDE="${productCrossPorting_Target_compiler_dir_system}/include"
 BIN="${productCrossPorting_Target_compiler_dir_system}/bin"
 LIB="${productCrossPorting_Target_compiler_dir_system}/lib"
- 
-fi
- 
+
 export TARGET=$( $GCC -dumpmachine )
 export MAKE=$( echo "${MAKE}" && true || which make )
-
+  
+fi
+ 
 BUILD=$( echo "/tmp/"$( basename $0 | tr "." " " | awk '{print $1}' ) )
 TMPDIR=$( echo "/tmp/"$( basename $0 | tr "." " " | awk '{print $1}' ) )
 

@@ -1,0 +1,5 @@
+compiler_desc="gcc"
+compiler_version="4.2.1"
+
+compiler_date=""
+compiler_args=""

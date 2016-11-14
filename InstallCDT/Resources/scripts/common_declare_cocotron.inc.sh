@@ -28,7 +28,22 @@
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
 
+# ########## # ########### ########### ########### ##########
+# ########## # ########### ########### ########### ##########
+
+# ## MOST of declared value are for transitionnal purpose ... Shall be deleted soon
+
+# ########## # ########### ########### ########### ##########
+# ########## # ########### ########### ########### ##########
+
+
+cat >> "${INSTALL_SCRIPT_DEF}" <<EOF
+
+# ########## # ########### ########### ########### ##########
+# ########## # ########### ########### ########### ##########
+
 scriptResources=$installResources/scripts/
+
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
 
@@ -160,28 +175,41 @@ url_google_cocotron_Download_GPL3="https://storage.googleapis.com/google-code-ar
 url_google_cocotron_Download_ARCHIVE="https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/"
 # ########### ##########
 
+EOF
+
 productCrossPorting_default_Name="Cocotron"
 productCrossPorting_default_Version="1.0"
 if [ "${#SDK_STYLE}" -lt 2 ]; then
     productCrossPorting_default_Folder="/Developer/${productCrossPorting_default_Name}/${productCrossPorting_default_Version}"
 else
-    productCrossPorting_default_Folder="/${SDK_STYLE_PATH}"
+    productCrossPorting_default_Folder="${SDK_STYLE_PATH}"
 fi
     
 productCrossPorting_default_downloadFolder="${productCrossPorting_default_Folder}/tmp/Downloads"
 productCrossPorting_default_sourceFolder="${productCrossPorting_default_Folder}/tmp/Source"
 productCrossPorting_default_binFolder="${productCrossPorting_default_Folder}/bin"
 
-productCrossPorting_default_compiler="gcc"
-
 productCrossPorting_Target_default="windows"
+productCrossPorting_Target_default_version=""
 productCrossPorting_Target_default_arch="i386"
 productCrossPorting_Target_default_arch_wordSize="32"
 
 productCrossPorting_Target_default_Folder_arch="${productCrossPorting_default_Folder}/${productCrossPorting_Target_default_arch}"
 
+# ## informative name
+productCrossPorting_default_compiler="gcc"
+
+productCrossPorting_Target_default_compiler_getLatest="--no--"
+productCrossPorting_Target_default_compiler="mingw32msvc"
+# ## destination dir shall not be changed
+productCrossPorting_Target_default_compiler_name="mingw32msvc"
+productCrossPorting_Target_default_compiler_version=""
+productCrossPorting_Target_default_compiler_version_Date=""
+
+productCrossPorting_Target_default_compiler_dir_name="${productCrossPorting_Target_default_arch}-${productCrossPorting_Target_default_compiler_name}/"
+productCrossPorting_Target_default_compiler_dir_system="${productCrossPorting_default_Folder}/system/${productCrossPorting_Target_default_compiler_dir_name}"
 #i386-pc-mingw32msvc$osVersion
-productCrossPorting_Target_default_compiler="i386-pc-mingw32msvc${SYSTEM_TARGET_VERSION}"
+productCrossPorting_Target_default_compiler="${productCrossPorting_Target_default_arch}-pc-${productCrossPorting_Target_default_compiler_name}${SYSTEM_TARGET_VERSION}"
 #gcc / llvm
 
 
@@ -191,174 +219,25 @@ productCrossPorting_Target_default_compiler_dir_base_platform="${productCrossPor
 productCrossPorting_Target_default_compiler_dir_base_interface="${productCrossPorting_default_Folder}/PlatformInterfaces/"
 productCrossPorting_Target_default_compiler_dir_base_interface_compiler="${productCrossPorting_default_Folder}/PlatformInterfaces/${productCrossPorting_Target_default_compiler}"
 
-productCrossPorting_Target_default_compiler_version="4.3.1"
-productCrossPorting_Target_default_compiler_version_Date=""
 
-productCrossPorting_Target_default_compiler_dir_name="i386-mingw32msvc/"
-productCrossPorting_Target_default_compiler_dir_system="${productCrossPorting_default_Folder}/system/${productCrossPorting_Target_default_compiler_dir_name}"
+productCrossPorting_Target_default_compiler_basedir="${productCrossPorting_Target_default_compiler_dir_base_platform}/${productCrossPorting_Target_default_compiler}${productCrossPorting_Target_default_compiler_version}/"
 
-productCrossPorting_Target_default_compiler_basedir="${productCrossPorting_Target_default_compiler_dir_base_platform}/${productCrossPorting_Target_default_compiler}-${productCrossPorting_Target_default_compiler_version}/"
+productCrossPorting_Target_compiler_ConfigureFlags=""
 
 
-productCrossPorting_Host_default_compiler_version="4.3.1"
-productCrossPorting_Host_default_compiler_version_Date=""
+productCrossPorting_Host_default_compiler_getLatest="--no--"
 productCrossPorting_Host_default_compiler="gcc"
-
-productCrossPorting_Host_default_compiler_basedir="${productCrossPorting_Target_default_compiler_dir_base_platform}/${productCrossPorting_Host_default_compiler}-${productCrossPorting_Host_default_compiler_version}/"
-
-if [ -f "${productCrossPorting_Target_default_compiler_dir_base_interface}" ]; then
-    echo ""
-else
-    mkdir -p $productCrossPorting_downloadFolder
-    mkdir -p $productCrossPorting_sourceFolder
-    
-    mkdir -p $productCrossPorting_Target_default_compiler_dir_build_platform
-    mkdir -p $productCrossPorting_Target_default_compiler_dir_base_platform
-    
-    mkdir -p $productCrossPorting_Target_default_compiler_dir_base_interface
-    mkdir -p $productCrossPorting_Target_default_compiler_basedir
-    
-    mkdir -p $productCrossPorting_Target_default_compiler_dir_system/bin
-    mkdir -p $productCrossPorting_Target_default_compiler_dir_system/lib
-    mkdir -p $productCrossPorting_Target_default_compiler_dir_system/include
-fi
-
-productCrossPorting_Target_avail=$( ls -d ./install_box/archs/* )
+productCrossPorting_Host_default_compiler_name="gcc"
+productCrossPorting_Host_default_compiler_version="4.3.1"
+productCrossPorting_Host_default_compiler_version_Date="-02242010"
 
 
+productCrossPorting_Host_default_compiler_basedir="${productCrossPorting_Target_default_compiler_dir_base_platform}/${productCrossPorting_Host_default_compiler}${productCrossPorting_Host_default_compiler_version}/"
 
-# ## productCrossPorting_Target_default=""
-# ## productCrossPorting_Target_default_arch=""
-# ## productCrossPorting_Target_default_compiler_version=""
-# ########## # ########### ########### ########### ##########
-# ########## # ########### ########### ########### ##########
+productCrossPorting_Target_avail=$( find "${PWD}" -name archs -exec ls  -d {}   \;  | tr "\ " "\\n" )
 
-if [  "${install_script_check_script}" == "--NO--" ] && [  "${install_script_check}" == "--NO--" ]; then
-     tty_echo ":::: NO install  ${install_script_check} :: $install_script_check_script :: $0"
-    
-elif [  "${install_script_check}" == "install" ]; then
-    tty_echo ":::: Begin install  ${install_script_check} :: $install_script_check_script :: $0"
-    
-    if [ ""${1-$DEFAULT}"" = "" ]; then
-      productCrossPorting_Target_default="${productCrossPorting_Target_default}"
-    else
-      productCrossPorting_Target_default=${1-$DEFAULT}
-    fi
-    # ########## # ########### ########### ########### ##########
-    # ########## # ########### ########### ########### ##########
-    
-    if [ ""${2-$DEFAULT}"" = "" ]; then
-      productCrossPorting_Target_default_arch="${productCrossPorting_Target_default_arch}"
-    else
-      productCrossPorting_Target_default_arch=${2-$DEFAULT}
-    fi
-    # ########## # ########### ########### ########### ##########
-    # ########## # ########### ########### ########### ##########
-    
-    if [ ""${3-$DEFAULT}"" = "" ]; then
-            productCrossPorting_Target_default_compiler="${productCrossPorting_Target_default_compiler}"
-    else
-            productCrossPorting_Target_default_compiler=${3-$DEFAULT}
-    fi
-    # ########## # ########### ########### ########### ##########
-    # ########## # ########### ########### ########### ##########
-     
-    # ## productCrossPorting_Target_default_compiler_version="4.3.1"
-    
-    if [ ""${4-$DEFAULT}"" = "" ]; then
-      productCrossPorting_Target_default_compiler_version="${productCrossPorting_Target_default_compiler_version}"
-    else
-      productCrossPorting_Target_default_compiler_version=${4-$DEFAULT}
-    fi
-    # ########## # ########### ########### ########### ##########
-    # ########## # ########### ########### ########### ##########
-    
-    # ########## # ########### ########### ########### ##########
-    # ########## # ########### ########### ########### ##########
-    
-    if [ ""${5-$DEFAULT}"" = "" ]; then
-            if [ "$productCrossPorting_Target_default_compiler" = "gcc" ]; then
-                    productCrossPorting_Target_default_compiler_version=$productCrossPorting_Target_default_compiler_version
-            elif [ "$productCrossPorting_Target_default_compiler" = "llvm-clang" ]; then
-                    productCrossPorting_Target_default_compiler_version="trunk"
-            else
-                    tty_echo "Unknown compiler :: $productCrossPorting_Target_default_compiler "$productCrossPorting_Target_default_compiler
-                    send_exit $0 $LINENO
-            fi
-    else
-            productCrossPorting_Target_default_compiler_version=${5-$DEFAULT}
-    fi
-    
-    # ########## # ########### ########### ########### ##########
-    # ########## # ########### ########### ########### ##########
-    
-    if [ ""${6-$DEFAULT}"" = "" ]; then
-            if [ "$productCrossPorting_Target_default_compiler" = "gcc" ]; then
-            productCrossPorting_Target_default_compiler_version_Date="-02242010"
-            elif [ "$productCrossPorting_Target_default_compiler" = "llvm-clang" ]; then
-            productCrossPorting_Target_default_compiler_version_Date="-05042011"
-            else
-                    tty_echo "Unknown $productCrossPorting_Target_default_compiler "$productCrossPorting_Target_default_compiler
-                    exit 1
-            fi
-    else
-            productCrossPorting_Target_default_compiler_version_Date="-"${6-$DEFAULT}
-    fi
-    
-    # ########## # ########### ########### ########### ##########
-    # ########## # ########### ########### ########### ##########
-    
-    osVersion=${7-${DEFAULT}}
-    
-    if [ "${osVersion}" = "" ]; then
-            if [ "${osVersion}" = "" ] && [ "${productCrossPorting_Target_default}" = "Solaris" ]; then
-                    osVersion="2.10"
-            elif [ "${osVersion}" = "" ] && [ "${productCrossPorting_Target_default}" = "FreeBSD" ]; then
-                    osVersion="7"
-            else
-                    osVersion=""
-            fi
-    else
-            osVersion="${osVersion}"
-    fi
-    
-    # ########## # ########### ########### ########### ##########
-    # ########## # ########### ########### ########### ##########
-    
-    if [ $productCrossPorting_Target_default_arch = "x86_64" ]; then
-            productCrossPorting_Target_default_arch_wordSize="64"
-    else
-            productCrossPorting_Target_default_arch_wordSize="32"
-    fi
-fi
+echo "===== "${productCrossPorting_Target_avail[@]}
+
 
 #finalise definition ....
 # ## rebuilt later
-cat >> "${INSTALL_SCRIPT_DEF}" <<EOF
-productCrossPorting_Folder="${productCrossPorting_default_Folder}"
-productCrossPorting_Host_compiler="${productCrossPorting_Host_default_compiler}"
-productCrossPorting_Host_compiler_basedir="${productCrossPorting_Host_default_compiler_basedir}"
-productCrossPorting_Host_compiler_version="${productCrossPorting_Host_default_compiler_version}"
-productCrossPorting_Host_compiler_version_Date="${productCrossPorting_Host_default_compiler_version_Date}"
-productCrossPorting_Name="${productCrossPorting_default_Name}"
-productCrossPorting_Target="${productCrossPorting_Target_default}"
-productCrossPorting_Target_Folder_arch="${productCrossPorting_Target_default_Folder_arch}"
-productCrossPorting_Target_arch="${productCrossPorting_Target_default_arch}"
-productCrossPorting_Target_arch_wordSize="${productCrossPorting_Target_default_arch_wordSize}"
-productCrossPorting_Target_compiler="${productCrossPorting_Target_default_compiler}"
-productCrossPorting_Target_compiler_basedir="${productCrossPorting_Target_default_compiler_basedir}"
-productCrossPorting_Target_compiler_dir_base_interface="${productCrossPorting_Target_default_compiler_dir_base_interface}"
-productCrossPorting_Target_compiler_dir_base_interface_compiler="${productCrossPorting_Target_default_compiler_dir_base_interface_compiler}"
-productCrossPorting_Target_compiler_dir_base_platform="${productCrossPorting_Target_default_compiler_dir_base_platform}"
-productCrossPorting_Target_compiler_dir_build_platform="${productCrossPorting_Target_default_compiler_dir_build_platform}"
-productCrossPorting_Target_compiler_dir_name="${productCrossPorting_Target_default_compiler_dir_name}"
-productCrossPorting_Target_compiler_dir_system="${productCrossPorting_Target_default_compiler_dir_system}"
-productCrossPorting_Target_compiler_version="${productCrossPorting_Target_default_compiler_version}"
-productCrossPorting_Target_compiler_version_Date="${productCrossPorting_Target_default_compiler_version_Date}"
-productCrossPorting_Version="${productCrossPorting_default_Version}"
-productCrossPorting_binFolder="${productCrossPorting_default_binFolder}"
-productCrossPorting_compiler="${productCrossPorting_default_compiler}"
-productCrossPorting_downloadFolder="${productCrossPorting_default_downloadFolder}"
-productCrossPorting_sourceFolder="${productCrossPorting_default_sourceFolder}"
-
-EOF

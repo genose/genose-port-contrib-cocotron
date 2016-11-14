@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CanonicalName</key>
-	<string>${productCrossPorting_Target}${productCrossPorting_Target_default_version}</string>
+	<string>bsd</string>
 	<key>CustomProperties</key>
 	<dict>
 		<key>KERNEL_EXTENSION_HEADER_SEARCH_PATHS</key>
@@ -11,19 +11,19 @@
 	</dict>
 	<key>DefaultProperties</key>
 	<dict>
-		<key>MACOSX_DEPLOYMENT_TARGET</key>
-		<string>${productCrossPorting_Target_default_version}</string>
-		<key>PLATFORM_NAME</key>
-		<string>${productCrossPorting_Target}</string>
 		<key>DEFAULT_KEXT_INSTALL_PATH</key>
 		<string>$(LIBRARY_KEXT_INSTALL_PATH)</string>
+		<key>MACOSX_DEPLOYMENT_TARGET</key>
+		<string></string>
+		<key>PLATFORM_NAME</key>
+		<string>bsd</string>
 	</dict>
 	<key>DisplayName</key>
-	<string>Cross Platform ${productCrossPorting_Target} ${productCrossPorting_Target_default_version} ${productCrossPorting_Target_compiler} </string>
+	<string>Cross Platform bsd i386-pc-freebsd</string>
 	<key>MaximumDeploymentTarget</key>
 	<string>10.12</string>
 	<key>MinimalDisplayName</key>
-	<string>${productCrossPorting_Target}</string>
+	<string>bsd</string>
 	<key>MinimumSupportedToolsVersion</key>
 	<string>3.2</string>
 	<key>SupportedBuildToolComponents</key>

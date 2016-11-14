@@ -83,7 +83,7 @@ macPortRelease_alt_package=$( curl https://www.macports.org/install.php 2>/dev/n
 # 2016 Model
 macPortRelease_URL="https://distfiles.macports.org/MacPorts/MacPorts-${macPortRelease_MySystemReleaseShouldBe}"
 #but we forth, that be better to auto conclude the path
-macPortRelease_avail=$( echo ${macPortRelease_alt_package[*]} | grep -i "${macPortRelease_MySystemReleaseShouldBe}" >/dev/null  && echo "Yes" || echo "No"  )
+macPortRelease_avail=$( echo ${macPortRelease_alt_package[@]} | grep -i "${macPortRelease_MySystemReleaseShouldBe}" >/dev/null  && echo "Yes" || echo "No"  )
 
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
@@ -96,17 +96,19 @@ if [ ${#InstalledSoftware_path_Mac_macport} -gt 5 ]; then
 /bin/echo
 
 selfupdate_macport=$(cat /tmp/macport_update.txt | grep -i "selfupdate" | wc -c ) 
-
-if [ "${selfupdate_macport}" -gt 5 ]; then
-    tty_echo "macport need to update repository .... "
-    tty_yesyno " macport need to update repository .... \n Would you like to updatez ${InstalledSoftware_path_Mac_macport} "
-    macport_update=${tty_yesyno_response}
-    macport_update_valid=${tty_yesyno_response_valid}
-    # ########### # ############ ###########
-    if [ "${macport_update}" == "y" ]; then
-        $InstalledSoftware_path_Mac_macport selupdate
+    
+    if [ "${selfupdate_macport}" -gt 5 ]; then
+        tty_echo "macport need to update repository .... "
+        tty_yesyno " macport need to update repository .... \n Would you like to updatez ${InstalledSoftware_path_Mac_macport} "
+        macport_update=${tty_yesyno_response}
+        macport_update_valid=${tty_yesyno_response_valid}
+        # ########### # ############ ###########
+        if [ "${macport_update}" == "y" ]; then
+            echo " Try to update Macport repository : ${InstalledSoftware_path_Mac_macport}"
+            
+            $InstalledSoftware_path_Mac_macport selupdate
+        fi
     fi
-fi
 
 else
     InstalledSoftware_path_Mac_macport_version="No"
@@ -139,41 +141,41 @@ tty_echo "#### MacPort Avail for this System .... (${macPortRelease_avail}) : ${
 
 if [ "${macPortRelease_avail}" == "No" ]; then
 		
-		tty_echo ""
-		tty_echo "# ########## # ########## # ########## # ########## # ##########"
-		tty_echo " #### No MacPorts for ${SYSTEM_HOST_VERSION_NAME}:${SYSTEM_HOST_VERSION}"
-		tty_echo "# ########## # ########## # ########## # ########## # ##########"
-		for m_port in ${macPortRelease_alt_package[*]} ; do
-			tty_echo " #### >>>> MacPorts : ${m_port}"
-		done
-		tty_echo ""
-		tty_echo "# ########## # ########## # ########## # ########## # ########## # ##########"
-		
-	else
-		if [ "${InstalledSoftware_path_Mac_macport_version}" == "No" ]; then
-			tty_yesyno " Would you like to visit ${macPortRelease_URL} "
-				macport_openurl=${tty_yesyno_response}
-				macport_openurl_valid=${tty_yesyno_response_valid}
-			   # ########### # ############ ###########
-		   if [ "${macport_openurl}" == "y" ]; then
-			   tty_echo "Open Browser with ${macPortRelease_URL}"
-			   sleep 3
-			   # ## can't really download it without some AUTH, so open the URL in browser
-			   open "${macPortRelease_URL}"
-			   
-			   
-		   else
-			   exit_witherror "MacPort not installed (${macport_openurl})" "see recommended ${macPortRelease_URL}"
-		   fi
-			# ## exit_witherror "MacPort not installed for ${SYSTEM_HOST_VERSION_NAME}:${SYSTEM_HOST_VERSION}"
-		else
-			echo " NO need to fetch Macports ${InstalledSoftware_path_Mac_macport_version}"
-		fi
+    tty_echo ""
+    tty_echo "# ########## # ########## # ########## # ########## # ##########"
+    tty_echo " #### No MacPorts for ${SYSTEM_HOST_VERSION_NAME}:${SYSTEM_HOST_VERSION}"
+    tty_echo "# ########## # ########## # ########## # ########## # ##########"
+    for m_port in ${macPortRelease_alt_package[@]} ; do
+            tty_echo " #### >>>> MacPorts : ${m_port}"
+    done
+    tty_echo ""
+    tty_echo "# ########## # ########## # ########## # ########## # ########## # ##########"
+    
+else
+    if [ "${InstalledSoftware_path_Mac_macport_version}" == "No" ]; then
+            tty_yesyno " Would you like to visit ${macPortRelease_URL} "
+                    macport_openurl=${tty_yesyno_response}
+                    macport_openurl_valid=${tty_yesyno_response_valid}
+               # ########### # ############ ###########
+       if [ "${macport_openurl}" == "y" ]; then
+               tty_echo "Open Browser with ${macPortRelease_URL}"
+               sleep 3
+               # ## can't really download it without some AUTH, so open the URL in browser
+               open "${macPortRelease_URL}"
+               
+               
+       else
+               exit_witherror "MacPort not installed (${macport_openurl})" "see recommended ${macPortRelease_URL}"
+       fi
+            # ## exit_witherror "MacPort not installed for ${SYSTEM_HOST_VERSION_NAME}:${SYSTEM_HOST_VERSION}"
+    else
+            echo " NO need to fetch Macports ${InstalledSoftware_path_Mac_macport_version}"
+    fi
 fi
 # ########## # ########### ########### ########### ##########
 # ########## # ########### ########### ########### ##########
-
-if [ $InstalledSoftware_path_GUI__dialog_required -eq 1 ]; then
+ tty_echo " next $InstalledSoftware_path_GUI__dialog_required " 
+if [ ${InstalledSoftware_path_GUI__dialog_required} -eq 1 ]; then
 	tty_echo " >>>>>> Alternatively you required Xdialog Gui ... Please install this software "
 	 
 	if [ "${#InstalledSoftware_path_GUI__x11Window}" -lt 5]; then
@@ -220,5 +222,6 @@ if [ $InstalledSoftware_path_GUI__dialog_required -eq 1 ]; then
 		   open "${InstalledSoftware_path_GUI__xdialog_url}"
 	   fi
    fi
+   tty_echo " quit" 
 	 exit_witherror "##### Re-run $0  once you ready to  begin installation ..."
 fi

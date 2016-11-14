@@ -176,7 +176,7 @@ tty_yesyno_response_valid=0
 
 function tty_yesyno () {
 
-
+dailog_result=""
 tty_yesyno_response=""
 tty_yesyno_response_valid=0
 tty_yesyno_ask="$1"    
@@ -187,23 +187,37 @@ tty_yesyno_ask="$1"
 
         echo "" > /tmp/install_box.tmp
  if [ ${InstalledSoftware_path_GUI__dialog_use} -gt 0 ]; then
-     
+    start_stamp=$(date +%s) 
 cat > /tmp/install_box.tmp <<EOF
 #!/bin/bash
 
-    "${InstalledSoftware_path_GUI_dialog}" 	--title "Resume for Installation Targeting ${SYSTEM_TARGET} " \
-    --timeout 10 \
+    "${InstalledSoftware_path_GUI_dialog}" 	--title "Resume for Installation Targeting ${productCrossPorting_Target} " \
+    --timeout 10 \n\\
     --yesno " $tty_yesyno_ask \n\\
      \n\\
     (Y/n) Default is (Yes, timeout : 10sec)  \n\\
     "  0 0     
 EOF
             
-            dailog_result=$( sh /tmp/install_box.tmp 2>&1  && echo $? ||  echo $?  )
-            echo "::YESYNO::" $dailog_result
-            switch_case=$( echo ${dailog_result} | tr "xx_" "\\n"  |  tail -n1 | awk '{if(length($2)){print $2}else{print $1}}' )
+            dailog_result_yesnos=$(  sh /tmp/install_box.tmp   && ret_yn=$?  && echo $ret_yn && echo "cc" && echo $ret_yn && true || ret_yn=$?  && echo $ret_yn  && ( test $ret_yn -eq 255 ) &&
+{ echo 0 "vv" $ret_yn ; } || { echo 1 "vv" $ret_yn ; }   )
+
+            # ## fraking timeout return 255 same as we close the box
+            stop_stamp=$(date +%s)
+            interval=0
+            let "interval= (stop_stamp - start_stamp)"
+            
+            echo "::YESYNO::" $dailog_result_yesnos
+            switch_case=$( echo ${dailog_result_yesnos}  | awk '{ print $1}' )
+            if [ ${switch_case} -eq 255 ] && [  ${interval} -gt 9 ]; then
+                switch_case="vv"
+            fi
+            echo "::YESYNO:switch_case:" $switch_case "::" $interval
             case  $switch_case  in
-           
+ 
+            "vv")
+                echo "Yes chosen. vv "
+                tty_yesyno_response="y";;           
             0)
                 echo "Yes chosen."
                 tty_yesyno_response="y";;
@@ -211,15 +225,15 @@ EOF
                 echo "No chosen."
                 tty_yesyno_response="n";;
             *)
-                echo "Box closed. / unknow option"
-                "${InstalledSoftware_path_GUI_dialog}"  --timeout 10 	--title "Information "    --msgbox "Installation Cancelled ...  "  20 80
+                echo "Box closed. / unknow option $switch_case "
+                "${InstalledSoftware_path_GUI_dialog}"  --timeout 5 	--title "Information "    --msgbox "Installation Cancelled ...  "  20 80
                 int_user
             ;;
             esac
         
     else
         # ###########
-        read -t 10 -p ">>>>>>>>> $1  ? (Y/n) Default is (Yes, timeout : 10sec) : "  tty_yesyno_response
+        read -t 10 -p ">>>>>>>>> $tty_yesyno_ask  ? (Y/n) Default is (Yes, timeout : 10sec) : "  tty_yesyno_response
         # ###########
     fi
         

@@ -28,7 +28,7 @@
 # ##
 # ##    Created by Genose.org (Sebastien Ray. Cotillard)
 # ##    Date 10-oct-2016
-# ##    last update 25-oct-2016
+# ##    last update nov-2016
 # ##
 # ##    Please support genose.org, the author and his projects
 # ##    
@@ -93,7 +93,7 @@ function doCheckHTTPFile ()
             listOfFiles_valid=(2)
             /bin/echo "###### >>>> ERROR :: Moved :: But we should be able to follow that Link :: Http Status (${listOfFiles_valid_httpcode}) "$locationOfFile" ..." | tee >&2 >> $SCRIPT_TTY
             cat /tmp/curl_test
-        elif  [   ${listOfFiles_valid_httpcode} -gt 500 ];then
+        elif  [   ${listOfFiles_valid_httpcode} -gt 500 ]; then
             listOfFiles_valid=(0)
             /bin/echo "###### >>>> ERROR 500 :: Http Status (${listOfFiles_valid_httpcode}) "$locationOfFile" ..." | tee >&2 >> $SCRIPT_TTY
         else
@@ -512,7 +512,7 @@ for locationOfFile in ${listOfFiles[*]}
 do
     nameOfFile=`basename $locationOfFile`
 
- if [ -f $productCrossPorting_downloadFolder/$nameOfFile ];then
+ if [ -f $productCrossPorting_downloadFolder/$nameOfFile ]; then
     /bin/echo "No download needed for "$productCrossPorting_downloadFolder/$nameOfFile | tee >&2 >> $SCRIPT_TTY
  else
     /bin/echo "Downloading "$locationOfFile" ..." | tee >&2 >> $SCRIPT_TTY

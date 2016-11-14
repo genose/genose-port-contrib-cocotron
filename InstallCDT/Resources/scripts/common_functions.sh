@@ -116,7 +116,7 @@ if [ "${bootstrapped_function-0}" == "0" ]; then
     if [ ${testbash_backyard_valid} -eq 1 ]; then
         # ## echo " Bash compatible :: True "
         # ## PWD=$( echo $PWD || pwd )
-        pwd
+       # ## echo "" >  "/tmp/install_common_declare.inc.sh" 
         PWD=${PWD-$(pwd)}
         _script=${_script-$( echo "$PWD/$0"  | sed -e "s;\.\/;;g" | sed -e "s;${PWD};;g"  | sed -e "s;\.\/;;g" ) }
         #_script=$( echo "$PWD/$0"  | sed -e "s;\.\/;;g" | sed -e "s;${PWD};;g"  | sed -e "s;\.\/;;g" ) 
@@ -158,6 +158,7 @@ if [ -f "${INSTALL_SCRIPT_DEF}" ]; then
     # ## finalised build declaration
     source "${INSTALL_SCRIPT_DEF}"
 else
+    tty_echo " not found : ${INSTALL_SCRIPT_DEF}"
     exit_witherror " :: file def are not found :: something went wrong "
 fi
 # ## echo "unexpected exit .... Bootstrap functions .... "
